@@ -1,0 +1,309 @@
+HC0_se : Intercept    40.527194
+Height        0.614598
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+HC1_se : Intercept    42.252521
+Height        0.640762
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+HC2_se : Intercept    42.944118
+Height        0.651167
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+HC3_se : Intercept    45.539083
+Height        0.690442
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+aic : 206.71613744293103 : <class 'numpy.float64'>
+
+
+bic : 209.15388909266744 : <class 'numpy.float64'>
+
+
+bse : Intercept    45.412309
+Height        0.669905
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+centered_tss : 5442.24 : <class 'numpy.float64'>
+
+
+compare_f_test : <bound method RegressionResults.compare_f_test of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+compare_lm_test : <bound method RegressionResults.compare_lm_test of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+compare_lr_test : <bound method RegressionResults.compare_lr_test of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+condition_number : 1058.6664565603846 : <class 'numpy.float64'>
+
+
+conf_int : <bound method RegressionResults.conf_int of <statsmodels.regression.linear_model.RegressionResultsWrapper object at 0x0000017205451B48>> : <class 'method'>
+
+
+conf_int_el : <bound method OLSResults.conf_int_el of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+cov_HC0 : [[ 1.64245348e+03 -2.48585548e+01]
+ [-2.48585548e+01  3.77730384e-01]] : <class 'numpy.ndarray'>
+
+
+cov_HC1 : [[ 1.78527552e+03 -2.70201683e+01]
+ [-2.70201683e+01  4.10576504e-01]] : <class 'numpy.ndarray'>
+
+
+cov_HC2 : [[ 1.84419731e+03 -2.79104946e+01]
+ [-2.79104946e+01  4.24019009e-01]] : <class 'numpy.ndarray'>
+
+
+cov_HC3 : [[ 2.07380806e+03 -3.13844340e+01]
+ [-3.13844340e+01  4.76709524e-01]] : <class 'numpy.ndarray'>
+
+
+cov_kwds : {'description': 'Standard Errors assume that the covariance matrix of the errors is correctly specified.'} : <class 'dict'>
+
+
+cov_params : <bound method LikelihoodModelResults.cov_params of <statsmodels.regression.linear_model.RegressionResultsWrapper object at 0x0000017205451B48>> : <class 'method'>
+
+
+cov_type : nonrobust : <class 'str'>
+
+
+df_model : 1.0 : <class 'float'>
+
+
+df_resid : 23.0 : <class 'numpy.float64'>
+
+
+diagn : {'jb': 1.3529417217937338, 'jbpv': 0.5084080728307465, 'skew': 0.1475220362365999, 'kurtosis': 1.89919436401315, 'omni': 2.8971111936738976, 'omnipv': 0.23490934696978646, 'condno': 1058.6664565603846, 'mineigval': 0.10252659471531214} : <class 'dict'>
+
+
+eigenvals : [1.14909210e+05 1.02526595e-01] : <class 'numpy.ndarray'>
+
+
+el_test : <bound method OLSResults.el_test of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+ess : 578.1046206896572 : <class 'numpy.float64'>
+
+
+f_pvalue : 0.11184630875881313 : <class 'numpy.float64'>
+
+
+f_test : <bound method LikelihoodModelResults.f_test of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+fittedvalues : 0     76.222138
+1     76.222138
+2     80.652483
+3     78.437310
+4     88.405586
+5     90.620759
+6     90.620759
+7     79.544897
+8     89.513172
+9     77.329724
+10    84.529034
+11    77.052828
+12    79.544897
+13    75.668345
+14    88.405586
+15    86.190414
+16    75.668345
+17    80.652483
+18    85.082828
+19    82.867655
+20    83.975241
+21    86.190414
+22    85.082828
+23    83.975241
+24    79.544897
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+fvalue : 2.7335600757369 : <class 'numpy.float64'>
+
+
+get_influence : <bound method OLSResults.get_influence of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+get_prediction : <bound method RegressionResults.get_prediction of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+get_robustcov_results : <bound method RegressionResults.get_robustcov_results of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+het_scale : [  9.69256136  48.62912689  20.7578819   84.45799524 332.82078744
+ 129.51848621 375.40554994 381.31083676 355.48322766 181.92962453
+ 144.96178235   4.5881002  173.67641989 120.78014109 332.82078744
+ 947.00016958 265.38964304  48.60354271 494.29186529   4.93636921
+ 353.43795552 250.24295738  10.56876453 481.25766433 176.18963216] : <class 'numpy.ndarray'>
+
+
+info_criteria : <bound method RegressionResults.info_criteria of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+initialize : <bound method Results.initialize of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+k_constant : 1 : <class 'int'>
+
+
+llf : -101.35806872146551 : <class 'numpy.float64'>
+
+
+load : <bound method ResultsWrapper.load of <class 'statsmodels.regression.linear_model.RegressionResultsWrapper'>> : <class 'method'>
+
+
+model : <statsmodels.regression.linear_model.OLS object at 0x000001720702EF88> : <class 'statsmodels.regression.linear_model.OLS'>
+
+
+mse_model : 578.1046206896572 : <class 'numpy.float64'>
+
+
+mse_resid : 211.48414692653662 : <class 'numpy.float64'>
+
+
+mse_total : 226.76 : <class 'numpy.float64'>
+
+
+nobs : 25.0 : <class 'float'>
+
+
+normalized_cov_params :            Intercept    Height
+Intercept   9.751454 -0.143554
+Height     -0.143554  0.002122 : <class 'pandas.core.frame.DataFrame'>
+
+
+outlier_test : <bound method OLSResults.outlier_test of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+params : Intercept    7.551793
+Height       1.107586
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+predict : <bound method Results.predict of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+pvalues : Intercept    0.869379
+Height       0.111846
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+remove_data : <bound method LikelihoodModelResults.remove_data of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+resid : 0      2.777862
+1     -6.222138
+2      4.347517
+3      8.562690
+4    -16.405586
+5     -9.620759
+6     16.379241
+7     18.455103
+8     16.486828
+9    -12.329724
+10    11.470966
+11     1.947172
+12    12.455103
+13    -9.668345
+14   -16.405586
+15    28.809586
+16    14.331655
+17    -6.652483
+18   -21.082828
+19     2.132345
+20   -17.975241
+21    14.809586
+22    -3.082828
+23   -20.975241
+24   -12.544897
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+resid_pearson : [ 0.19101689 -0.42785905  0.29895265  0.58880474 -1.12811362 -0.66156178
+  1.12630205  1.26904662  1.13370011 -0.84784107  0.7887894   0.13389535
+  0.85646265 -0.664834   -1.12811362  1.9810622   0.98550184 -0.45745128
+ -1.44973942  0.14662855 -1.23604938  1.01836629 -0.21198754 -1.44234136
+ -0.86263719] : <class 'numpy.ndarray'>
+
+
+rsquared : 0.10622549183601926 : <class 'numpy.float64'>
+
+
+rsquared_adj : 0.06736573061149842 : <class 'numpy.float64'>
+
+
+save : <bound method ResultsWrapper.save of <statsmodels.regression.linear_model.RegressionResultsWrapper object at 0x0000017205451B48>> : <class 'method'>
+
+
+scale : 211.48414692653662 : <class 'numpy.float64'>
+
+
+ssr : 4864.135379310343 : <class 'numpy.float64'>
+
+
+summary : <bound method RegressionResults.summary of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+summary2 : <bound method RegressionResults.summary2 of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+t_test : <bound method LikelihoodModelResults.t_test of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+t_test_pairwise : <bound method LikelihoodModelResults.t_test_pairwise of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+tvalues : Intercept    0.166294
+Height       1.653348
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
+uncentered_tss : 175516.0 : <class 'numpy.float64'>
+
+
+use_t : True : <class 'bool'>
+
+
+wald_test : <bound method LikelihoodModelResults.wald_test of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+wald_test_terms : <bound method LikelihoodModelResults.wald_test_terms of <statsmodels.regression.linear_model.OLSResults object at 0x0000017207017448>> : <class 'method'>
+
+
+wresid : 0      2.777862
+1     -6.222138
+2      4.347517
+3      8.562690
+4    -16.405586
+5     -9.620759
+6     16.379241
+7     18.455103
+8     16.486828
+9    -12.329724
+10    11.470966
+11     1.947172
+12    12.455103
+13    -9.668345
+14   -16.405586
+15    28.809586
+16    14.331655
+17    -6.652483
+18   -21.082828
+19     2.132345
+20   -17.975241
+21    14.809586
+22    -3.082828
+23   -20.975241
+24   -12.544897
+dtype: float64 : <class 'pandas.core.series.Series'>
+
+
