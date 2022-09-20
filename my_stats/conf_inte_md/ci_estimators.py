@@ -5,23 +5,24 @@ todo
 - use kwargs format while calling functions
 - reorder fcts attributes
 '''
-import sys, os.path
+import statsmodels.api as sm  # pip install statsmodels
+from my_stats.utils_md.compute_ppf_and_p_value import (get_z_value,
+                                                       get_t_value)
+from my_stats.hyp_vali_md.constraints import (check_zero_to_one_constraint,
+                                              check_hyp_min_sample,
+                                              check_hyp_min_samples)
+from math import ceil as math_ceil, sqrt
+import sys
+import os.path
 
 sys.path.append(os.path.abspath("."))
 
 print('ci_estimators: import start...')
 # data manipulation and testing
-from math import ceil as math_ceil, sqrt
-import statsmodels.api as sm  #pip install statsmodels
 
 # hyp_validation
-from my_stats.hyp_vali_md.constraints import (check_zero_to_one_constraint,
-                                              check_hyp_min_sample,
-                                              check_hyp_min_samples)
 
 # utils
-from my_stats.utils_md.compute_ppf_and_p_value import (get_z_value,
-                                                       get_t_value)
 
 print('ci_estimators: import ended...')
 
@@ -51,7 +52,7 @@ def CIE_ONE_PROPORTION(cf, proportion, n, method):
     - proportion: measurement 
     - n: number of observations == len(sample)
     - method: "classic" or "conservative"
-    
+
     Hyp
     - better the population follow nornal dist. Or use large sample (>10)
     '''
@@ -64,7 +65,8 @@ def CIE_ONE_PROPORTION(cf, proportion, n, method):
 
     check_zero_to_one_constraint(proportion, cf)
     check_hyp_min_sample(n, proportion)
-    if method not in ["classic", "conservative"]: raise Exception("pb")
+    if method not in ["classic", "conservative"]:
+        raise Exception("pb")
 
     # parameter
     p = proportion
@@ -90,7 +92,7 @@ def CIE_PROPORTION_TWO(cf, p1, p2, n1, n2):
     - p2: mean of liste2
     - n1: len(liste1)
     - n2: len(liste2)
-    
+
     Hyp
     - better the populations follow normal dist. Or use large samples (>10)
     '''
@@ -106,7 +108,7 @@ def CIE_PROPORTION_TWO(cf, p1, p2, n1, n2):
     check_hyp_min_samples(p1, p2, n1, n2)
 
     # parameter
-    p = p1 - p2  #p1-p2#
+    p = p1 - p2  # p1-p2#
     # few_value: from normal distribution (0,1)
     z_value = get_z_value(cf)
     # standard error of the stat
@@ -127,19 +129,21 @@ def CIE_MEAN_ONE(cf, n, mean_dist, std_sample, t_etoile=None):
     - mean_dist: the mean measured on the sample = mean(sample)
     - std_sample: std of the sample  ==std(sample)
     - t_etoile: if set, cf is ignored.
-    
+
     Hyp
     - better the population follow nornal dist. Or use large sample (>10)
         - Alternative to normality: Wilcoxon Signed Rank Test
-        
+
     Theo
     - https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling
     '''
 
     # ctd
     if t_etoile != None:
-        if (cf <= 0 or cf > 1): raise Exception("pb")
-        else: cf = float(cf)
+        if (cf <= 0 or cf > 1):
+            raise Exception("pb")
+        else:
+            cf = float(cf)
     check_hyp_min_sample(n)
 
     mean_dist = float(mean_dist)
@@ -190,7 +194,7 @@ def CIE_MEAN_TWO(cf,
         - False 
             - if we assume that our populations variance are not equal
             - we use a t-distribution of min(N1, N2)-1 ddl
-    
+
     Hyp
     - both the population follow normal dist. Or use large sample (>10)
     - the populations are independant from each other 
@@ -203,25 +207,27 @@ def CIE_MEAN_TWO(cf,
                 ::solution = "no equality" if p-value<0.05 else "equality"
             - or check if IQR are the same
                 - IQR = quantile(75%) - quantile(25%)
-    
+
     Eqvl
     - scipy.stats.ttest_ind(liste1,liste2, equal_var = False | True)
-    
-    
+
+
     Eqvl_pointWise estimation
     - Assume diff_mean = 82
     - Result: diff_mean in CI = [77.33, 87.63]
     - If we test H0:p=80 vs H1:p>80, we would fail to reject the null because H1 is not valide here
     - As sa matter of fact, there is some value in CI below 80 witch if not compatible with H1 => the test doest give enough evidence to reject H0
-    
+
     Theo
     - https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling
     '''
 
     # ctd
     if t_etoile == None:
-        if (cf <= 0 or cf > 1): raise Exception("pb")
-        else: cf = float(cf)
+        if (cf <= 0 or cf > 1):
+            raise Exception("pb")
+        else:
+            cf = float(cf)
     check_hyp_min_sample(N1)
     check_hyp_min_sample(N2)
 

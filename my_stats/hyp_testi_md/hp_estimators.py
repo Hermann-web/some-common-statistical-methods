@@ -11,35 +11,27 @@ todo
 - reorder fcts attributes
 '''
 
+import os.path
+import sys
+from scipy.stats import (f_oneway)
+import statsmodels.api as sm_api
+from numpy.linalg import norm
+from numpy import array, vectorize, random
+import warnings
+from math import sqrt
 print('hyp_testi_md.hp_estimators: import start...')
-import sys, os.path
 
 sys.path.append(os.path.abspath("."))
 
 # data manipulation and testing
-from math import sqrt
-import warnings
 
 SUM = sum
-from numpy import array, vectorize, random
 
 random.seed(233)
-from numpy.linalg import norm
-import statsmodels.api as sm_api
-from scipy.stats import (f_oneway)
 
 # hyp_validation
-from my_stats.hyp_vali_md.constraints import (check_zero_to_one_constraint,
-                                              check_hyp_min_sample,
-                                              check_hyp_min_samples)
 
 # utils
-from my_stats.utils_md.compute_ppf_and_p_value import (get_p_value,
-                                                       get_p_value_f_test,
-                                                       get_p_value_z_test,
-                                                       get_p_value_t_test)
-from my_stats.utils_md.constants import COMMON_ALPHA_FOR_HYPH_TEST
-from my_stats.utils_md.refactoring import (Hypothesis_data, Tails)
 
 print('hyp_testi_md.hp_estimators: ---import end---')
 
@@ -81,7 +73,7 @@ def HPE_FROM_P_VALUE(tail: str = None,
         raise Exception(
             "Either set t_stat or set p_value or set p_hat,p0,std_stat_eval")
 
-    #compute Z_test/T_test if not set
+    # compute Z_test/T_test if not set
     elif p_hat != None:
         if t_stat != None:
             raise Exception("You set p_value while p_hat is already set")
@@ -98,11 +90,12 @@ def HPE_FROM_P_VALUE(tail: str = None,
                 "You set p_value while t_stat is already set or computated")
         tail = Tails.norm_tail(tail)
         p_value = get_p_value(Z=t_stat, ddl=ddl, tail=tail, test=test)
-        if tail == Tails.middle and onetail: p_value = p_value / 2
+        if tail == Tails.middle and onetail:
+            p_value = p_value / 2
 
-    #rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
+    # rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
     reject_null = True if p_value < alpha else False
-    #return p_hat, p0, std_stat_eval, t_stat, p_value,reject_null
+    # return p_hat, p0, std_stat_eval, t_stat, p_value,reject_null
 
     data = Hypothesis_data(parameter=p_hat,
                            pnull=p0,
@@ -131,17 +124,17 @@ def HPE_PROPORTION_ONE(alpha, p0, proportion, n, tail=Tails.right):
     Hyp
     - simple random sample
     - large sample (np>10)
-    
+
     Hypotheses
     - H0: proportion = p0
     - H1: 
         - tail==right => proportion > p0
         - tail==left => proportion < p0
         - tail==middle => proportion != p0
-    
+
     Detail
     - use a normal distribion (Z-statistic)
-    
+
     Result (ex:tail=right)
     - if reject==True
         - There is sufficient evidence to conclude that the population proportion of {....} is greater than p0
@@ -158,22 +151,22 @@ def HPE_PROPORTION_ONE(alpha, p0, proportion, n, tail=Tails.right):
     # parameter
     p_hat = proportion
 
-    #calculate the Z-statistic:
-    #standard error of the estimate
-    #scipy.stats.stats.proportions_ztest utilise p_hat ici au lieu de p0 => mais les result ts ne varient pas trop
+    # calculate the Z-statistic:
+    # standard error of the estimate
+    # scipy.stats.stats.proportions_ztest utilise p_hat ici au lieu de p0 => mais les result ts ne varient pas trop
     std_stat_eval = sqrt(
         p0 * (1 - p0) / n
-    )  #the null standard error #la proportion suit une loi de bernouli => on passe à plusieurs samples
-    #compute Z corresponding to normal distribtion
+    )  # the null standard error #la proportion suit une loi de bernouli => on passe à plusieurs samples
+    # compute Z corresponding to normal distribtion
     Z = (
         p_hat - p0
-    ) / std_stat_eval  #"assume" that th eproportion folow a normal for many samples
+    ) / std_stat_eval  # "assume" that th eproportion folow a normal for many samples
     print("Z = ", Z)
 
-    #compute p_value
+    # compute p_value
     p_value = get_p_value_z_test(Z, tail=tail)
 
-    #rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
+    # rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
     reject_null = True if p_value < alpha else False
     return p_hat, p0, std_stat_eval, Z, p_value, reject_null
 
@@ -188,16 +181,16 @@ def HPE_PROPORTION_TW0(alpha, p1, p2, n1, n2, tail=Tails.middle, evcpp=False):
     - n1: len(liste1)
     - n2: len(liste2)
     - evcpp: bool(defult=False) (True -> Estimate of the variance of the combined population proportion)
-    
+
     Hyp
     - two independant samples
     - two random samples
     - large enough data
-    
+
     Hypotheses
     - H0: proportion = p0
     - H1: proportion !=p0
-    
+
     Detail
     - use a normal distribion (Z-statistic)
     '''
@@ -214,39 +207,39 @@ def HPE_PROPORTION_TW0(alpha, p1, p2, n1, n2, tail=Tails.middle, evcpp=False):
     check_hyp_min_samples(p1, p2, n1, n2)
 
     # parameter
-    p_hat = abs(p1 - p2)  #estimator
+    p_hat = abs(p1 - p2)  # estimator
     p0 = 0
 
-    #calculate the Z-statistic:
-    #standard error of the estimate
-    #the null standard error #la proportion suit une loi de bernouli => on passe à plusieurs samples
+    # calculate the Z-statistic:
+    # standard error of the estimate
+    # the null standard error #la proportion suit une loi de bernouli => on passe à plusieurs samples
     if evcpp:
         # estimation de sqrt(p_hat*(1-p_hat)*(1/n1 + 1/n2))
         phat2 = (p1 * n1 + p2 * n2) / (
-            n1 + n2)  ## Estimate of the combined population proportion
+            n1 + n2)  # Estimate of the combined population proportion
         va = phat2 * (
             1 - phat2
-        )  ## Estimate of the variance of the combined population proportion
+        )  # Estimate of the variance of the combined population proportion
         std_stat_eval = sqrt(
             va * (1 / n1 + 1 / n2)
-        )  ## Estimate of the standard error of the combined population proportion
+        )  # Estimate of the standard error of the combined population proportion
     else:
         std_stat_eval = sqrt((p1 * (1 - p1) / n1) + (p2 * (1 - p2) / n2))
 
-        #compute Z corresponding to normal distribtion
+        # compute Z corresponding to normal distribtion
     Z = (
         p_hat - p0
-    ) / std_stat_eval  #"assume" that th eproportion folow a normal for many samples
+    ) / std_stat_eval  # "assume" that th eproportion folow a normal for many samples
     print(f"Z = ({p_hat - p0})/{std_stat_eval} = ", Z)
-    #Z = abs(Z) #to use tail=right it is now a H1:p>p0 problem
+    # Z = abs(Z) #to use tail=right it is now a H1:p>p0 problem
 
-    #compute p_value
+    # compute p_value
     tail = Tails.norm_tail(tail)
     tail = Tails.norm_tail(tail)
     p_value = get_p_value_z_test(Z, tail=tail, debug=True)
 
-    #rejection (we want to be far away from the mean to reject the null)
-    #use alpha or alpha/2 ??
+    # rejection (we want to be far away from the mean to reject the null)
+    # use alpha or alpha/2 ??
     reject_null = True if p_value < alpha else False
     return p_hat, p0, std_stat_eval, Z, p_value, reject_null
 
@@ -258,12 +251,12 @@ def HPE_MEAN_ONE(alpha, p0, mean_dist, n, std_sample, tail=Tails.right):
     - n: number of observations == len(sample)
     - mean_dist: the mean measured on the sample = mean(sample)
     - std_sample: std of the sample  ==std(sample). You should use a real estimate (ffod=n-1)
-    
+
     Hyp
     - simple random sample
     - better the population follow nornal dist. Or use large sample (>10)
         - Alternative to normality: Wilcoxon Signed Rank Test
-        
+
     Theo
     - https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling
     '''
@@ -280,21 +273,21 @@ def HPE_MEAN_ONE(alpha, p0, mean_dist, n, std_sample, tail=Tails.right):
     # parameter
     p_hat = mean_dist
 
-    #calculate the Z-statistic:
-    #standard error of the estimate
+    # calculate the Z-statistic:
+    # standard error of the estimate
     std_stat_eval = std_sample / sqrt(
         n
-    )  #à cause du la loi des samples de N qui suivent une t à (n-1) ddl non?
-    #compute Z corresponding to normal distribtion
+    )  # à cause du la loi des samples de N qui suivent une t à (n-1) ddl non?
+    # compute Z corresponding to normal distribtion
     Z = (
         p_hat - p0
-    ) / std_stat_eval  #"assume" that th eproportion folow a normal for many samples
+    ) / std_stat_eval  # "assume" that th eproportion folow a normal for many samples
     print("Z = ", Z)
 
-    #compute p_value
+    # compute p_value
     p_value = get_p_value_t_test(Z, ddl=n - 1, tail=tail)
 
-    #rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
+    # rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
     reject_null = True if p_value < alpha else False
     return p_hat, p0, std_stat_eval, Z, p_value, reject_null
 
@@ -311,12 +304,12 @@ def HPE_MEAN_TWO_PAIRED(alpha,
     - n: number of observations == len(sample) == n1 == n2
     - std_diff_sample: std of the sample  ==std(sample). You should use a real estimate (ffod=n-1)
     - tail: default=Tails.middle to test the equality (mean_diff=0). But we can also to mean_diff>0 (right) or mean_diff<0 (left)
-    
+
     Hyp
     - simple random sample
     - better when the diff of the samples (sample1 - sample2) follow nornal dist. Or use large sample (>10)
     - std_diff_sample is a good data based estimated [use (n-1) instead of n]. example: np.std(sample1 - sample2, ddof=1) is better than ddof=0 (default)
-    
+
     Hypothesis
     - H0: p1 - p2 = 0
     - H1: 
@@ -357,7 +350,7 @@ def HPE_MEAN_TWO_NOTPAIRED(alpha,
         - False 
             - if we assume that our populations variance are not equal
             - we use a t-distribution of min(N1, N2)-1 ddl
-    
+
     Hyp
     - both the population follow normal dist. Or use large sample (>10)
     - the populations are independant from each other 
@@ -393,38 +386,38 @@ def HPE_MEAN_TWO_NOTPAIRED(alpha,
     # few value: from t distribution with ddl = fct(pool)
     ddl = min(N1, N2) - 1 if not pool else N1 + N2 - 2
 
-    #calculate the Z-statistic:
+    # calculate the Z-statistic:
     # standard error of the stat
     if not pool:
         std_stat_eval = sqrt(
             (std_sample_1**2) / N1 + (std_sample_2**2) / N2
-        )  #or std_sample*sqrt( 1/N1 + 1/N2) with std_sample==std_sample_1==std_sample_2
+        )  # or std_sample*sqrt( 1/N1 + 1/N2) with std_sample==std_sample_1==std_sample_2
     else:
         std_stat_eval = sqrt(
             ((N1 - 1) * (std_sample_1**2) + (N2 - 1) *
              (std_sample_2**2)) / (N1 + N2 - 2)) * sqrt(1 / N1 + 1 / N2)
 
-        #compute Z corresponding to normal distribtion
+        # compute Z corresponding to normal distribtion
     Z = (
         p_hat - p0
-    ) / std_stat_eval  #"assume" that th eproportion folow a normal for many samples
+    ) / std_stat_eval  # "assume" that th eproportion folow a normal for many samples
     print("Z = ", Z)
 
-    #compute p_value
+    # compute p_value
     p_value = get_p_value_t_test(Z, ddl=ddl, tail=tail)
 
-    #rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
+    # rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
     reject_null = True if p_value < alpha else False
     return p_hat, p0, std_stat_eval, Z, p_value, reject_null
 
 
 def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
     """check if mean is equal accross many samples
-    
+
     Hypothesis
     H0: mean1 = mean2 = mean3 = ....
     H1: one is different
-    
+
     Hypothesis
     - each sample is 
         - simple random 
@@ -432,8 +425,8 @@ def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
         - indepebdant from others
     - same variance 
         - if added, the "same variance test" should use levene test but apparently, use levene test (plus robuste que fusher ou bartlett face à la non-normalité de la donnée)(https://fr.wikipedia.org/wiki/Test_de_Bartlett)
-    
-    
+
+
     Fisher test 
         - The F Distribution is also called the Snedecor’s F, Fisher’s F or the Fisher–Snedecor distribution
         - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html
@@ -448,10 +441,10 @@ def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
         assert len(elt) > 0
 
     samples = array(samples, dtype=object)
-    k = len(samples)  #the number of groups
+    k = len(samples)  # the number of groups
 
     sum_loc_ = vectorize(SUM)
-    list_Ti = sum_loc_(samples)  #list of Ti
+    list_Ti = sum_loc_(samples)  # list of Ti
     assert list_Ti.shape == (k, )
     G = SUM(list_Ti)
     assert array(G).shape == ()
@@ -459,7 +452,7 @@ def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
     len_loc_ = vectorize(len)
     list_ni = len_loc_(samples)
     assert list_ni.shape == (k, )
-    n = SUM(list_ni)  #the total number of subjects in the experiment
+    n = SUM(list_ni)  # the total number of subjects in the experiment
     print(f"n={n} k={k}")
     assert array(n).shape == ()
 
@@ -471,11 +464,12 @@ def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
         list_Ti**2 / list_ni
     )  # S_carre = sum_i( sum_j(samples[i][j]**2) / len(sample[i]) ) #[pour chaque grp, [je fais la somme des carre; je divise par le nb_elt], je somme tout] => somme_on_groups(E(X**2))
     # variance btw groups
-    SSR = S_carre - G**2 / n  #y_hat-y_mean# S_carre - sum_i_j(samples[i][j])**2 / sum_i(len(samples[i])) #G est la somme de toutes les observations #n est le nombre total d'observations ==> somme_on_groups(E(X**2)/len_grp) - E(X)**2 /len_total
+    # y_hat-y_mean# S_carre - sum_i_j(samples[i][j])**2 / sum_i(len(samples[i])) #G est la somme de toutes les observations #n est le nombre total d'observations ==> somme_on_groups(E(X**2)/len_grp) - E(X)**2 /len_total
+    SSR = S_carre - G**2 / n
     # var within group
     SSE = sum(
         list_norm**2
-    ) - S_carre  #y-y_hat# sum_i_j(sample[i][j]**2) - S_carre ==> E(X**2) - somme_on_groups(E(X**2)/len_grp)
+    ) - S_carre  # y-y_hat# sum_i_j(sample[i][j]**2) - S_carre ==> E(X**2) - somme_on_groups(E(X**2)/len_grp)
 
     assert SSR.shape == ()
     assert SSE.shape == ()
@@ -483,8 +477,10 @@ def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
     dfe = n - k  # error in sample
     dfr = k - 1  # explained by the diff bewtwenn samples
 
-    MSR = SSR / dfr  #variance between samples #the mean square due to dependant_var = fct(groups) (between groups)
-    MSE = SSE / dfe  #variance within sample #is the mean square due to error (within groups, residual mean square)
+    # variance between samples #the mean square due to dependant_var = fct(groups) (between groups)
+    MSR = SSR / dfr
+    # variance within sample #is the mean square due to error (within groups, residual mean square)
+    MSE = SSE / dfe
     F = MSR / MSE
 
     # plus F est grand, plus la diff des mean s'explique par la difference entre les groupes
@@ -494,7 +490,7 @@ def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
 
     p_value = get_p_value_f_test(Z=F, dfn=dfr, dfd=dfe)
 
-    #rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
+    # rejection #we want to be far away from the mean (how p_value= how great is (p_hat - p0) = how far p_hat is from p0 considered as mean)
     reject_null = True if p_value < alpha else False
     return F, 0, 1, F, p_value, reject_null
 

@@ -29,11 +29,13 @@ def compute_slope_std(X, y, y_hat, debug=False, skipcst=True):
     assert y.shape == (n, )
     assert y_hat.shape == (n, )
     Y_err = norm(y - y_hat)
-    if debug: print("X_err", X_err)
+    if debug:
+        print("X_err", X_err)
     #m = n-2 if n>2 else n
     list_coeffs_std = sqrt(Y_err / X_err) / sqrt(
-        n - 2)  #list of standard errors of the coefficients
-    if debug: print("list_coeffs_std: ", list_coeffs_std)
+        n - 2)  # list of standard errors of the coefficients
+    if debug:
+        print("list_coeffs_std: ", list_coeffs_std)
     assert list_coeffs_std.shape == (1, nb_param)
 
     list_coeffs_std = list_coeffs_std.flatten()

@@ -3,27 +3,28 @@ les test de valisation (hypothese avant de lancer un autre test) qui dependant d
 Les mettre dans utils prut créer un import circulaire
 '''
 
+import os.path
+import sys
+import warnings
+from my_stats.utils_md.constants import COMMON_ALPHA_FOR_HYPH_TEST
+from my_stats.utils_md.refactoring import HypothesisValidationData, Tails
+from my_stats.hyp_vali_md.constraints import check_equal_var, check_sample_normality, check_zero_to_one_constraint
+from my_stats.hyp_testi_md.hypothesis_testing import HP_MEAN_MANY, HP_MEAN_ONE
+from my_stats.hyp_testi_md.hp_estimators import HPE_FROM_P_VALUE
+from numpy import array
 print('hyp_vali_md.hypothesis_validator:import start...')
-import sys, os.path
 
 sys.path.append(os.path.abspath("."))
 
 # data manipulation
-from numpy import array
 
 #
-from my_stats.hyp_testi_md.hp_estimators import HPE_FROM_P_VALUE
-from my_stats.hyp_testi_md.hypothesis_testing import HP_MEAN_MANY, HP_MEAN_ONE
 
 # hyp_validation
-from my_stats.hyp_vali_md.constraints import check_equal_var, check_sample_normality, check_zero_to_one_constraint
 
 # utils
-from my_stats.utils_md.refactoring import HypothesisValidationData, Tails
-from my_stats.utils_md.constants import COMMON_ALPHA_FOR_HYPH_TEST
 
 # testing
-import warnings
 
 print('hyp_vali_md.hypothesis_validator: ---import end---')
 
@@ -44,7 +45,7 @@ def check_residuals_centered(residuals: list,
                        alpha=alpha,
                        sample=residuals,
                        symb=Tails.NEQ_SYMB)
-    passed_residu_mean_null_test = not data.reject_null  #H0:p=p0, H1:p!=p0
+    passed_residu_mean_null_test = not data.reject_null  # H0:p=p0, H1:p!=p0
     return HypothesisValidationData(passed_residu_mean_null_test)
 
 
@@ -78,10 +79,10 @@ def check_coefficients_non_zero(list_coeffs: list,
 
     pass_non_zero_test = []
     for coeff_, se_ in zip(list_coeffs, list_coeff_std):
-        #test statistic: H0:coeff=0; H1:coeff!=0
+        # test statistic: H0:coeff=0; H1:coeff!=0
         assert isinstance(coeff_, float)
         assert isinstance(se_, float)
-        #compute p_value
+        # compute p_value
         data = HPE_FROM_P_VALUE(p_hat=coeff_,
                                 p0=0,
                                 std_stat_eval=se_,
@@ -104,19 +105,19 @@ def check_coefficients_non_zero(list_coeffs: list,
 
 def check_equal_mean(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
     """check if mean if the same accross samples
-    
+
     Hypothesis
         H0: mean1 = mean2 = mean3 = ....
         H1: one is different
-    
+
     Hypothesis
         - The samples are independent.
         - Each sample is from a normally distributed population.
         - The population standard deviations of the groups are all equal. This property is known as homoscedasticity.
-    
+
     Args:
         - *samples (list): one or many lists 
-    
+
     Fisher test 
         - The F Distribution is also called the Snedecor’s F, Fisher’s F or the Fisher–Snedecor distribution
         - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html
@@ -131,7 +132,7 @@ def check_equal_mean(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
         assert len(elt) > 0
 
     # check same_variance hypothesis
-    #if not check_equal_variance()
+    # if not check_equal_variance()
     if not check_equal_var(*samples, alpha=alpha).testPassed:
         warnings.warn("data seems to not have equal variance")
 
@@ -141,7 +142,8 @@ def check_equal_mean(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
             warnings.warn("data seems to not be normal")
 
     data = HP_MEAN_MANY(samples, alpha=alpha)
-    equal_mean = not data.reject_null  #tail=right donc reject_null => p_value faible => stat grand => F (=MSR/MSE) grand => la variance vient de la diff entre les groupe et non de la variance interne de groupes => les groups sont significativement differents
+    # tail=right donc reject_null => p_value faible => stat grand => F (=MSR/MSE) grand => la variance vient de la diff entre les groupe et non de la variance interne de groupes => les groups sont significativement differents
+    equal_mean = not data.reject_null
 
     return HypothesisValidationData(equal_mean, {
         "Z": data.Z,

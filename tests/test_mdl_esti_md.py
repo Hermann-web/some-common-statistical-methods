@@ -1,8 +1,9 @@
-import sys, os.path
+from common_imports import *
+import sys
+import os.path
 import warnings
 
 sys.path.append(os.path.abspath("."))
-from common_imports import *
 
 
 class Tests_hp_estimators_regression(unittest.TestCase):
@@ -114,12 +115,12 @@ class Test_model_estimator(unittest.TestCase):
             print(f"  -> {elt}:{val}")
         #self.assertAlmostEqual_(coeffs[0], 7.5518, 0.01)
         #self.assertTrue(abs(coeff_std[0] - 45.412) < 1)
-        ##self.assertTrue(Testresults["coeff_non_zero"].obj[0])
+        # self.assertTrue(Testresults["coeff_non_zero"].obj[0])
         #self.assertTrue(abs(coeffs[1] - 1.1076) < 0.01)
         #self.assertTrue(abs(coeff_std[1] - 0.670) < 0.1)
-        #self.assertTrue(Testresults["coeff_non_zero"].obj[1])
-        #self.assertTrue(Testresults["residu_mean_null"].testPassed)
-        #self.assertTrue(Testresults["residuals_normality"].testPassed)
+        # self.assertTrue(Testresults["coeff_non_zero"].obj[1])
+        # self.assertTrue(Testresults["residu_mean_null"].testPassed)
+        # self.assertTrue(Testresults["residuals_normality"].testPassed)
 
         # coeffs
         for i in range(len(coeffs)):
@@ -175,7 +176,7 @@ class Test_model_estimator(unittest.TestCase):
         self.assertAlmostEqual_(BIC, res.bic, 0.026)
 
         # others
-        _ = res.summary()  #important #it create diagn attribute
+        _ = res.summary()  # important #it create diagn attribute
         meta_data = res.diagn
         # skew, kustosis
         skew, kurtosis = metrics["skew"], metrics["kurtosis"]
@@ -184,13 +185,13 @@ class Test_model_estimator(unittest.TestCase):
         warnings.warn('Eh the kurtosis is wrong hhh!!')
 
         omni = meta_data[
-            "omni"]  #Omnibus #a Ftest with an F based on skew and kutosis
-        omnipv = meta_data["omnipv"]  #Prob(Omnibus)
+            "omni"]  # Omnibus #a Ftest with an F based on skew and kutosis
+        omnipv = meta_data["omnipv"]  # Prob(Omnibus)
         mineigval = meta_data[
-            "mineigval"]  #Durbin-Watson #H0:first-order autocorrelation: the presumed error that should be independant follow: u(t) = rho*u(t-1) + eps(t) where eps(t) is the ideal error #https://itfeature.com/time-series-analysis-and-forecasting/autocorrelation/first-order-autocorrelation #https://corporatefinanceinstitute.com/resources/knowledge/other/durbin-watson-statistic/
-        jb = meta_data["jb"]  #Jarque-Bera (JB)
-        jbpv = meta_data["jbpv"]  #Prob(JB)
-        condno = meta_data["condno"]  #Cond. No.
+            "mineigval"]  # Durbin-Watson #H0:first-order autocorrelation: the presumed error that should be independant follow: u(t) = rho*u(t-1) + eps(t) where eps(t) is the ideal error #https://itfeature.com/time-series-analysis-and-forecasting/autocorrelation/first-order-autocorrelation #https://corporatefinanceinstitute.com/resources/knowledge/other/durbin-watson-statistic/
+        jb = meta_data["jb"]  # Jarque-Bera (JB)
+        jbpv = meta_data["jbpv"]  # Prob(JB)
+        condno = meta_data["condno"]  # Cond. No.
 
 
 class test_models(unittest.TestCase):

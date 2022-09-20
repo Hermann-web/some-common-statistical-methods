@@ -9,30 +9,19 @@ todo
 - reorder fcts attributes
 '''
 
+import os.path
+import sys
+from numpy import mean
 print('conf_int_md.confidence_interval: import start...')
-import sys, os.path
 
 sys.path.append(os.path.abspath("."))
 
 # data manipulation and testing
-from numpy import mean
 
 # hyp_validation
-from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
-                                              check_zero_to_one_constraint,
-                                              check_hyp_min_samples)
 # utils
-from my_stats.utils_md.estimate_std import estimate_std
-from my_stats.utils_md.refactoring import (Confidence_data)
-from my_stats.utils_md.preprocessing import (
-    clear_list,
-    clear_list_pair,
-)
 
 # confidence interval
-from my_stats.conf_inte_md.ci_estimators import (CIE_MEAN_ONE, CIE_MEAN_TWO,
-                                                 CIE_ONE_PROPORTION,
-                                                 CIE_PROPORTION_TWO)
 
 print('conf_int_md.confidence_interval: ---import end---')
 
@@ -48,30 +37,30 @@ def IC_PROPORTION_ONE(sample_size: int,
         - parameter: float: the measurement on the sample
         - confidence: float: confidence confidence (between O and 1). Greater the confidence, wider the interval
         - method: str: either "classic" (default) or "conservative.
-    
+
     - Example: 
         - how many men in the entire population with a con ?
         - a form filled by 300 people show that there is only 120 men => p = (120/300); N=300
-    
+
     - Hypothesis
         - the sample is over 10 for each of the categories in place => we use the "Law of Large Numbers"
         - the sample proportion comes from data that is considered a simple random sample
-    
+
     - Idea 
         - let P: the real proportion in the population
         - let S: Size of each sample == nb of observations per sample
         - For many samples, we calculate proportions per sample: ex: for N samples of size S => N proportions values
         - (p - P) / ( p*(1-p)/S ) follow a normal distribution
-    
+
     - Descriptions:
         - For a given polulation and a parameter P to find, If we repeated this study many times, each producing a new sample (of the same size {res.sample_size==S}) from witch a {res.confidence} confidence interval is computed, then {res.confidence} of the resulting confidence intervals would be excpected to contain the true value P 
         - If the entire interval verify a property, then it is reasonable say that the parameter verify that property
-    
+
     - Result
         - with a {res.confidence} confidence, we estimate that the populztion proportion who are men is between {res.left_tail} and {res.right_tail}
     '''
-    p = parameter  #value of the paramater ==sample proportion == statistic == estimate of the population proportion
-    N = sample_size  #sample size out of the population
+    p = parameter  # value of the paramater ==sample proportion == statistic == estimate of the population proportion
+    N = sample_size  # sample size out of the population
     cf = confidence  # between 0 and 1
 
     check_zero_to_one_constraint(p, cf)
@@ -95,14 +84,14 @@ def IC_PROPORTION_ONE(sample_size: int,
 def IC_MEAN_ONE(confidence: float, sample: list, t_etoile=None):
     '''
     Estimate_population_mean(ONE MEAN): We need the spread (std): We will use an estimation
-    
+
     Data 
         - confidence:..
         - sample: value...
-        
+
     Method
     - Use t-distribution to calculate few
-    
+
     Hypothesis
     - Samples follow a normal (or large enough to bypass this assumption) => means of these sample follow a t-dist
     '''
@@ -135,13 +124,13 @@ def IC_MEAN_ONE(confidence: float, sample: list, t_etoile=None):
 def IC_PROPORTION_TWO(confidence, p1, p2, N1, N2):
     '''
     Difference_population_proportion(TWO PROPORTIONS): We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? #p1-p2#
- 
+
     Method
         - create joint confidence interval
-        
+
     Construction
     - Cmparison 
-    
+
     Hypotheses
     - two independant random samples
     - large enough sample sizes : 10 per category (ex 10 yes, 10 no)
@@ -151,7 +140,7 @@ def IC_PROPORTION_TWO(confidence, p1, p2, N1, N2):
     check_hyp_min_samples(p1, p2, N1, N2)
 
     p, marginOfError, interval = CIE_PROPORTION_TWO(cf, p1, p2, N1,
-                                                    N2)  #p1-p2#
+                                                    N2)  # p1-p2#
     assert p >= interval[0]
     assert p <= interval[1]
 
@@ -167,8 +156,8 @@ def IC_PROPORTION_TWO(confidence, p1, p2, N1, N2):
 def IC_MEAN_TWO_PAIR(confidence, sample1, sample2, t_etoile=None):
     '''
     Difference_population_means_for_paired_data(TWO MEANS FOR PAIRED DATA): We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? #p1-p2#
- 
- 
+
+
     What is paired data: 
         - measurements took on individuals (people, home, any object)
         - technicality: 
@@ -190,26 +179,26 @@ def IC_MEAN_TWO_PAIR(confidence, sample1, sample2, t_etoile=None):
                         - Is there a mean difference between the education level of twins
                         - if education levels are unequel -> mean difference is not 0
                     - So, Look for 0 in the ranfe of reaonable values
-    
+
     We need the spread (std): We will use an estimation
-    
+
     Equivl
     - IC_MEAN_ONE(confidence, sample1 - sample2)
-    
+
     Data 
         - confidence:..
         - Sample1: list: values...
         - Sample2: list: (same len) values...
-        
-    
+
+
     Method
     - Use t-distribution to calculate few
     - create joint confidence interval
-    
+
     Hypothesis
     - a random sample of identical twin sets
     - Samples follow a normal (or large enough to bypass this assumption: (ex 20 twins)) => means of these sample follow a t-dist
-    
+
     - description
     - With {cf} confidence, the population mean difference of the (second_team - first_team) attribute is estimated to be between {data.interval[0]} and {dat.interval[1]}
     - if all values are above 0, cool there is a significativity
@@ -226,11 +215,11 @@ def IC_MEAN_TWO_PAIR(confidence, sample1, sample2, t_etoile=None):
     check_zero_to_one_constraint(cf)
     check_hyp_min_sample(N)
 
-    Sample_diff = sample1 - sample2  #p1-p2#
+    Sample_diff = sample1 - sample2  # p1-p2#
 
     diff_mean = Sample_diff.mean()
     std_sample = estimate_std(Sample_diff)
-    #std_sample = sqrt(estimate_std(sample1)**2 +estimate_std(sample2)**2  ) #wrong!!!
+    # std_sample = sqrt(estimate_std(sample1)**2 +estimate_std(sample2)**2  ) #wrong!!!
     if t_etoile:
         p, marginOfError, interval = CIE_MEAN_ONE(cf, N, diff_mean, std_sample,
                                                   t_etoile)
@@ -251,7 +240,7 @@ def IC_MEAN_TWO_PAIR(confidence, sample1, sample2, t_etoile=None):
 def IC_MEAN_TWO_NOTPAIR(confidence, sample1, sample2, pool=False):
     '''
     Difference_population_means_for_nonpaired_data(TWO MEANS FOR PAIRED DATA): We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? #p1-p2#
- 
+
     Construction
     - It is like, 
         - checking if a feature magnitude change when going from a category to another
@@ -265,9 +254,9 @@ def IC_MEAN_TWO_NOTPAIR(confidence, sample1, sample2, pool=False):
                 - Is there a mean difference between the education level based on gender
                 - if education levels are unequel -> mean difference is not 0
             - So, Look for 0 in the ranfe of reaonable values
-    
+
     We need the spread (std): We will use an estimation
-    
+
     Data 
         - confidence:..
         - Sample1: list: values...
@@ -279,15 +268,15 @@ def IC_MEAN_TWO_NOTPAIR(confidence, sample1, sample2, pool=False):
             - False 
                 - if we assume that our populations variance are not equal
                 - we use a t-distribution of min(N1, N2)-1 ddl
-        
+
     Method
     - Use t-distribution to calculate few
     - create joint confidence interval
-    
+
     Hypothesis
     - a random sample
     - Samples follow a normal (or large enough to bypass this assumption: 10 per category) => means of these sample follow a t-dist
-    
+
     - description
     - With {cf} confidence, the population mean difference of the (second_team - first_team) attribute is estimated to be between {data.interval[0]} and {dat.interval[1]}
     - if all values are above 0, cool there is a significativity
@@ -302,7 +291,7 @@ def IC_MEAN_TWO_NOTPAIR(confidence, sample1, sample2, pool=False):
     check_hyp_min_sample(N1)
     check_hyp_min_sample(N2)
 
-    diff_mean = sample1.mean() - sample2.mean()  #p1-p2#
+    diff_mean = sample1.mean() - sample2.mean()  # p1-p2#
     std_sample1 = estimate_std(sample1)
     std_sample2 = estimate_std(sample2)
 

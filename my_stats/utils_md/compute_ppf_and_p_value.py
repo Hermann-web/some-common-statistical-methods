@@ -7,7 +7,7 @@ from my_stats.utils_md.refactoring import Tails
 from my_stats.utils_md.constants import LIM_MIN_SAMPLE
 
 
-####quantiles
+# quantiles
 def get_z_value(cf):
     return norm.ppf(1 - (1 - cf) / 2, loc=0, scale=1)
 
@@ -16,12 +16,12 @@ def get_t_value(cf, ddl):
     return t_dist.ppf(1 - (1 - cf) / 2, df=ddl)
 
 
-#Fisher dist
+# Fisher dist
 def get_f_value(cf, ddl):
     return f_dist.ppf(1 - (1 - cf) / 2, df=ddl)
 
 
-####p_value => fct de rpartition
+# p_value => fct de rpartition
 def get_p_value_from_tail(prob, tail, debug=False):
     '''
     get p value based on cdf and tail
@@ -32,11 +32,11 @@ def get_p_value_from_tail(prob, tail, debug=False):
         - middle: return P(N < -|Z|) + P(N > |Z|) => return  2*P(N > |Z|) 
     '''
     tail = Tails.norm_tail(tail)
-    if tail == Tails.right:  #Z est à droite. On compte P(N>Z)
+    if tail == Tails.right:  # Z est à droite. On compte P(N>Z)
         return 1 - prob
-    elif tail == Tails.left:  #Z est à gauche. On compte P(N<Z)
+    elif tail == Tails.left:  # Z est à gauche. On compte P(N<Z)
         return prob
-    elif tail == Tails.middle:  #We take Z>0 so at the right => then double to take into account the left part #double because "normal" and "student" are both symetric!!!!
+    elif tail == Tails.middle:  # We take Z>0 so at the right => then double to take into account the left part #double because "normal" and "student" are both symetric!!!!
         '''En supposant la distribution symetrique'''
         if debug:
             print(f"p_val = 2*(1 - prob) = 2*(1 - {prob}) = {2*(1 - prob)}")
@@ -54,7 +54,8 @@ def get_p_value_z_test(Z: float, tail: str, debug=False):
         - middle: return P(N < -|Z|) + P(N > |Z|) => return  2*P(N > |Z|)
     '''
     tail = Tails.norm_tail(tail)
-    if tail == Tails.middle: Z = abs(Z)
+    if tail == Tails.middle:
+        Z = abs(Z)
     prob = norm.cdf(Z)
     return get_p_value_from_tail(prob, tail, debug)
 
@@ -67,20 +68,21 @@ def get_p_value_t_test(Z: float, ddl, tail: str, debug: bool = False):
         - left: return P(T < Z)
         - middle: return P(T < -|Z|) + P(T > |Z|) => return  2*P(T > |Z|)
     '''
-    #As t_dist is symetric, we dont need to compute each part of the p-value. We double the finding at the right
+    # As t_dist is symetric, we dont need to compute each part of the p-value. We double the finding at the right
     '''if tail==Tails.middle:
         Z = abs(Z)
         prob_left, prob_right =  t_dist.cdf(-Z, df=ddl), t_dist.cdf(Z, df=ddl)
         return get_p_value_from_tail(prob_left, Tails.left) + get_p_value_from_tail(prob_right, Tails.right)'''
     tail = Tails.norm_tail(tail)
-    if tail == Tails.middle: Z = abs(Z)
+    if tail == Tails.middle:
+        Z = abs(Z)
     prob = t_dist.cdf(Z, df=ddl)
     return get_p_value_from_tail(prob, tail, debug)
 
 
 def get_p_value_f_test(Z: float, dfn: int, dfd: int, debug: bool = False):
     """get p value based on fisher distribution T(dfn, dfd) with ddl degres of freedom
-    
+
     Utils
         - https://en.wikipedia.org/wiki/F-distribution
         - tail is right because Fisher is positive
@@ -117,7 +119,7 @@ def get_p_value(Z: float, tail: str, test: str, ddl: int = None, debug=False):
         - (if test=="t_test") student distribution T(df=ddl) with ddl degres of freedom
         - (if test=="z_test") normal distribution N(0, 1)
         - (if test=="f_test") normal distribution F(ddl[0], ddl[1])
-    
+
     if tail
         - right: return P(T > Z)
         - left: return P(T < Z)

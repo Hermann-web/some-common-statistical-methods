@@ -1,5 +1,6 @@
 if __name__ == "__main__":
-    import sys, os.path
+    import sys
+    import os.path
     sys.path.append(os.path.abspath("."))
 
 import unittest

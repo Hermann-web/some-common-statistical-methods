@@ -1,11 +1,12 @@
-import sys, os.path
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+import sys
+import os.path
 
 sys.path.append(os.path.abspath("."))
 
-import random
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 #from model_estimator import ME_Normal_dist
 nb_exp = 1000
