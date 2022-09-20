@@ -8,7 +8,8 @@ todo
 import statsmodels.api as sm  # pip install statsmodels
 from my_stats.utils_md.compute_ppf_and_p_value import (get_z_value,
                                                        get_t_value)
-from my_stats.hyp_vali_md.constraints import (check_zero_to_one_constraint,
+from my_stats.hyp_vali_md.constraints import (check_or_get_cf_for_conf_inte,
+                                              check_zero_to_one_constraint,
                                               check_hyp_min_sample,
                                               check_hyp_min_samples)
 from math import ceil as math_ceil, sqrt
@@ -23,11 +24,10 @@ print('ci_estimators: import start...')
 # hyp_validation
 
 # utils
-
 print('ci_estimators: import ended...')
 
 
-def get_min_sample(cf: float, moe: float, p=None, method=None):
+def get_min_sample(moe: float, p=None, method=None, cf: float = None):
     '''
     Get_min_sample:get the minimum of sample_size to use for a 
     - input
@@ -39,13 +39,14 @@ def get_min_sample(cf: float, moe: float, p=None, method=None):
     - better the population follow nornal dist. Or use large sample (>10)
     '''
     method = method or "conservative"
+    cf = check_or_get_cf_for_conf_inte(confidence=cf)
     z_value = get_z_value(cf)
     min_sample = (z_value / (2 * moe))**2
     #print("min_sample = ",min_sample)
     return math_ceil(min_sample)
 
 
-def CIE_ONE_PROPORTION(cf, proportion, n, method):
+def CIE_ONE_PROPORTION(proportion, n, method, cf: float = None):
     '''
     Get_interval_simple: get a proportion of an attribute value (male gender, ) in a population based on a sample  (no sign pb)
     - cf: confidence_level (or coverage_probability)
@@ -60,10 +61,9 @@ def CIE_ONE_PROPORTION(cf, proportion, n, method):
     # cdt
     proportion = float(proportion)
     n = int(n)
-    cf = float(cf)
     method = str(method)
-
-    check_zero_to_one_constraint(proportion, cf)
+    cf = check_or_get_cf_for_conf_inte(confidence=cf)
+    check_zero_to_one_constraint(proportion)
     check_hyp_min_sample(n, proportion)
     if method not in ["classic", "conservative"]:
         raise Exception("pb")
@@ -74,8 +74,8 @@ def CIE_ONE_PROPORTION(cf, proportion, n, method):
     z_value = get_z_value(cf)
     print("z_value_ = ", z_value)
     # standard error of the stat
-    std_stat_eval = 1 / (2 * sqrt(n)) if method == "conservative" else sqrt(
-        p * (1 - p) / n)
+    std_stat_eval = 1 / \
+        (2*sqrt(n)) if method == "conservative" else sqrt(p * (1-p)/n)
     # margin of error
     marginOfError = z_value * std_stat_eval
     # interval
@@ -84,7 +84,7 @@ def CIE_ONE_PROPORTION(cf, proportion, n, method):
     return p, marginOfError, interval
 
 
-def CIE_PROPORTION_TWO(cf, p1, p2, n1, n2):
+def CIE_PROPORTION_TWO(p1, p2, n1, n2, cf: float = None):
     '''
     Get_interval_diff: get the diff of mean between 2 population based on a sample from each population (p1-p2) #p1-p2#
     - cf: confidence_level (or coverage_probability)
@@ -99,12 +99,12 @@ def CIE_PROPORTION_TWO(cf, p1, p2, n1, n2):
 
     p1 = float(p1)
     p2 = float(p2)
-    cf = float(cf)
     n1 = int(n1)
     n2 = int(n2)
 
     # cdt
-    check_zero_to_one_constraint(p1, p2, cf)
+    cf = check_or_get_cf_for_conf_inte(confidence=cf)
+    check_zero_to_one_constraint(p1, p2)
     check_hyp_min_samples(p1, p2, n1, n2)
 
     # parameter
@@ -121,7 +121,7 @@ def CIE_PROPORTION_TWO(cf, p1, p2, n1, n2):
     return p, marginOfError, interval
 
 
-def CIE_MEAN_ONE(cf, n, mean_dist, std_sample, t_etoile=None):
+def CIE_MEAN_ONE(n, mean_dist, std_sample, t_etoile=None, cf: float = None):
     '''
     Get_interval_mean:get the mean of a population from a sample  (no sign pb)
     - cf: confidence level (or coverage_probability)
@@ -139,11 +139,10 @@ def CIE_MEAN_ONE(cf, n, mean_dist, std_sample, t_etoile=None):
     '''
 
     # ctd
-    if t_etoile != None:
-        if (cf <= 0 or cf > 1):
-            raise Exception("pb")
-        else:
-            cf = float(cf)
+    if t_etoile == None:
+        cf = check_or_get_cf_for_conf_inte(confidence=cf)
+    else:
+        t_etoile = float(t_etoile)
     check_hyp_min_sample(n)
 
     mean_dist = float(mean_dist)
@@ -170,14 +169,14 @@ def CIE_MEAN_ONE(cf, n, mean_dist, std_sample, t_etoile=None):
     return p, marginOfError, interval
 
 
-def CIE_MEAN_TWO(cf,
-                 N1,
+def CIE_MEAN_TWO(N1,
                  N2,
                  diff_mean,
                  std_sample_1,
                  std_sample_2,
                  t_etoile=None,
-                 pool=False):
+                 pool=False,
+                 cf: float = None):
     '''
     Get_interval_diff_mean: get  the diff in mean of two populations(taking their samples) (sign(diff_mean) => no sign pb)
     - cf: confidence level (or coverage_probability)
@@ -224,10 +223,7 @@ def CIE_MEAN_TWO(cf,
 
     # ctd
     if t_etoile == None:
-        if (cf <= 0 or cf > 1):
-            raise Exception("pb")
-        else:
-            cf = float(cf)
+        cf = check_or_get_cf_for_conf_inte(confidence=cf)
     check_hyp_min_sample(N1)
     check_hyp_min_sample(N2)
 
@@ -242,8 +238,8 @@ def CIE_MEAN_TWO(cf,
     # few value: from t distribution with ddl = fct(pool)
     ddl = min(N1, N2) - 1 if not pool else N1 + N2 - 2
     if t_etoile == None:
-        few = get_t_value(
-            cf, ddl)  # min(,) for a convervative approach => max of variance
+        # min(,) for a convervative approach => max of variance
+        few = get_t_value(cf, ddl)
     else:
         few = t_etoile
 

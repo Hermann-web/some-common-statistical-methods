@@ -1,8 +1,8 @@
 import os.path
 import sys
-from my_stats.utils_md.constants import (COMMON_ALPHA_FOR_CONF_INT,
-                                         COMMON_ALPHA_FOR_HYPH_TEST,
-                                         LIM_MIN_SAMPLE)
+from my_stats.utils_md.constants import (
+    COMMON_COVERAGE_PROBABILITY_FOR_CONF_INT, COMMON_ALPHA_FOR_HYPH_TEST,
+    LIM_MIN_SAMPLE)
 from scipy.stats import (normaltest, shapiro, anderson, levene)
 from numpy import array
 from my_stats.utils_md.refactoring import HypothesisValidationData
@@ -25,7 +25,26 @@ def check_zero_to_one_constraint(*args):
             raise Exception(f"zero_to_one_constraint failed. get arg = {arg}")
 
 
+def check_or_get_alpha_for_hyph_test(alpha=None):
+    if alpha:
+        alpha = float(alpha)
+    else:
+        alpha = COMMON_ALPHA_FOR_HYPH_TEST
+    check_zero_to_one_constraint(alpha)
+    return alpha
+
+
+def check_or_get_cf_for_conf_inte(confidence=None):
+    if confidence:
+        confidence = float(confidence)
+    else:
+        confidence = COMMON_COVERAGE_PROBABILITY_FOR_CONF_INT
+    check_zero_to_one_constraint(confidence)
+    return confidence
+
+
 def check_hyp_min_sample(n: int, p: int = None):
+    n = int(n)
 
     def exc(st, nb):
         return Exception(
@@ -36,6 +55,7 @@ def check_hyp_min_sample(n: int, p: int = None):
         if n < LIM_MIN_SAMPLE:
             raise exc("n", n)
     if p != None:
+        p = int(p)
         if n * p < LIM_MIN_SAMPLE:
             exc("n*p", n * p)
         if n * (1 - p) < LIM_MIN_SAMPLE:
@@ -53,9 +73,7 @@ def check_hyp_min_samples(p1: float,
     check_hyp_min_sample(n2, p2)
 
 
-def check_sample_normality(residuals: list,
-                           debug=False,
-                           alpha=COMMON_ALPHA_FOR_HYPH_TEST):
+def check_sample_normality(residuals: list, debug=False, alpha=None):
     """check if residuals is like a normal distribution
     - test_implemented
 
@@ -67,7 +85,7 @@ def check_sample_normality(residuals: list,
     Returns:
         bool: if all tests passed
     """
-    check_zero_to_one_constraint(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     residuals = array(residuals).flatten()
     # check normality of residuals
     # if True, Sample looks Gaussian (fail to reject H0)'
@@ -100,14 +118,14 @@ def check_equal_var(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
     Args:
         alpha (_type_, optional): _description_. Defaults to COMMON_ALPHA_FOR_HYPH_TEST.
     Utils 
-    - use levene test (plus robuste que fusher ou bartlett face à la non-normalité de la donnée)(https://fr.wikipedia.org/wiki/Test_de_Bartlett)
+    - use levene test (plus robuste que fisher ou bartlett face à la non-normalité de la donnée)(https://fr.wikipedia.org/wiki/Test_de_Bartlett)
 
     Returns:
         _type_: _description_
     """
     # if not check_equal_variance()
-    stat, p = levene(*samples,
-                     proportiontocut=alpha)  # H0: variances are all the same
+    # H0: variances are all the same
+    stat, p = levene(*samples, proportiontocut=alpha)
     cdt = p > alpha  # but I want i test to state H0: one is different
     pass_equal_var_test = cdt
     return HypothesisValidationData(pass_equal_var_test)

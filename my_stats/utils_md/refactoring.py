@@ -16,17 +16,15 @@ class Confidence_data:
 
 @dataclass()
 class Hypothesis_data:
-    parameter: float = field(
-        repr=False
-    )  # value to test if "bigger than p0" or "different then p0" or "less than p0"
+    # value to test if "bigger than p0" or "different then p0" or "less than p0"
+    parameter: float = field(repr=False)
     pnull: float = field(repr=False)  # prior value to check against
     # std_stat_eval to use to approximate that [ (parameter - p0)/std_stat_eval for sample in samples] follow certain distribution (Z-normal, T-student, F-fisher)
     std_stat_eval: float
     tail: str = field(repr=False)  # right, left,middle
     sample_size: int = field(repr=False)  # int or tuple
-    alpha: int = field(
-        repr=False
-    )  # level of significance #impact only the value of reject_null
+    # level of significance #impact only the value of reject_null
+    alpha: int = field(repr=False)
     # Z = (parameter-pnull)/sdt_stat_eval is the convertion of "parameter" nito the concerned distribution (Z, T, F, ...)
     Z: float
     # if tail=right, P(dist>Z); if tail=left, P(dist<Z); if tail=middle, P(dist>|Z|)+P(dist<-|Z|);
@@ -38,17 +36,18 @@ class Hypothesis_data:
 class RegressionFisherTestData:
     # unexplained
     DFE: float = field(default=None)
-    SSE: float = field(repr=False, default=None)  # (y_hat-y)**2
+    # (y_hat-y)**2 #varance explained by the noise
+    SSE: float = field(repr=False, default=None)
     MSE: float = field(default=None)
     # explained
-    DFR: float = field(
-        default=None
-    )  # number of predictor variables (regressors, not including intercept)
-    SSR: float = field(repr=False, default=None)  # (y_hat-y_mean)**2
+    # number of predictor variables (regressors, not including intercept)
+    DFR: float = field(default=None)
+    # (y_hat-y_mean)**2 #variance explained by the regressor
+    SSR: float = field(repr=False, default=None)
     MSR: float = field(default=None)  # SSR/(k-1)
     # total variance
-    DFT: float = field(
-        repr=False, default=None)  # n-1 where n is the number of observztions
+    # n-1 where n is the number of observztions
+    DFT: float = field(repr=False, default=None)
     SST: float = field(repr=False, default=None)
     MST: float = field(repr=False, default=None)
     # R_carre

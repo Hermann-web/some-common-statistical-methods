@@ -14,30 +14,24 @@ fisher ? yes F
 
 import os.path
 import sys
-from my_stats.mdl_esti_md.hp_estimators_regression import (
-    HPE_REGRESSION_FISHER_TEST, compute_log_likelihood, compute_skew,
-    compute_mae, compute_kurtosis, compute_aic_bic)
+from my_stats.mdl_esti_md.hp_estimators_regression import compute_regression
 from my_stats.conf_inte_md.confidence_interval import IC_MEAN_ONE
-from my_stats.hyp_vali_md.hypothesis_validator import (
-    check_coefficients_non_zero, check_residuals_centered)
 from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
+                                              check_or_get_alpha_for_hyph_test,
                                               check_sample_normality,
                                               check_zero_to_one_constraint)
-from my_stats.utils_md.constants import COMMON_ALPHA_FOR_HYPH_TEST
-from my_stats.utils_md.estimate_std import (compute_slope_std, estimate_std)
-from my_stats.utils_md.preprocessing import (clear_list, clear_list_pair)
+from my_stats.utils_md.estimate_std import (estimate_std)
+from my_stats.utils_md.preprocessing import (clear_list, clear_list_pair,
+                                             clear_mat_vec)
 import warnings
 from pandas import read_csv
-from scipy.linalg import inv, det
-from numpy import (random, array, zeros, power, dot, sqrt, diag)
+from numpy import (ones, random, array, zeros, power, hstack)
 
 print('mdl_esti_md.model_estimator: import start...')
-
 sys.path.append(os.path.abspath("."))
 
 # data manipulation
 sum_loc = sum
-
 random.seed(133)
 
 # testing
@@ -45,16 +39,14 @@ random.seed(133)
 # utils
 
 # hyp_validation
-# condidence_intervals
 
-# regression metrics
+# condidence_intervals
+# regression models
 
 print('mdl_esti_md.model_estimator: ---import end---')
 
 
-def ME_Normal_dist(sample: list,
-                   alpha=COMMON_ALPHA_FOR_HYPH_TEST,
-                   debug=False):
+def ME_Normal_dist(sample: list, alpha=None, debug=False):
     '''
     estimate a normal distribution from a sample
 
@@ -75,7 +67,7 @@ def ME_Normal_dist(sample: list,
     lenght 
     - you may need data over 1000 samples to get
     '''
-    check_zero_to_one_constraint(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     n = len(sample)
     check_hyp_min_sample(n)
     sample = clear_list(sample)
@@ -102,12 +94,89 @@ def ME_Normal_dist(sample: list,
     return m, std_estimator, s, Testresults
 
 
-def ME_multiple_regression(X: list,
-                           y: list,
-                           degre: int,
-                           debug=False,
-                           alpha=COMMON_ALPHA_FOR_HYPH_TEST):
+def ME_Regression(x: list, y: list, degre: int, debug=False, alpha=None):
     '''
+    estimate a regression model from two samples
+
+    prediction
+    - predict Y conditional on X assuming that Y = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3 + N(0,s**2)
+    - Y is a dependant variable
+    - x, s are independant ones => predictors of the dependant variables
+    - If there is a time stamp of measures (or paired data), please add them as independant variables pr[0] + var_exp_1*G + 
+
+
+    visualisation: 
+    - sns.scatterplot(X,Y) 
+
+    hypothesis 
+    - Y = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3 + err 
+    - err ~~> N(0,s**2)
+    - variance(error)==s**2 is the same accross the data
+    - var(Y/X)==s**2 ; E(Y/X) = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3
+    - pr[i] cst
+    - pr[i] not null => i add a test hypothesis (to reject the null H0:coeff==0 against H1:coeff!=0), not a confidence interval (to check if 0 if not in)
+
+
+    prediction 
+    - each pr[i] have a mean and a std based on normal distribution
+    - Y too => 
+        - Mean(Y) = y_hat = pr_h[0] + pr_h[1]*X + pr_h[2]*X^2 + pr_[3]*X^3
+        - Some model can predict quantile(Y, 95%) but i will just add std(y_hat) later. uuh isn't s ?
+
+
+    predictors 
+    - pr[i], s**2
+
+    lenght 
+    - you may need data over 1000 samples to get
+
+    Others 
+    D'ont forget about the errors !
+    Predictions have certain uncertainty => [ poorer fitted model => larger uncertainty]
+
+    utils
+    - https://stats.stackexchange.com/questions/173271/what-exactly-is-the-standard-error-of-the-intercept-in-multiple-regression-analy
+    '''
+
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
+
+    # reshape and remove nan
+    x = array(x).flatten()
+    y = array(y).flatten()
+    x, y = clear_list_pair(x, y)
+    # get sizes
+    n = len(x)
+    nb_param = int(degre) + 1
+    # constraint
+    check_hyp_min_sample(n)
+    if n != len(y):
+        raise Exception("x and y lenght must match")
+
+    # create X
+    X = zeros((n, nb_param))
+    X[:, 0] = 1
+    for i in range(1, nb_param):
+        X[:, i] = power(x, i)
+    assert X.shape == (n, nb_param)
+    assert y.shape == (n, )
+
+    coeffs, list_coeffs_std, residu_std, Testresults = compute_regression(
+        X, y, alpha=alpha, debug=debug)
+    assert coeffs.shape == (nb_param, )
+    assert list_coeffs_std.shape == (nb_param, )
+
+    return coeffs, list_coeffs_std, residu_std, Testresults
+
+
+def ME_multiple_regression(X: list, y: list, debug=False, alpha=None):
+    """_summary_
+
+    Args:
+        X (list): _description_
+        y (list): _description_
+        debug (bool, optional): _description_. Defaults to False.
+        alpha (_type_, optional): _description_. Defaults to COMMON_ALPHA_FOR_HYPH_TEST.
+
     estimate a regression model from two samples
 
     prediction
@@ -155,181 +224,45 @@ def ME_multiple_regression(X: list,
     Others 
     D'ont forget about the errors !
     Predictions have certain uncertainty => [ poorer fitted model => larger uncertainty]
-    '''
-    check_zero_to_one_constraint(alpha)
-    pass
 
+    Raises:
+        Exception: _description_
 
-def ME_Regression(x: list,
-                  y: list,
-                  degre: int,
-                  debug=False,
-                  alpha=COMMON_ALPHA_FOR_HYPH_TEST):
-    '''
-    estimate a regression model from two samples
-
-    prediction
-    - predict Y conditional on X assuming that Y = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3 + N(0,s**2)
-    - Y is a dependant variable
-    - x, s are independant ones => predictors of the dependant variables
-    - If there is a time stamp of measures (or paired data), please add them as independant variables pr[0] + var_exp_1*G + 
-
-
-    visualisation: 
-    - sns.scatterplot(X,Y) 
-
-    hypothesis 
-    - Y = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3 + err 
-    - err ~~> N(0,s**2)
-    - variance(error)==s**2 is the same accross the data
-    - var(Y/X)==s**2 ; E(Y/X) = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3
-    - pr[i] cst
-    - pr[i] not null => i add a test hypothesis (to reject the null H0:coeff==0 against H1:coeff!=0), not a confidence interval (to check if 0 if not in)
-
-
-    prediction 
-    - each pr[i] have a mean and a std based on normal distribution
-    - Y too => 
-        - Mean(Y) = y_hat = pr_h[0] + pr_h[1]*X + pr_h[2]*X^2 + pr_[3]*X^3
-        - Some model can predict quantile(Y, 95%) but i will just add std(y_hat) later. uuh isn't s ?
-
-
-    predictors 
-    - pr[i], s**2
-
-    lenght 
-    - you may need data over 1000 samples to get
-
-    Others 
-    D'ont forget about the errors !
-    Predictions have certain uncertainty => [ poorer fitted model => larger uncertainty]
-
-    utils
-    - https://stats.stackexchange.com/questions/173271/what-exactly-is-the-standard-error-of-the-intercept-in-multiple-regression-analy
-    '''
-
-    check_zero_to_one_constraint(alpha)
+    Returns:
+        _type_: _description_
+    """
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
 
     # reshape and remove nan
-    x = array(x).flatten()
-    y = array(y).flatten()
-    x, y = clear_list_pair(x, y)
+    X = array(X)
+    y = array(y)
+    assert X.ndim == 2
+    assert y.ndim == 1
+
+    X, y = clear_mat_vec(X, y)
     # get sizes
-    n = len(x)
-    nb_param = int(degre) + 1
+    n = X.shape[0]
+    nb_param = X.shape[1] + 1  # add slope
     # constraint
     check_hyp_min_sample(n)
     if n != len(y):
         raise Exception("x and y lenght must match")
 
-    # create X
-    X = zeros((n, nb_param))
-    X[:, 0] = 1
-    for i in range(1, nb_param):
-        X[:, i] = power(x, i)
+    # add slope to X
+    X = hstack((ones((n, 1)), X))
     assert X.shape == (n, nb_param)
     assert y.shape == (n, )
 
-    # estimate coefficients
-    b1 = dot(X.T, X)
-    if det(b1) == 0:
-        raise Exception("det==0")
-    b1 = inv(b1)
-    b2 = dot(X.T, y)
-    coeffs = dot(b1, b2)
+    coeffs, list_coeffs_std, residu_std, Testresults = compute_regression(
+        X, y, alpha=alpha, debug=debug)
     assert coeffs.shape == (nb_param, )
-
-    # compute residuals
-    y_hat = dot(X, coeffs)  # y = y_hat + e
-    residuals = y - y_hat
-    assert residuals.shape == (n, )
-
-    # compute standard error of the estimators
-    # estimate standard deviation of the residual
-    residu_std = estimate_std(residuals)  # e fl-> N(0,s**2)
-    # estimate standard deviation of the coefficients
-    assert b1.shape == (nb_param, nb_param)
-    list_coeffs_std = residu_std * sqrt(
-        diag(b1)
-    )  # matrice de variance-covariance #les rzcine carre les elt diagonaux donnent les std
     assert list_coeffs_std.shape == (nb_param, )
 
-    # test normality of the residuals
-    passNormalitytest = check_sample_normality(residuals, alpha=alpha)
-    if not passNormalitytest.testPassed:
-        if debug:
-            print('residuals does not look Gaussian (reject H0)')
-    Testresults = {"residuals_normality": passNormalitytest}
-
-    # test if mean != 0 for the residuals
-    passed_residu_mean_null_test = check_residuals_centered(residuals,
-                                                            alpha=alpha)
-    if not passed_residu_mean_null_test.testPassed:
-        if debug:
-            print('residialss does not look centered')
-    Testresults["residu_mean_null"] = passed_residu_mean_null_test
-
-    # check if coefficients != 0
-    nb_obs = n
-    pass_non_zero_test = check_coefficients_non_zero(
-        list_coeffs=coeffs,
-        list_coeff_std=list_coeffs_std,
-        nb_obs=nb_obs,
-        alpha=alpha,
-        debug=debug)
-    if not passNormalitytest.testPassed:
-        if debug:
-            print('residuals does not look Gaussian (reject H0)')
-    Testresults["coeff_non_zero"] = pass_non_zero_test
-
-    # fisher test
-    data = HPE_REGRESSION_FISHER_TEST(y=y, y_hat=y_hat, nb_param=nb_param)
-    DFE, DFR = data.DFE, data.DFR
-    SSE, MSE, SSR, MSR, SST, MST = data.SSE, data.MSE, data.SSR, data.MSR, data.SST, data.MST
-    R_carre, R_carre_adj, F_stat, p_value = data.R_carre, data.R_carre_adj, data.F_stat, data.p_value
-    pass_fisher_test = data.reject_null
-
-    Testresults["significance"] = {
-        "R_carre": R_carre,
-        "R_carre_adj": R_carre_adj,
-        "MSE": MSE,
-        "DFE": DFE,
-        "MSR": MSR,
-        "DFR": DFR,
-        "SSE": SSE,
-        "SSR": SSR
-    }
-    Testresults["fisher_test"] = {
-        "test_passed": pass_fisher_test,
-        "F_stat": F_stat,
-        "p_value": p_value
-    }
-
-    Testresults["metrics"] = {}
-    log_likelihood = compute_log_likelihood(y=y,
-                                            y_hat=y_hat,
-                                            std_eval=residu_std)
-    Testresults["metrics"]["log-likelihood"] = log_likelihood
-
-    aic, bic = compute_aic_bic(dfr=DFR,
-                               n=n,
-                               llh=log_likelihood,
-                               method="basic")
-    Testresults["metrics"]["AIC"] = aic
-    Testresults["metrics"]["BIC"] = bic
-
-    # mse, rmse, mae
-    Testresults["metrics"]["MSE"] = MSE
-    MAE = compute_mae(y, y_hat)
-    Testresults["metrics"]["MAE"] = MAE
-    RMSE = sqrt(MSE)
-    Testresults["metrics"]["RMSE"] = RMSE
-
-    # skew, kurtosis
-    Testresults["metrics"]["skew"] = compute_skew(y - y_hat)
-    Testresults["metrics"]["kurtosis"] = compute_kurtosis(y - y_hat)
-
     return coeffs, list_coeffs_std, residu_std, Testresults
+
+
+def ME_logistic_regression(X: list, y: list, debug=False, alpha=None):
+    pass
 
 
 if __name__ == "__main__":

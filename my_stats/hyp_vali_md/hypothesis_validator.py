@@ -6,15 +6,13 @@ Les mettre dans utils prut créer un import circulaire
 import os.path
 import sys
 import warnings
-from my_stats.utils_md.constants import COMMON_ALPHA_FOR_HYPH_TEST
 from my_stats.utils_md.refactoring import HypothesisValidationData, Tails
-from my_stats.hyp_vali_md.constraints import check_equal_var, check_sample_normality, check_zero_to_one_constraint
+from my_stats.hyp_vali_md.constraints import check_equal_var, check_or_get_alpha_for_hyph_test, check_sample_normality, check_zero_to_one_constraint
 from my_stats.hyp_testi_md.hypothesis_testing import HP_MEAN_MANY, HP_MEAN_ONE
 from my_stats.hyp_testi_md.hp_estimators import HPE_FROM_P_VALUE
 from numpy import array
 
 print('hyp_vali_md.hypothesis_validator:import start...')
-
 sys.path.append(os.path.abspath("."))
 
 # data manipulation
@@ -26,12 +24,10 @@ sys.path.append(os.path.abspath("."))
 # utils
 
 # testing
-
 print('hyp_vali_md.hypothesis_validator: ---import end---')
 
 
-def check_residuals_centered(residuals: list,
-                             alpha=COMMON_ALPHA_FOR_HYPH_TEST):
+def check_residuals_centered(residuals: list, alpha=None):
     """check if a list is centered (if the mean ==0 nuder a significance od 0.05)
 
     Args:
@@ -54,7 +50,7 @@ def check_coefficients_non_zero(list_coeffs: list,
                                 list_coeff_std: list,
                                 nb_obs: int,
                                 debug=False,
-                                alpha=COMMON_ALPHA_FOR_HYPH_TEST):
+                                alpha=None):
     """compute non zero tests for each corfficien
     - test 
         - for ech coefficient
@@ -71,7 +67,7 @@ def check_coefficients_non_zero(list_coeffs: list,
             - testPassed (bool)
             - obj (list) list of boolean (For each value, True if H0 is reected)
     """
-    check_zero_to_one_constraint(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     list_coeffs = array(list_coeffs).flatten()
     list_coeff_std = array(list_coeff_std).flatten()
     assert len(list_coeffs) == len(list_coeff_std)
@@ -104,7 +100,7 @@ def check_coefficients_non_zero(list_coeffs: list,
                                     pass_non_zero_test)
 
 
-def check_equal_mean(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
+def check_equal_mean(*samples, alpha=None):
     """check if mean if the same accross samples
 
     Hypothesis
@@ -128,7 +124,7 @@ def check_equal_mean(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
         stat: (float) F
         p_value: (float)
     """
-    check_zero_to_one_constraint(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     for elt in samples:
         assert len(elt) > 0
 

@@ -6,8 +6,9 @@ from scipy.stats import f as f_dist
 from my_stats.utils_md.refactoring import Tails
 from my_stats.utils_md.constants import LIM_MIN_SAMPLE
 
-
 # quantiles
+
+
 def get_z_value(cf):
     return norm.ppf(1 - (1 - cf) / 2, loc=0, scale=1)
 
@@ -17,6 +18,8 @@ def get_t_value(cf, ddl):
 
 
 # Fisher dist
+
+
 def get_f_value(cf, ddl):
     return f_dist.ppf(1 - (1 - cf) / 2, df=ddl)
 

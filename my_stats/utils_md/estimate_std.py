@@ -32,8 +32,8 @@ def compute_slope_std(X, y, y_hat, debug=False, skipcst=True):
     if debug:
         print("X_err", X_err)
     #m = n-2 if n>2 else n
-    list_coeffs_std = sqrt(Y_err / X_err) / sqrt(
-        n - 2)  # list of standard errors of the coefficients
+    # list of standard errors of the coefficients
+    list_coeffs_std = sqrt(Y_err / X_err) / sqrt(n - 2)
     if debug:
         print("list_coeffs_std: ", list_coeffs_std)
     assert list_coeffs_std.shape == (1, nb_param)

@@ -2,10 +2,11 @@
 utils 
     - Dans un test, H0 est l'hypothese pessimiste 
         - il faudra donc assez d'evidence (p<0.05) afin de la rejeter
+        - on a alors mis une borne max faible sur l'erreur de type 1 (rejeter H0 alors qu'il est vrai)
 
 Some defs
     - parameter: A quantifiable characteristic of a population (baseline)
-    - alpha: level of significance
+    - alpha: level of significance = type1_error = proba(reject_null;when null is True)
 '''
 '''
 todo
@@ -19,9 +20,9 @@ note
 - mean_two_paired(Sample1, Sample2) <==> mean_one(Sample1 - Sample2)
 '''
 
-import statsmodels.api as sm  # pip install statsmodels
 import os.path
 import sys
+import statsmodels.api as sm  # pip install statsmodels
 from numpy.random import binomial
 from pandas import read_csv
 from statsmodels.stats.weightstats import CompareMeans
@@ -29,7 +30,6 @@ from numpy import mean
 from turtle import right
 
 print('hyp_testi_md.hypothesis_testing:import start...')
-
 sys.path.append(os.path.abspath("."))
 
 # data manipulation and testing

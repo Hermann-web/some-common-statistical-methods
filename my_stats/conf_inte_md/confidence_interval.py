@@ -14,7 +14,6 @@ import sys
 from numpy import mean
 
 print('conf_int_md.confidence_interval: import start...')
-
 sys.path.append(os.path.abspath("."))
 
 # data manipulation and testing
@@ -29,7 +28,7 @@ print('conf_int_md.confidence_interval: ---import end---')
 
 def IC_PROPORTION_ONE(sample_size: int,
                       parameter: float,
-                      confidence: float,
+                      confidence: float = None,
                       method: str = None):
     '''
     Confidence_interval(ONE PROPORTION):Confidence interval calculus after a statistic test
@@ -62,14 +61,17 @@ def IC_PROPORTION_ONE(sample_size: int,
     '''
     p = parameter  # value of the paramater ==sample proportion == statistic == estimate of the population proportion
     N = sample_size  # sample size out of the population
-    cf = confidence  # between 0 and 1
+    cf = check_or_get_cf_for_conf_inte(confidence=confidence)
 
-    check_zero_to_one_constraint(p, cf)
+    check_zero_to_one_constraint(p)
     check_hyp_min_sample(N, p)
 
     method = method or "classic"
 
-    p, marginOfError, interval = CIE_ONE_PROPORTION(cf, p, N, method=method)
+    p, marginOfError, interval = CIE_ONE_PROPORTION(cf=cf,
+                                                    proportion=p,
+                                                    n=N,
+                                                    method=method)
     assert p >= interval[0]
     assert p <= interval[1]
 
@@ -82,7 +84,7 @@ def IC_PROPORTION_ONE(sample_size: int,
     return data
 
 
-def IC_MEAN_ONE(confidence: float, sample: list, t_etoile=None):
+def IC_MEAN_ONE(sample: list, t_etoile=None, confidence: float = None):
     '''
     Estimate_population_mean(ONE MEAN): We need the spread (std): We will use an estimation
 
@@ -98,15 +100,15 @@ def IC_MEAN_ONE(confidence: float, sample: list, t_etoile=None):
     '''
     sample = clear_list(sample)
 
-    cf = confidence
+    cf = check_or_get_cf_for_conf_inte(confidence=confidence)
     mean_dist = float(mean(sample))
     sample_size = len(sample)
     std_sample = estimate_std(sample)
 
-    p, marginOfError, interval = CIE_MEAN_ONE(cf,
-                                              sample_size,
-                                              mean_dist,
-                                              std_sample,
+    p, marginOfError, interval = CIE_MEAN_ONE(cf=cf,
+                                              n=sample_size,
+                                              mean_dist=mean_dist,
+                                              std_sample=std_sample,
                                               t_etoile=t_etoile)
 
     assert p == mean_dist
@@ -122,7 +124,7 @@ def IC_MEAN_ONE(confidence: float, sample: list, t_etoile=None):
     return data
 
 
-def IC_PROPORTION_TWO(confidence, p1, p2, N1, N2):
+def IC_PROPORTION_TWO(p1, p2, N1, N2, confidence: float = None):
     '''
     Difference_population_proportion(TWO PROPORTIONS): We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? #p1-p2#
 
@@ -136,12 +138,15 @@ def IC_PROPORTION_TWO(confidence, p1, p2, N1, N2):
     - two independant random samples
     - large enough sample sizes : 10 per category (ex 10 yes, 10 no)
     '''
-    cf = confidence
-    check_zero_to_one_constraint(cf, p1, p2)
+    cf = check_or_get_cf_for_conf_inte(confidence=confidence)
+    check_zero_to_one_constraint(p1, p2)
     check_hyp_min_samples(p1, p2, N1, N2)
 
-    p, marginOfError, interval = CIE_PROPORTION_TWO(cf, p1, p2, N1,
-                                                    N2)  # p1-p2#
+    p, marginOfError, interval = CIE_PROPORTION_TWO(p1=p1,
+                                                    p2=p2,
+                                                    n1=N1,
+                                                    n2=N2,
+                                                    cf=cf)  # p1-p2#
     assert p >= interval[0]
     assert p <= interval[1]
 
@@ -154,7 +159,10 @@ def IC_PROPORTION_TWO(confidence, p1, p2, N1, N2):
     return data
 
 
-def IC_MEAN_TWO_PAIR(confidence, sample1, sample2, t_etoile=None):
+def IC_MEAN_TWO_PAIR(sample1,
+                     sample2,
+                     t_etoile=None,
+                     confidence: float = None):
     '''
     Difference_population_means_for_paired_data(TWO MEANS FOR PAIRED DATA): We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? #p1-p2#
 
@@ -211,9 +219,7 @@ def IC_MEAN_TWO_PAIR(confidence, sample1, sample2, t_etoile=None):
     if N != len(sample2):
         raise Exception('two samples from the same size')
 
-    cf = confidence
-
-    check_zero_to_one_constraint(cf)
+    cf = check_or_get_cf_for_conf_inte(confidence=confidence)
     check_hyp_min_sample(N)
 
     Sample_diff = sample1 - sample2  # p1-p2#
@@ -222,10 +228,16 @@ def IC_MEAN_TWO_PAIR(confidence, sample1, sample2, t_etoile=None):
     std_sample = estimate_std(Sample_diff)
     # std_sample = sqrt(estimate_std(sample1)**2 +estimate_std(sample2)**2  ) #wrong!!!
     if t_etoile:
-        p, marginOfError, interval = CIE_MEAN_ONE(cf, N, diff_mean, std_sample,
-                                                  t_etoile)
+        p, marginOfError, interval = CIE_MEAN_ONE(n=N,
+                                                  mean_dist=diff_mean,
+                                                  std_sample=std_sample,
+                                                  t_etoile=t_etoile,
+                                                  cf=cf)
     else:
-        p, marginOfError, interval = CIE_MEAN_ONE(cf, N, diff_mean, std_sample)
+        p, marginOfError, interval = CIE_MEAN_ONE(n=N,
+                                                  mean_dist=diff_mean,
+                                                  std_sample=std_sample,
+                                                  cf=cf)
     assert p >= interval[0]
     assert p <= interval[1]
 
@@ -238,7 +250,10 @@ def IC_MEAN_TWO_PAIR(confidence, sample1, sample2, t_etoile=None):
     return data
 
 
-def IC_MEAN_TWO_NOTPAIR(confidence, sample1, sample2, pool=False):
+def IC_MEAN_TWO_NOTPAIR(sample1,
+                        sample2,
+                        pool=False,
+                        confidence: float = None):
     '''
     Difference_population_means_for_nonpaired_data(TWO MEANS FOR PAIRED DATA): We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? #p1-p2#
 
@@ -287,8 +302,7 @@ def IC_MEAN_TWO_NOTPAIR(confidence, sample1, sample2, pool=False):
     N1 = len(sample1)
     N2 = len(sample2)
 
-    cf = confidence
-    check_zero_to_one_constraint(cf)
+    cf = check_or_get_cf_for_conf_inte(confidence=confidence)
     check_hyp_min_sample(N1)
     check_hyp_min_sample(N2)
 
@@ -296,13 +310,13 @@ def IC_MEAN_TWO_NOTPAIR(confidence, sample1, sample2, pool=False):
     std_sample1 = estimate_std(sample1)
     std_sample2 = estimate_std(sample2)
 
-    p, marginOfError, interval = CIE_MEAN_TWO(cf,
-                                              N1,
-                                              N2,
-                                              diff_mean,
-                                              std_sample1,
-                                              std_sample2,
-                                              pool=pool)
+    p, marginOfError, interval = CIE_MEAN_TWO(N1=N1,
+                                              N2=N2,
+                                              diff_mean=diff_mean,
+                                              std_sample_1=std_sample1,
+                                              std_sample_2=std_sample2,
+                                              pool=pool,
+                                              cf=cf)
     assert p >= interval[0]
     assert p <= interval[1]
 

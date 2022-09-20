@@ -13,7 +13,6 @@ todo
 
 import os.path
 import sys
-from scipy.stats import (f_oneway)
 import statsmodels.api as sm_api
 from numpy.linalg import norm
 from numpy import array, vectorize, random
@@ -21,13 +20,11 @@ import warnings
 from math import sqrt
 
 print('hyp_testi_md.hp_estimators: import start...')
-
 sys.path.append(os.path.abspath("."))
 
 # data manipulation and testing
 
 SUM = sum
-
 random.seed(233)
 
 # hyp_validation
@@ -43,7 +40,7 @@ def HPE_FROM_P_VALUE(tail: str = None,
                      p_hat=None,
                      p0=None,
                      std_stat_eval=None,
-                     alpha=COMMON_ALPHA_FOR_HYPH_TEST,
+                     alpha=None,
                      test="z_test",
                      ddl=0,
                      onetail=False):
@@ -56,7 +53,7 @@ def HPE_FROM_P_VALUE(tail: str = None,
         p_hat (_type_, optional): _description_. Defaults to None.
         p0 (_type_, optional): _description_. Defaults to None.
         std_stat_eval (_type_, optional): _description_. Defaults to None.
-        alpha (_type_, optional): _description_. Defaults to COMMON_ALPHA_FOR_HYPH_TEST.
+        alpha (_type_, optional): _description_. Defaults to None.
         test (str, optional): _description_. Defaults to "z_test".
         ddl (int, optional): _description_. Defaults to 0.
         onetail (bool, optional): if tail="middle". return one_tail_cf_p_value instead of the 2tail_2cf_p_value Defaults to False.
@@ -66,7 +63,7 @@ def HPE_FROM_P_VALUE(tail: str = None,
     Returns:
         _type_: _description_
     """
-    check_zero_to_one_constraint(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     if int(t_stat != None) + int(p_value != None) + int(p_hat != None) > 1:
         raise Exception("Set only t_stat or set p_value or p_hat")
 
@@ -144,9 +141,8 @@ def HPE_PROPORTION_ONE(alpha, p0, proportion, n, tail=Tails.right):
     proportion = float(proportion)
     p0 = float(p0)
     n = int(n)
-    alpha = float(alpha)
-
-    check_zero_to_one_constraint(proportion, p0, alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
+    check_zero_to_one_constraint(proportion, p0)
     check_hyp_min_sample(n, proportion)
 
     # parameter
@@ -155,13 +151,11 @@ def HPE_PROPORTION_ONE(alpha, p0, proportion, n, tail=Tails.right):
     # calculate the Z-statistic:
     # standard error of the estimate
     # scipy.stats.stats.proportions_ztest utilise p_hat ici au lieu de p0 => mais les result ts ne varient pas trop
-    std_stat_eval = sqrt(
-        p0 * (1 - p0) / n
-    )  # the null standard error #la proportion suit une loi de bernouli => on passe à plusieurs samples
+    # the null standard error #la proportion suit une loi de bernouli => on passe à plusieurs samples
+    std_stat_eval = sqrt(p0 * (1 - p0) / n)
     # compute Z corresponding to normal distribtion
-    Z = (
-        p_hat - p0
-    ) / std_stat_eval  # "assume" that th eproportion folow a normal for many samples
+    # "assume" that th eproportion folow a normal for many samples
+    Z = (p_hat - p0) / std_stat_eval
     print("Z = ", Z)
 
     # compute p_value
@@ -201,10 +195,10 @@ def HPE_PROPORTION_TW0(alpha, p1, p2, n1, n2, tail=Tails.middle, evcpp=False):
     p2 = float(p2)
     n2 = int(n2)
     n1 = int(n1)
-    alpha = float(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
 
     # cdt
-    check_zero_to_one_constraint(p1, p2, alpha)
+    check_zero_to_one_constraint(p1, p2)
     check_hyp_min_samples(p1, p2, n1, n2)
 
     # parameter
@@ -216,21 +210,18 @@ def HPE_PROPORTION_TW0(alpha, p1, p2, n1, n2, tail=Tails.middle, evcpp=False):
     # the null standard error #la proportion suit une loi de bernouli => on passe à plusieurs samples
     if evcpp:
         # estimation de sqrt(p_hat*(1-p_hat)*(1/n1 + 1/n2))
-        phat2 = (p1 * n1 + p2 * n2) / (
-            n1 + n2)  # Estimate of the combined population proportion
-        va = phat2 * (
-            1 - phat2
-        )  # Estimate of the variance of the combined population proportion
-        std_stat_eval = sqrt(
-            va * (1 / n1 + 1 / n2)
-        )  # Estimate of the standard error of the combined population proportion
+        # Estimate of the combined population proportion
+        phat2 = (p1 * n1 + p2 * n2) / (n1 + n2)
+        # Estimate of the variance of the combined population proportion
+        va = phat2 * (1 - phat2)
+        # Estimate of the standard error of the combined population proportion
+        std_stat_eval = sqrt(va * (1 / n1 + 1 / n2))
     else:
         std_stat_eval = sqrt((p1 * (1 - p1) / n1) + (p2 * (1 - p2) / n2))
 
         # compute Z corresponding to normal distribtion
-    Z = (
-        p_hat - p0
-    ) / std_stat_eval  # "assume" that th eproportion folow a normal for many samples
+    # "assume" that th eproportion folow a normal for many samples
+    Z = (p_hat - p0) / std_stat_eval
     print(f"Z = ({p_hat - p0})/{std_stat_eval} = ", Z)
     # Z = abs(Z) #to use tail=right it is now a H1:p>p0 problem
 
@@ -263,9 +254,8 @@ def HPE_MEAN_ONE(alpha, p0, mean_dist, n, std_sample, tail=Tails.right):
     '''
 
     # ctd
-    alpha = float(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     check_hyp_min_sample(n)
-    check_zero_to_one_constraint(alpha)
 
     mean_dist = float(mean_dist)
     std_sample = float(std_sample)
@@ -276,13 +266,11 @@ def HPE_MEAN_ONE(alpha, p0, mean_dist, n, std_sample, tail=Tails.right):
 
     # calculate the Z-statistic:
     # standard error of the estimate
-    std_stat_eval = std_sample / sqrt(
-        n
-    )  # à cause du la loi des samples de N qui suivent une t à (n-1) ddl non?
+    # à cause du la loi des samples de N qui suivent une t à (n-1) ddl non?
+    std_stat_eval = std_sample / sqrt(n)
     # compute Z corresponding to normal distribtion
-    Z = (
-        p_hat - p0
-    ) / std_stat_eval  # "assume" that th eproportion folow a normal for many samples
+    # "assume" that th eproportion folow a normal for many samples
+    Z = (p_hat - p0) / std_stat_eval
     print("Z = ", Z)
 
     # compute p_value
@@ -318,7 +306,7 @@ def HPE_MEAN_TWO_PAIRED(alpha,
         - H1: p1 - p2 > 0 for(tail=right) 
         - H1: p1 - p2 < 0 for(tail=left) 
     '''
-    check_zero_to_one_constraint(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     p0 = 0
     return HPE_MEAN_ONE(alpha,
                         p0,
@@ -370,8 +358,7 @@ def HPE_MEAN_TWO_NOTPAIRED(alpha,
     '''
 
     # ctd
-    alpha = float(alpha)
-    check_zero_to_one_constraint(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     check_hyp_min_sample(N1)
     check_hyp_min_sample(N2)
 
@@ -390,18 +377,16 @@ def HPE_MEAN_TWO_NOTPAIRED(alpha,
     # calculate the Z-statistic:
     # standard error of the stat
     if not pool:
-        std_stat_eval = sqrt(
-            (std_sample_1**2) / N1 + (std_sample_2**2) / N2
-        )  # or std_sample*sqrt( 1/N1 + 1/N2) with std_sample==std_sample_1==std_sample_2
+        # or std_sample*sqrt( 1/N1 + 1/N2) with std_sample==std_sample_1==std_sample_2
+        std_stat_eval = sqrt((std_sample_1**2) / N1 + (std_sample_2**2) / N2)
     else:
         std_stat_eval = sqrt(
             ((N1 - 1) * (std_sample_1**2) + (N2 - 1) *
              (std_sample_2**2)) / (N1 + N2 - 2)) * sqrt(1 / N1 + 1 / N2)
 
         # compute Z corresponding to normal distribtion
-    Z = (
-        p_hat - p0
-    ) / std_stat_eval  # "assume" that th eproportion folow a normal for many samples
+    # "assume" that th eproportion folow a normal for many samples
+    Z = (p_hat - p0) / std_stat_eval
     print("Z = ", Z)
 
     # compute p_value
@@ -412,7 +397,7 @@ def HPE_MEAN_TWO_NOTPAIRED(alpha,
     return p_hat, p0, std_stat_eval, Z, p_value, reject_null
 
 
-def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
+def HPE_MEAN_MANY(*samples, alpha=None):
     """check if mean is equal accross many samples
 
     Hypothesis
@@ -437,7 +422,7 @@ def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
         stat: (float) F
         p_value: (float)
     """
-    check_zero_to_one_constraint(alpha)
+    alpha = check_or_get_alpha_for_hyph_test(alpha)
     for elt in samples:
         assert len(elt) > 0
 
@@ -461,16 +446,14 @@ def HPE_MEAN_MANY(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
     list_norm = norm_loc_(samples)
     assert list_norm.shape == (k, )
 
-    S_carre = sum(
-        list_Ti**2 / list_ni
-    )  # S_carre = sum_i( sum_j(samples[i][j]**2) / len(sample[i]) ) #[pour chaque grp, [je fais la somme des carre; je divise par le nb_elt], je somme tout] => somme_on_groups(E(X**2))
+    # S_carre = sum_i( sum_j(samples[i][j]**2) / len(sample[i]) ) #[pour chaque grp, [je fais la somme des carre; je divise par le nb_elt], je somme tout] => somme_on_groups(E(X**2))
+    S_carre = sum(list_Ti**2 / list_ni)
     # variance btw groups
     # y_hat-y_mean# S_carre - sum_i_j(samples[i][j])**2 / sum_i(len(samples[i])) #G est la somme de toutes les observations #n est le nombre total d'observations ==> somme_on_groups(E(X**2)/len_grp) - E(X)**2 /len_total
     SSR = S_carre - G**2 / n
     # var within group
-    SSE = sum(
-        list_norm**2
-    ) - S_carre  # y-y_hat# sum_i_j(sample[i][j]**2) - S_carre ==> E(X**2) - somme_on_groups(E(X**2)/len_grp)
+    # y-y_hat# sum_i_j(sample[i][j]**2) - S_carre ==> E(X**2) - somme_on_groups(E(X**2)/len_grp)
+    SSE = sum(list_norm**2) - S_carre
 
     assert SSR.shape == ()
     assert SSE.shape == ()
