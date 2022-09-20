@@ -4,10 +4,10 @@ from my_stats.hyp_vali_md.constraints import check_zero_to_one_constraint
 from my_stats.utils_md.constants import COMMON_ALPHA_FOR_HYPH_TEST
 from my_stats.mdl_esti_md.model_estimator import (ME_Normal_dist)
 from numpy import random
+
 print('mdl_esti_md.models: import start...')
 
 sys.path.append(os.path.abspath("."))
-
 
 # estimator
 

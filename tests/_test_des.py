@@ -7,7 +7,6 @@ import os.path
 
 sys.path.append(os.path.abspath("."))
 
-
 #from model_estimator import ME_Normal_dist
 nb_exp = 1000
 

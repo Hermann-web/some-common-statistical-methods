@@ -6,11 +6,10 @@ from my_stats.utils_md.constants import (COMMON_ALPHA_FOR_CONF_INT,
 from scipy.stats import (normaltest, shapiro, anderson, levene)
 from numpy import array
 from my_stats.utils_md.refactoring import HypothesisValidationData
+
 print('hyp_vali_md.constraints:import start...')
 
-
 sys.path.append(os.path.abspath("."))
-
 
 # hypothesis testing
 
@@ -27,9 +26,12 @@ def check_zero_to_one_constraint(*args):
 
 
 def check_hyp_min_sample(n: int, p: int = None):
-    def exc(st, nb): return Exception(
-        f"pb: {st} should be at least {LIM_MIN_SAMPLE}. Instead, found {nb}\nNote that there are several ways to bypass this"
-    )
+
+    def exc(st, nb):
+        return Exception(
+            f"pb: {st} should be at least {LIM_MIN_SAMPLE}. Instead, found {nb}\nNote that there are several ways to bypass this"
+        )
+
     if p == None:
         if n < LIM_MIN_SAMPLE:
             raise exc("n", n)
