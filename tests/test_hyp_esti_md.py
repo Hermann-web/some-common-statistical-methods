@@ -105,32 +105,41 @@ class Tests_hyp_estimators(unittest.TestCase):
 
         #print(f"Z={Z} p_val={p_val} test_passed={reject_null}")
         assert abs(Z - 1.3) <= 0.5
-        assert abs(
-            p_val - 0.1942
-        ) <= 0.05  # calcul assez large quand même pour être très exact (1942 vs 1956)
+        # calcul assez large quand même pour être très exact (1942 vs 1956)
+        assert abs(p_val - 0.1942) <= 0.05
         assert reject_null == False
 
     def test_hp_from_p_value(self):
         print("---> test_hp_from_p_value")
-        HPE_FROM_P_VALUE(tail=Tails.middle, p_value=22, test="z_test")
-        HPE_FROM_P_VALUE(tail=Tails.middle, p_value=22, test="t_test", ddl=3)
-        data = HPE_FROM_P_VALUE(tail=Tails.middle, t_stat=33, test="z_test")
-        self.assertTrue(
-            data.reject_null
-        )  # the t_stat is too large => away from 0 => the test should pass
+        HPE_FROM_P_VALUE(tail=Tails.middle,
+                         p_value=22,
+                         test="z_test",
+                         alpha=0.05)
+        HPE_FROM_P_VALUE(tail=Tails.middle,
+                         p_value=22,
+                         test="t_test",
+                         ddl=3,
+                         alpha=0.05)
+        data = HPE_FROM_P_VALUE(tail=Tails.middle,
+                                t_stat=33,
+                                test="z_test",
+                                alpha=0.05)
+        # the t_stat is too large => away from 0 => the test should pass
+        self.assertTrue(data.reject_null)
         data = HPE_FROM_P_VALUE(tail=Tails.middle,
                                 p_hat=20,
                                 p0=0,
                                 std_stat_eval=50,
                                 test="z_test",
-                                ddl=0)
+                                ddl=0,
+                                alpha=0.05)
         print(data)
 
     def test_anova(self):
         print("\n->test_anova_on_normal ...")
         z = random.normal(2, 3, 25)
         x, y = z[:len(z) // 2], z[len(z) // 2:]
-        _, _, _, F, p_value, reject_null = HPE_MEAN_MANY(x, y)
+        _, _, _, F, p_value, reject_null = HPE_MEAN_MANY(x, y, alpha=0.05)
         stat_, p_val_ = f_oneway(x, y)
         print("res: ", stat_, p_val_, "mine", F, p_value)
         assert abs(stat_ - F) < 0.001
@@ -298,18 +307,19 @@ class Tests_estimators(unittest.TestCase):
         # print(data)
 
         # use statsmodels.api.stats.ztest
-        Z_, p_v_ = sm_api.stats.ztest(
-            Sample1, Sample2, usevar="pooled",
-            alternative="two-sided")  # only "pooled" is supported
+        # only "pooled" is supported
+        Z_, p_v_ = sm_api.stats.ztest(Sample1,
+                                      Sample2,
+                                      usevar="pooled",
+                                      alternative="two-sided")
         #print(f"Z_={Z_}, p_v_={p_v_}")
         assert abs(abs(data.Z) - abs(Z_)) < 0.0000005
         assert abs(data.p_value - p_v_) < 0.005
 
         # use scipy.stats.ttest_ind
         from scipy import stats
-        Z_, p_v_ = stats.ttest_ind(
-            Sample1, Sample2,
-            equal_var=True)  # two-sided #equal_var=True => pooled
+        # two-sided #equal_var=True => pooled
+        Z_, p_v_ = stats.ttest_ind(Sample1, Sample2, equal_var=True)
         #print(f"Z_={Z_}, p_v_={p_v_},_={_} ")
         # print(data)
         assert abs(abs(data.Z) - abs(Z_)) < 0.0000005
