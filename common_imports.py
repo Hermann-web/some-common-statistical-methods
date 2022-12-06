@@ -28,10 +28,11 @@ from my_stats.conf_inte_md.confidence_interval import (IC_MEAN_ONE,
 from my_stats.utils_md.refactoring import (Tails)
 from my_stats.utils_md.estimate_std import (estimate_std)
 from pandas import read_csv
-from scipy.stats import (f_oneway)
+from scipy.stats import (f_oneway) # pip install statsmodels
 import statsmodels.api as sm_api
 import unittest
 from numpy import power, random, sin
+from numpy.random import binomial
 import sys
 import os.path
 

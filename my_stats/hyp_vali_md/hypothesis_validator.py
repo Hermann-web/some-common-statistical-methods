@@ -7,8 +7,8 @@ import os.path
 import sys
 import warnings
 from my_stats.utils_md.refactoring import HypothesisValidationData, Tails
-from my_stats.hyp_vali_md.constraints import check_equal_var, check_or_get_alpha_for_hyph_test, check_sample_normality, check_zero_to_one_constraint
-from my_stats.hyp_testi_md.hypothesis_testing import HP_MEAN_MANY, HP_MEAN_ONE
+from my_stats.hyp_vali_md.constraints import (check_equal_var, check_or_get_alpha_for_hyph_test, check_sample_normality, check_zero_to_one_constraint)
+from my_stats.hyp_testi_md.hypothesis_testing import (HP_MEAN_MANY, HP_MEAN_ONE)
 from my_stats.hyp_testi_md.hp_estimators import HPE_FROM_P_VALUE
 from numpy import array
 

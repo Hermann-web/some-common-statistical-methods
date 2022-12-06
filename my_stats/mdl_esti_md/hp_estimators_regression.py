@@ -17,7 +17,7 @@ from my_stats.hyp_vali_md.hypothesis_validator import (
 from my_stats.utils_md.estimate_std import (compute_slope_std, estimate_std)
 from my_stats.utils_md.compute_ppf_and_p_value import (
     get_p_value_f_test, )
-from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test,
+from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test, check_sample_normality,
                                               check_zero_to_one_constraint,
                                               check_hyp_min_sample)
 from scipy.linalg import inv, det

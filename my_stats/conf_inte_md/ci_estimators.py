@@ -5,7 +5,6 @@ todo
 - use kwargs format while calling functions
 - reorder fcts attributes
 '''
-import statsmodels.api as sm  # pip install statsmodels
 from my_stats.utils_md.compute_ppf_and_p_value import (get_z_value,
                                                        get_t_value)
 from my_stats.hyp_vali_md.constraints import (check_or_get_cf_for_conf_inte,

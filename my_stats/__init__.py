@@ -1,1 +1,1 @@
-print("ouh là")
+print("---init---")
