@@ -21,7 +21,7 @@ from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test, 
                                               check_zero_to_one_constraint,
                                               check_hyp_min_sample)
 from scipy.linalg import inv, det
-from numpy import (abs, random, array, sqrt, diag, dot, log)
+from numpy import (abs, random, array, sqrt, diag, dot, log, ones, hstack, ndarray)
 import warnings
 import math
 
@@ -41,50 +41,132 @@ random.seed(233)
 print('mdl_esti_md.hp_estimator_regression: ---import ended---')
 
 
-def compute_regression(X, y, alpha=None, debug=False):
-    """_summary_
 
-    Args:
-        X (2-dim array): list of columns (including slope) (n,nb_params)
-        y (1-dim array): observations (n,)
-        alpha (_type_, optional): _description_. Defaults to None.
-        debug (bool, optional): _description_. Defaults to False.
+from dataclasses import field, dataclass
+from numpy import ndarray
 
-    Raises:
-        Exception: _description_
+@dataclass
+class RegressionResultData:
+    y: ndarray
+    y_hat: ndarray
+    nb_obs: int
+    nb_param: int
+    alpha: float
+    coeffs: ndarray 
+    list_coeffs_std: ndarray
+    residuals: ndarray = field(init=False)
+    residu_std: float = field(init=False)
 
-    Returns:
-        _type_: _description_
-    """
-    alpha = check_or_get_alpha_for_hyph_test(alpha)
+    def __post_init__(self):
+        assert self.y.shape == self.y_hat.shape 
+        assert self.nb_obs == len(self.y)
+        assert self.list_coeffs_std.shape == self.coeffs.shape == (self.nb_param, )
 
-    X = array(X)
-    assert X.ndim == 2
-    n, nb_param = X.shape
-    assert y.shape == (n, )
+        self.alpha = check_or_get_alpha_for_hyph_test(self.alpha)
+        self.residuals: ndarray = self.y - self.y_hat
+        self.residu_std = estimate_std(self.residuals)
 
-    # estimate coefficients
-    b1 = dot(X.T, X)
-    if det(b1) == 0:
-        raise Exception("det==0")
-    b1 = inv(b1)
-    b2 = dot(X.T, y)
-    coeffs = dot(b1, b2)
-    assert coeffs.shape == (nb_param, )
+class ComputeRegression:
 
-    # compute residuals
-    y_hat = dot(X, coeffs)  # y = y_hat + e
-    residuals = y - y_hat
-    assert residuals.shape == (n, )
+    def __init__(self, fit_intercept=True, alpha=None, debug=False) -> None:
+        self.fit_intercept = bool(fit_intercept)
+        self.alpha = check_or_get_alpha_for_hyph_test(alpha)
+        self.debug = debug
 
-    # compute standard error of the estimators
-    # estimate standard deviation of the residual
-    residu_std = estimate_std(residuals)  # e fl-> N(0,s**2)
-    # estimate standard deviation of the coefficients
-    assert b1.shape == (nb_param, nb_param)
-    # matrice de variance-covariance #les rzcine carre les elt diagonaux donnent les std
-    list_coeffs_std = residu_std * sqrt(diag(b1))
-    assert list_coeffs_std.shape == (nb_param, )
+    
+    def add_intercept(self, X):
+        assert X.ndim ==2
+        return X if not self.fit_intercept else hstack((ones((X.shape[0], 1)), X))
+    
+    def fit(self, X, y):
+        """_summary_
+
+        Args:
+            X (2-dim array): list of columns (including slope) (n,nb_params)
+            y (1-dim array): observations (n,)
+            alpha (_type_, optional): _description_. Defaults to None.
+            debug (bool, optional): _description_. Defaults to False.
+
+        Raises:
+            Exception: _description_
+
+        Returns:
+            _type_: _description_
+        """
+
+        X = array(X)
+        y = array(y)
+        assert X.ndim == 2
+        n, nb_param = X.shape
+        assert y.shape == (n, )
+
+        # add slope to X
+        X = self.add_intercept(X)
+        if self.fit_intercept: nb_param = nb_param + 1
+        assert X.shape == (n, nb_param)
+        
+
+        # estimate coefficients
+        b1 = dot(X.T, X)
+        if det(b1) == 0:
+            raise Exception("det==0")
+        b1 = inv(b1)
+        b2 = dot(X.T, y)
+        coeffs = dot(b1, b2)
+        assert coeffs.shape == (nb_param, )
+
+        # compute residuals
+        y_hat = dot(X, coeffs)  # y = y_hat + e
+        residuals = y - y_hat
+        assert residuals.shape == (n, )
+
+        # compute standard error of the estimators
+        # estimate standard deviation of the residual
+        residu_std = estimate_std(residuals)  # e fl-> N(0,s**2)
+        # estimate standard deviation of the coefficients
+        assert b1.shape == (nb_param, nb_param)
+        # matrice de variance-covariance #les rzcine carre les elt diagonaux donnent les std
+        list_coeffs_std = residu_std * sqrt(diag(b1))
+        assert list_coeffs_std.shape == (nb_param, )
+
+        self.regression_result_data = RegressionResultData(y=y, y_hat=y_hat, nb_obs=n, nb_param=nb_param, alpha=self.alpha, coeffs=coeffs, list_coeffs_std=list_coeffs_std)
+
+        self.Testresults = self._compute_results()
+
+    def _compute_results(self):
+
+        return compute_regression_results(crd=self.regression_result_data, debug=self.debug)
+
+    def get_regression_results(self):
+        crd: RegressionResultData = self.regression_result_data
+        return crd.coeffs, crd.list_coeffs_std, crd.residu_std, self.Testresults
+
+    def predict(self, X_test:ndarray):
+        assert X_test.ndim==2
+        X_test = self.add_intercept(X_test)
+        assert X_test.shape[1] == self.regression_result_data.nb_param
+        return dot(X_test, self.regression_result_data.coeffs)
+
+
+
+
+def compute_regression_results(crd:RegressionResultData, debug:bool=False):
+    
+    debug = bool(debug)
+    alpha = crd.alpha
+
+    nb_obs = crd.nb_obs
+    nb_param = crd.nb_param
+
+    y = crd.y 
+    y_hat = crd.y_hat
+
+    residuals = crd.residuals
+    residu_std = crd.residu_std
+    
+    coeffs = crd.coeffs
+    list_coeffs_std = crd.list_coeffs_std
+    
 
     # test normality of the residuals
     passNormalitytest = check_sample_normality(residuals, alpha=alpha)
@@ -102,7 +184,6 @@ def compute_regression(X, y, alpha=None, debug=False):
     Testresults["residu_mean_null"] = passed_residu_mean_null_test
 
     # check if coefficients != 0
-    nb_obs = n
     pass_non_zero_test = check_coefficients_non_zero(
         list_coeffs=coeffs,
         list_coeff_std=list_coeffs_std,
@@ -116,9 +197,9 @@ def compute_regression(X, y, alpha=None, debug=False):
 
     # fisher test
     data = HPE_REGRESSION_FISHER_TEST(y=y,
-                                      y_hat=y_hat,
-                                      nb_param=nb_param,
-                                      alpha=alpha)
+                                    y_hat=y_hat,
+                                    nb_param=nb_param,
+                                    alpha=alpha)
     DFE, DFR = data.DFE, data.DFR
     SSE, MSE, SSR, MSR, SST, MST = data.SSE, data.MSE, data.SSR, data.MSR, data.SST, data.MST
     R_carre, R_carre_adj, F_stat, p_value = data.R_carre, data.R_carre_adj, data.F_stat, data.p_value
@@ -147,9 +228,9 @@ def compute_regression(X, y, alpha=None, debug=False):
     Testresults["metrics"]["log-likelihood"] = log_likelihood
 
     aic, bic = compute_aic_bic(dfr=DFR,
-                               n=n,
-                               llh=log_likelihood,
-                               method="basic")
+                            n=nb_obs,
+                            llh=log_likelihood,
+                            method="basic")
     Testresults["metrics"]["AIC"] = aic
     Testresults["metrics"]["BIC"] = bic
 
@@ -161,10 +242,14 @@ def compute_regression(X, y, alpha=None, debug=False):
     Testresults["metrics"]["RMSE"] = RMSE
 
     # skew, kurtosis
-    Testresults["metrics"]["skew"] = compute_skew(y - y_hat)
-    Testresults["metrics"]["kurtosis"] = compute_kurtosis(y - y_hat)
+    Testresults["metrics"]["skew"] = compute_skew(residuals)
+    Testresults["metrics"]["kurtosis"] = compute_kurtosis(residuals)
 
-    return coeffs, list_coeffs_std, residu_std, Testresults
+    
+
+    return Testresults
+    
+
 
 
 def HPE_REGRESSION_FISHER_TEST(y: list,

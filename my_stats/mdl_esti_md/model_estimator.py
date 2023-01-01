@@ -14,7 +14,7 @@ fisher ? yes F
 
 import os.path
 import sys
-from my_stats.mdl_esti_md.hp_estimators_regression import compute_regression
+from my_stats.mdl_esti_md.hp_estimators_regression import ComputeRegression
 from my_stats.conf_inte_md.confidence_interval import IC_MEAN_ONE
 from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
                                               check_or_get_alpha_for_hyph_test,
@@ -23,9 +23,8 @@ from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
 from my_stats.utils_md.estimate_std import (estimate_std)
 from my_stats.utils_md.preprocessing import (clear_list, clear_list_pair,
                                              clear_mat_vec)
-import warnings
-from pandas import read_csv
-from numpy import (ones, random, array, zeros, power, hstack)
+
+from numpy import (random, array, zeros, power)
 
 print('mdl_esti_md.model_estimator: import start...')
 sys.path.append(os.path.abspath("."))
@@ -94,7 +93,7 @@ def ME_Normal_dist(sample: list, alpha=None, debug=False):
     return m, std_estimator, s, Testresults
 
 
-def ME_Regression(x: list, y: list, degre: int, debug=False, alpha=None):
+def ME_Regression(x: list, y: list, degre: int, fit_intercept=True, debug=False, alpha=None):
     '''
     estimate a regression model from two samples
 
@@ -146,29 +145,32 @@ def ME_Regression(x: list, y: list, degre: int, debug=False, alpha=None):
     x, y = clear_list_pair(x, y)
     # get sizes
     n = len(x)
-    nb_param = int(degre) + 1
+    degre = int(degre)
     # constraint
     check_hyp_min_sample(n)
     if n != len(y):
         raise Exception("x and y lenght must match")
 
     # create X
-    X = zeros((n, nb_param))
-    X[:, 0] = 1
-    for i in range(1, nb_param):
-        X[:, i] = power(x, i)
-    assert X.shape == (n, nb_param)
+    '''X = zeros((n, degre))
+    for i in range(0, degre):
+        X[:, i] = power(x, i)'''
+    X = array([power(x, i) for i in range(1, degre+1)]).T
+    assert X.shape == (n, degre)
     assert y.shape == (n, )
 
-    coeffs, list_coeffs_std, residu_std, Testresults = compute_regression(
-        X, y, alpha=alpha, debug=debug)
+    cr = ComputeRegression(fit_intercept=fit_intercept, alpha=alpha, debug=debug)
+    cr.fit(X, y)
+    coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results()
+    
+    if fit_intercept: nb_param = degre + 1
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 
     return coeffs, list_coeffs_std, residu_std, Testresults
 
 
-def ME_multiple_regression(X: list, y: list, debug=False, alpha=None):
+def ME_multiple_regression(X: list, y: list, fit_intercept=True, debug=False, alpha=None):
     """_summary_
 
     Args:
@@ -232,29 +234,25 @@ def ME_multiple_regression(X: list, y: list, debug=False, alpha=None):
         _type_: _description_
     """
     alpha = check_or_get_alpha_for_hyph_test(alpha)
+    fit_intercept = bool(fit_intercept)
 
     # reshape and remove nan
     X = array(X)
     y = array(y)
     assert X.ndim == 2
     assert y.ndim == 1
+    assert y.shape == (X.shape[0], ), "x and y lenght must match"
 
     X, y = clear_mat_vec(X, y)
-    # get sizes
-    n = X.shape[0]
-    nb_param = X.shape[1] + 1  # add slope
+    
     # constraint
-    check_hyp_min_sample(n)
-    if n != len(y):
-        raise Exception("x and y lenght must match")
-
-    # add slope to X
-    X = hstack((ones((n, 1)), X))
-    assert X.shape == (n, nb_param)
-    assert y.shape == (n, )
-
-    coeffs, list_coeffs_std, residu_std, Testresults = compute_regression(
-        X, y, alpha=alpha, debug=debug)
+    check_hyp_min_sample(X.shape[0])
+    
+    cr = ComputeRegression(fit_intercept=fit_intercept, alpha=alpha, debug=debug)
+    cr.fit(X, y)
+    coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results()
+    nb_param = X.shape[1] # without slope
+    if fit_intercept: nb_param = nb_param + 1
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 

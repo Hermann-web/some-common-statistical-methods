@@ -1,7 +1,7 @@
-from numpy import array, isnan, newaxis, std, hstack
+from numpy import array, isnan, newaxis, std, hstack, ndarray
+from typing import Tuple
 
-
-def clear_list(L: list):
+def clear_list(L: list) -> ndarray:
     """remove nan from a list
 
     Args:
@@ -35,7 +35,7 @@ def clear_list(L: list):
     return L
 
 
-def clear_list_pair(L1, L2):
+def clear_list_pair(L1, L2) -> Tuple[ndarray, ndarray]:
     """remove nan values (remove observation data containing nan value in L1 or L2) from 2 lists
 
     Args:
@@ -78,7 +78,7 @@ def clear_list_pair(L1, L2):
     return L1, L2
 
 
-def clear_mat_vec(A, y):
+def clear_mat_vec(A, y) -> Tuple[ndarray, ndarray]:
     """Remove nan values (remove observation data containing nan value in X or y) from a matric and a corresponding vector
 
 
