@@ -69,6 +69,19 @@ class RegressionResultData:
 class ComputeRegression:
 
     def __init__(self, fit_intercept=True, alpha=None, debug=False) -> None:
+        """_summary_
+
+        Args:
+            fit_intercept (bool, optional): _description_. Defaults to True.
+            alpha (_type_, optional): _description_. Defaults to None.
+            debug (bool, optional): _description_. Defaults to False.
+
+        Raises:
+            Exception: _description_
+
+        Returns:
+            _type_: _description_
+        """
         self.fit_intercept = bool(fit_intercept)
         self.alpha = check_or_get_alpha_for_hyph_test(alpha)
         self.debug = debug
