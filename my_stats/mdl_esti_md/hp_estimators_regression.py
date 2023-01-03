@@ -22,6 +22,7 @@ from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test, 
                                               check_hyp_min_sample)
 from scipy.linalg import inv, det
 from numpy import (abs, random, array, sqrt, diag, dot, log, ones, hstack, ndarray)
+from numpy import (exp,log, exp, dot, zeros)
 import warnings
 import math
 
@@ -65,191 +66,6 @@ class RegressionResultData:
         self.alpha = check_or_get_alpha_for_hyph_test(self.alpha)
         self.residuals: ndarray = self.y - self.y_hat
         self.residu_std = estimate_std(self.residuals)
-
-class ComputeRegression:
-
-    def __init__(self, fit_intercept=True, alpha=None, debug=False) -> None:
-        self.fit_intercept = bool(fit_intercept)
-        self.alpha = check_or_get_alpha_for_hyph_test(alpha)
-        self.debug = debug
-
-    
-    def add_intercept(self, X):
-        assert X.ndim ==2
-        return X if not self.fit_intercept else hstack((ones((X.shape[0], 1)), X))
-    
-    def fit(self, X, y):
-        """_summary_
-
-        Args:
-            X (2-dim array): list of columns (including slope) (n,nb_params)
-            y (1-dim array): observations (n,)
-            alpha (_type_, optional): _description_. Defaults to None.
-            debug (bool, optional): _description_. Defaults to False.
-
-        Raises:
-            Exception: _description_
-
-        Returns:
-            _type_: _description_
-        """
-
-        X = array(X)
-        y = array(y)
-        assert X.ndim == 2
-        n, nb_param = X.shape
-        assert y.shape == (n, )
-
-        # add slope to X
-        X = self.add_intercept(X)
-        if self.fit_intercept: nb_param = nb_param + 1
-        assert X.shape == (n, nb_param)
-        
-
-        # estimate coefficients
-        b1 = dot(X.T, X)
-        if det(b1) == 0:
-            raise Exception("det==0")
-        b1 = inv(b1)
-        b2 = dot(X.T, y)
-        coeffs = dot(b1, b2)
-        assert coeffs.shape == (nb_param, )
-
-        # compute residuals
-        y_hat = dot(X, coeffs)  # y = y_hat + e
-        residuals = y - y_hat
-        assert residuals.shape == (n, )
-
-        # compute standard error of the estimators
-        # estimate standard deviation of the residual
-        residu_std = estimate_std(residuals)  # e fl-> N(0,s**2)
-        # estimate standard deviation of the coefficients
-        assert b1.shape == (nb_param, nb_param)
-        # matrice de variance-covariance #les rzcine carre les elt diagonaux donnent les std
-        list_coeffs_std = residu_std * sqrt(diag(b1))
-        assert list_coeffs_std.shape == (nb_param, )
-
-        self.regression_result_data = RegressionResultData(y=y, y_hat=y_hat, nb_obs=n, nb_param=nb_param, alpha=self.alpha, coeffs=coeffs, list_coeffs_std=list_coeffs_std)
-
-        self.Testresults = self._compute_results()
-
-    def _compute_results(self):
-
-        return compute_regression_results(crd=self.regression_result_data, debug=self.debug)
-
-    def get_regression_results(self):
-        crd: RegressionResultData = self.regression_result_data
-        return crd.coeffs, crd.list_coeffs_std, crd.residu_std, self.Testresults
-
-    def predict(self, X_test:ndarray):
-        assert X_test.ndim==2
-        X_test = self.add_intercept(X_test)
-        assert X_test.shape[1] == self.regression_result_data.nb_param
-        return dot(X_test, self.regression_result_data.coeffs)
-
-
-
-
-def compute_regression_results(crd:RegressionResultData, debug:bool=False):
-    
-    debug = bool(debug)
-    alpha = crd.alpha
-
-    nb_obs = crd.nb_obs
-    nb_param = crd.nb_param
-
-    y = crd.y 
-    y_hat = crd.y_hat
-
-    residuals = crd.residuals
-    residu_std = crd.residu_std
-    
-    coeffs = crd.coeffs
-    list_coeffs_std = crd.list_coeffs_std
-    
-
-    # test normality of the residuals
-    passNormalitytest = check_sample_normality(residuals, alpha=alpha)
-    if not passNormalitytest.testPassed:
-        if debug:
-            print('residuals does not look Gaussian (reject H0)')
-    Testresults = {"residuals_normality": passNormalitytest}
-
-    # test if mean != 0 for the residuals
-    passed_residu_mean_null_test = check_residuals_centered(residuals,
-                                                            alpha=alpha)
-    if not passed_residu_mean_null_test.testPassed:
-        if debug:
-            print('residialss does not look centered')
-    Testresults["residu_mean_null"] = passed_residu_mean_null_test
-
-    # check if coefficients != 0
-    pass_non_zero_test = check_coefficients_non_zero(
-        list_coeffs=coeffs,
-        list_coeff_std=list_coeffs_std,
-        nb_obs=nb_obs,
-        alpha=alpha,
-        debug=debug)
-    if not passNormalitytest.testPassed:
-        if debug:
-            print('residuals does not look Gaussian (reject H0)')
-    Testresults["coeff_non_zero"] = pass_non_zero_test
-
-    # fisher test
-    data = HPE_REGRESSION_FISHER_TEST(y=y,
-                                    y_hat=y_hat,
-                                    nb_param=nb_param,
-                                    alpha=alpha)
-    DFE, DFR = data.DFE, data.DFR
-    SSE, MSE, SSR, MSR, SST, MST = data.SSE, data.MSE, data.SSR, data.MSR, data.SST, data.MST
-    R_carre, R_carre_adj, F_stat, p_value = data.R_carre, data.R_carre_adj, data.F_stat, data.p_value
-    pass_fisher_test = data.reject_null
-
-    Testresults["significance"] = {
-        "R_carre": R_carre,
-        "R_carre_adj": R_carre_adj,
-        "MSE": MSE,
-        "DFE": DFE,
-        "MSR": MSR,
-        "DFR": DFR,
-        "SSE": SSE,
-        "SSR": SSR
-    }
-    Testresults["fisher_test"] = {
-        "test_passed": pass_fisher_test,
-        "F_stat": F_stat,
-        "p_value": p_value
-    }
-
-    Testresults["metrics"] = {}
-    log_likelihood = compute_log_likelihood(y=y,
-                                            y_hat=y_hat,
-                                            std_eval=residu_std)
-    Testresults["metrics"]["log-likelihood"] = log_likelihood
-
-    aic, bic = compute_aic_bic(dfr=DFR,
-                            n=nb_obs,
-                            llh=log_likelihood,
-                            method="basic")
-    Testresults["metrics"]["AIC"] = aic
-    Testresults["metrics"]["BIC"] = bic
-
-    # mse, rmse, mae
-    Testresults["metrics"]["MSE"] = MSE
-    MAE = compute_mae(y, y_hat)
-    Testresults["metrics"]["MAE"] = MAE
-    RMSE = sqrt(MSE)
-    Testresults["metrics"]["RMSE"] = RMSE
-
-    # skew, kurtosis
-    Testresults["metrics"]["skew"] = compute_skew(residuals)
-    Testresults["metrics"]["kurtosis"] = compute_kurtosis(residuals)
-
-    
-
-    return Testresults
-    
-
 
 
 def HPE_REGRESSION_FISHER_TEST(y: list,
@@ -461,6 +277,323 @@ def compute_aic_bic(dfr: int, n: int, llh: float, method: str = "basic"):
         return aic, bic
     elif method == "correct":
         return aic + 2 * K * (K + 1) / (n - 1 - K), bic
+
+
+def compute_logit_regression_results(crd:RegressionResultData, debug:bool=False):
+    
+    debug = bool(debug)
+    alpha = crd.alpha
+
+    nb_obs = crd.nb_obs
+    nb_param = crd.nb_param
+
+    y = crd.y 
+    y_hat = crd.y_hat
+
+    residuals = crd.residuals
+    residu_std = crd.residu_std
+    
+    coeffs = crd.coeffs
+    list_coeffs_std = crd.list_coeffs_std
+
+    Testresults = {}
+
+    # check if coefficients != 0
+    pass_non_zero_test = check_coefficients_non_zero(
+        list_coeffs=coeffs,
+        list_coeff_std=list_coeffs_std,
+        nb_obs=nb_obs,
+        alpha=alpha,
+        debug=debug)
+    Testresults["coeff_non_zero"] = pass_non_zero_test
+
+    Testresults["metrics"] = {}
+    log_likelihood = compute_log_likelihood(y=y,
+                                            y_hat=y_hat,
+                                            std_eval=residu_std)
+    Testresults["metrics"]["log-likelihood"] = log_likelihood
+   
+
+    return Testresults
+
+
+def compute_linear_regression_results(crd:RegressionResultData, debug:bool=False):
+    
+    debug = bool(debug)
+    alpha = crd.alpha
+
+    nb_obs = crd.nb_obs
+    nb_param = crd.nb_param
+
+    y = crd.y 
+    y_hat = crd.y_hat
+
+    residuals = crd.residuals
+    residu_std = crd.residu_std
+    
+    coeffs = crd.coeffs
+    list_coeffs_std = crd.list_coeffs_std
+
+    Testresults = {}
+    
+    # test normality of the residuals
+    passNormalitytest = check_sample_normality(residuals, alpha=alpha)
+    if not passNormalitytest.testPassed:
+        if debug:
+            print('residuals does not look Gaussian (reject H0)')
+    Testresults["residuals_normality"] = passNormalitytest
+
+    # test if mean != 0 for the residuals
+    passed_residu_mean_null_test = check_residuals_centered(residuals,
+                                                            alpha=alpha)
+    if not passed_residu_mean_null_test.testPassed:
+        if debug:
+            print('residialss does not look centered')
+    Testresults["residu_mean_null"] = passed_residu_mean_null_test
+
+    # check if coefficients != 0
+    pass_non_zero_test = check_coefficients_non_zero(
+        list_coeffs=coeffs,
+        list_coeff_std=list_coeffs_std,
+        nb_obs=nb_obs,
+        alpha=alpha,
+        debug=debug)
+    if not passNormalitytest.testPassed:
+        if debug:
+            print('residuals does not look Gaussian (reject H0)')
+    Testresults["coeff_non_zero"] = pass_non_zero_test
+
+    # fisher test
+    data = HPE_REGRESSION_FISHER_TEST(y=y,
+                                    y_hat=y_hat,
+                                    nb_param=nb_param,
+                                    alpha=alpha)
+    DFE, DFR = data.DFE, data.DFR
+    SSE, MSE, SSR, MSR, SST, MST = data.SSE, data.MSE, data.SSR, data.MSR, data.SST, data.MST
+    R_carre, R_carre_adj, F_stat, p_value = data.R_carre, data.R_carre_adj, data.F_stat, data.p_value
+    pass_fisher_test = data.reject_null
+
+    Testresults["significance"] = {
+        "R_carre": R_carre,
+        "R_carre_adj": R_carre_adj,
+        "MSE": MSE,
+        "DFE": DFE,
+        "MSR": MSR,
+        "DFR": DFR,
+        "SSE": SSE,
+        "SSR": SSR
+    }
+    Testresults["fisher_test"] = {
+        "test_passed": pass_fisher_test,
+        "F_stat": F_stat,
+        "p_value": p_value
+    }
+
+    Testresults["metrics"] = {}
+    log_likelihood = compute_log_likelihood(y=y,
+                                            y_hat=y_hat,
+                                            std_eval=residu_std)
+    Testresults["metrics"]["log-likelihood"] = log_likelihood
+
+    aic, bic = compute_aic_bic(dfr=DFR,
+                            n=nb_obs,
+                            llh=log_likelihood,
+                            method="basic")
+    Testresults["metrics"]["AIC"] = aic
+    Testresults["metrics"]["BIC"] = bic
+
+    # mse, rmse, mae
+    Testresults["metrics"]["MSE"] = MSE
+    MAE = compute_mae(y, y_hat)
+    Testresults["metrics"]["MAE"] = MAE
+    RMSE = sqrt(MSE)
+    Testresults["metrics"]["RMSE"] = RMSE
+
+    # skew, kurtosis
+    Testresults["metrics"]["skew"] = compute_skew(residuals)
+    Testresults["metrics"]["kurtosis"] = compute_kurtosis(residuals)
+
+    
+
+    return Testresults
+    
+
+
+def sigmoid(z):
+    return 1 / (1 + exp(-z))
+
+def log_loss(yp, y):
+    # this is the loss function which we use to minimize the error of our model
+    return (-y * log(yp) - (1 - y) * log(1 - yp)).mean()
+
+
+class ComputeRegression:
+
+    def __init__(self, logit=False, fit_intercept=True, alpha=None, debug=False) -> None:
+        self.fit_intercept = bool(fit_intercept)
+        self.alpha = check_or_get_alpha_for_hyph_test(alpha)
+        self.debug = bool(debug)
+        self.logit = bool(logit)
+        self.W = None
+
+    
+    def _add_intercept(self, X):
+        assert X.ndim ==2
+        return X if not self.fit_intercept else hstack((ones((X.shape[0], 1)), X))
+    
+    
+    
+    def _set_X_y(self, X, y):
+        # verifications
+        X = array(X)
+        y = array(y)
+        assert X.ndim == 2
+        n, nb_param = X.shape
+        assert y.shape == (n, )
+
+        # add slope to X
+        X = self._add_intercept(X)
+        if self.fit_intercept: nb_param = nb_param + 1
+        assert X.shape == (n, nb_param)
+
+        # set data 
+        self.X = X
+        self.y = y
+        self.nb_param = nb_param
+        self.nb_obs = n
+    
+    def _sigmoid(self, z):
+        return 1 / (1 + exp(-z))
+    
+    def _pred_target(self, X):
+        assert X.shape[1] == self.X.shape[1]
+        y_pred = dot(X, self.W)
+        if self.logit: y_pred = self._sigmoid(y_pred)
+        return y_pred
+
+    def _estimate_log_reg_coeff_std(self):
+        #compute #https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture26.pdf
+        temp = exp(self.X @ self.W)
+        assert temp.shape == (self.nb_obs, )
+        WT = temp / (1+temp)**2
+        assert WT.shape == (self.nb_obs, )
+        WT = diag(WT)
+        assert WT.shape == (self.nb_obs, self.nb_obs)
+        b1 = self.X.T @ WT @ self.X
+        assert WT.shape == (self.nb_param, self.nb_param)
+        b1 = inv(b1)
+        return sqrt(diag(b1))
+
+    def _estimate_logit_reg_coeffs(self, num_iterations:int=100, learning_rate:float=0.01, verbose:bool=True):
+        """
+        - https://github.com/susanli2016/Machine-Learning-with-Python/blob/master/Logistic%20Regression%20in%20Python%20-%20Step%20by%20Step.ipynb
+        - https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb
+        - https://arunaddagatla.medium.com/maximum-likelihood-estimation-in-logistic-regression-f86ff1627b67
+        - https://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation
+        """
+        assert len(self.y)==2
+        # weights initialization of our Normal Vector, initially we set it to 0, then we learn it eventually
+        self.W = zeros(self.X.shape[1])
+        yp = self._pred_target(self.X)
+        
+        # this for loop runs for the number of iterations provided
+        for i in range(num_iterations):
+            #gradient
+            grad = dot(self.X.T, (yp - self.y)) / self.y.size #https://arunaddagatla.medium.com/maximum-likelihood-estimation-in-logistic-regression-f86ff1627b67
+            #optimize
+            self.W -= learning_rate * grad 
+            #prediction
+            yp = self._pred_target(self.X)
+            # loss
+            loss = log_loss(yp, self.y)
+            if(verbose ==True and i % 10000 == 0):print(f'step {i} loss: {loss} \t')
+        
+        list_coeffs_std = self._estimate_log_reg_coeff_std()
+        
+        return list_coeffs_std, self.W
+
+    
+    def _estimate_lin_reg_coeffs(self):
+        # estimate coefficients
+        b1 = dot(self.X.T, self.X)
+        assert b1.shape == (self.nb_param, self.nb_param)
+        if det(b1) == 0:raise Exception("det==0")
+        b1 = inv(b1)
+        b2 = dot(self.X.T, self.y)
+        self.W = dot(b1, b2)
+        assert self.W.shape == (self.nb_param, )
+
+        # compute residuals
+        y_hat = self._pred_target(self.X)  # y = y_hat + e
+        residuals = self.y - y_hat
+        assert residuals.shape == (self.nb_obs, )
+
+        # compute standard error of the estimators
+        # estimate standard deviation of the residual
+        residu_std = estimate_std(residuals)  # e fl-> N(0,s**2)
+        # estimate standard deviation of the coefficients
+            # matrice de variance-covariance #les rzcine carre les elt diagonaux donnent les std
+        list_coeffs_std = residu_std * sqrt(diag(b1))
+        assert list_coeffs_std.shape == (self.nb_param, )
+        return list_coeffs_std, self.W 
+
+    
+
+    def _set_coeffs_(self, W, list_coeffs_std):
+        # verifications
+        assert W.shape == (self.nb_param, )
+        assert list_coeffs_std.shape == (self.nb_param, )
+
+        # set data 
+        self.list_coeffs_std = list_coeffs_std
+        self.W  = W
+    
+    def _estimate_coeffs(self):
+        list_coeffs_std, W = self._estimate_logit_reg_coeffs() if self.logit else self._estimate_lin_reg_coeffs()
+        self._set_coeffs_(W, list_coeffs_std)
+    
+    def _compute_test_results(self):
+        # compute target
+        y_hat = self._pred_target(self.X) 
+        # store necessery
+        self.regression_result_data = RegressionResultData(y=self.y, y_hat=y_hat, nb_obs=self.nb_obs, nb_param=self.nb_param, alpha=self.alpha, coeffs=self.W, list_coeffs_std=self.list_coeffs_std)
+        # compute tests
+        self.Testresults = compute_logit_regression_results(crd=self.regression_result_data, debug=self.debug) if self.logit else compute_linear_regression_results(crd=self.regression_result_data, debug=self.debug)
+
+    def fit(self, X, y):
+        """_summary_
+
+        Args:
+            X (2-dim array): list of columns (including slope) (n,nb_params)
+            y (1-dim array): observations (n,)
+            alpha (_type_, optional): _description_. Defaults to None.
+            debug (bool, optional): _description_. Defaults to False.
+
+        Raises:
+            Exception: _description_
+
+        Returns:
+            _type_: _description_
+        """
+        
+        self._set_X_y(X=X, y=y)
+        
+        self._estimate_coeffs()
+
+        self._compute_test_results()
+
+    
+
+    def get_regression_results(self):
+        crd: RegressionResultData = self.regression_result_data
+        return crd.coeffs, crd.list_coeffs_std, crd.residu_std, self.Testresults
+
+    def predict(self, X_test:ndarray):
+        assert X_test.ndim==2
+        X_test = self._add_intercept(X_test)
+        assert X_test.shape[1] == self.regression_result_data.nb_param
+        return self._pred_target(X=X_test)
+
 
 
 if __name__ == "__main__":
