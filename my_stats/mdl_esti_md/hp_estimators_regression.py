@@ -478,6 +478,17 @@ def compute_aic_bic(dfr: int, n: int, llh: float, method: str = "basic"):
 
 
 def compute_logit_regression_results(crd:RegressionResultData, debug:bool=False):
+    """_summary_
+
+    Args:
+        crd (RegressionResultData): _description_
+        debug (bool, optional): _description_. Defaults to False.
+    Info 
+    - understant outputs: https://stats.stackexchange.com/questions/86351/interpretation-of-rs-output-for-binomial-regression
+    - pseudo-rcarre: https://stats.stackexchange.com/questions/3559/which-pseudo-r2-measure-is-the-one-to-report-for-logistic-regression-cox-s
+    Returns:
+        _type_: _description_
+    """
     
     debug = bool(debug)
     alpha = crd.alpha
@@ -670,7 +681,16 @@ class ComputeRegression:
         return y_pred
 
     def _estimate_log_reg_coeff_std(self):
-        #compute #https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture26.pdf
+        """_summary_
+
+        Info 
+        - cool: https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture26.pdf
+        - another(not used): https://stats.stackexchange.com/questions/60723/bias-of-maximum-likelihood-estimators-for-logistic-regression
+
+        Returns:
+            _type_: _description_
+        """
+        #compute #
         temp = exp(self.X @ self.W)
         assert temp.shape == (self.nb_obs, )
         WT = temp / (1+temp)**2
@@ -688,6 +708,7 @@ class ComputeRegression:
         - https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb
         - https://arunaddagatla.medium.com/maximum-likelihood-estimation-in-logistic-regression-f86ff1627b67
         - https://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation
+        - converg engenieering: https://stats.stackexchange.com/questions/113766/omitted-variable-bias-in-logistic-regression-vs-omitted-variable-bias-in-ordina
         """
         assert len(self.y)==2
         # weights initialization of our Normal Vector, initially we set it to 0, then we learn it eventually
