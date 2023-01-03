@@ -93,7 +93,7 @@ def ME_Normal_dist(sample: list, alpha=None, debug=False):
     return m, std_estimator, s, Testresults
 
 
-def ME_Regression(x: list, y: list, degre: int, fit_intercept=True, debug=False, alpha=None):
+def ME_Regression(x: list, y: list, degre: int, logit=False, fit_intercept=True, debug=False, alpha=None, nb_iter=None, learning_rate=None):
     '''
     estimate a regression model from two samples
 
@@ -138,6 +138,7 @@ def ME_Regression(x: list, y: list, degre: int, fit_intercept=True, debug=False,
     '''
 
     alpha = check_or_get_alpha_for_hyph_test(alpha)
+    logit= bool(logit)
 
     # reshape and remove nan
     x = array(x).flatten()
@@ -159,18 +160,19 @@ def ME_Regression(x: list, y: list, degre: int, fit_intercept=True, debug=False,
     assert X.shape == (n, degre)
     assert y.shape == (n, )
 
-    cr = ComputeRegression(fit_intercept=fit_intercept, alpha=alpha, debug=debug)
-    cr.fit(X, y)
+    cr = ComputeRegression(logit=logit, fit_intercept=fit_intercept, alpha=alpha, debug=debug)
+    cr.fit(X, y, nb_iter=nb_iter, learning_rate=learning_rate)
     coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results()
     
-    if fit_intercept: nb_param = degre + 1
+    nb_param = degre
+    if fit_intercept: nb_param += 1
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 
     return coeffs, list_coeffs_std, residu_std, Testresults
 
 
-def ME_multiple_regression(X: list, y: list, fit_intercept=True, debug=False, alpha=None):
+def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, debug=False, alpha=None):
     """_summary_
 
     Args:
@@ -235,6 +237,7 @@ def ME_multiple_regression(X: list, y: list, fit_intercept=True, debug=False, al
     """
     alpha = check_or_get_alpha_for_hyph_test(alpha)
     fit_intercept = bool(fit_intercept)
+    logit= bool(logit)
 
     # reshape and remove nan
     X = array(X)
@@ -248,7 +251,7 @@ def ME_multiple_regression(X: list, y: list, fit_intercept=True, debug=False, al
     # constraint
     check_hyp_min_sample(X.shape[0])
     
-    cr = ComputeRegression(fit_intercept=fit_intercept, alpha=alpha, debug=debug)
+    cr = ComputeRegression(logit=logit, fit_intercept=fit_intercept, alpha=alpha, debug=debug)
     cr.fit(X, y)
     coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results()
     nb_param = X.shape[1] # without slope

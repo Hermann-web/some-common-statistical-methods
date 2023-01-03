@@ -22,7 +22,7 @@ from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test, 
                                               check_hyp_min_sample)
 from scipy.linalg import inv, det
 from numpy import (abs, random, array, sqrt, diag, dot, log, ones, hstack, ndarray)
-from numpy import (exp,log, exp, dot, zeros)
+from numpy import (exp,log, exp, dot, zeros, vectorize)
 import warnings
 import math
 
@@ -476,6 +476,14 @@ def compute_aic_bic(dfr: int, n: int, llh: float, method: str = "basic"):
     elif method == "correct":
         return aic + 2 * K * (K + 1) / (n - 1 - K), bic
 
+def get_confusion_matrix(y_true, y_pred):
+    y_true = (y_true>0.5).astype('int')
+    y_pred = (y_pred>0.5).astype('int')
+    _y_neg = y_true[y_true==0]
+    _y_pos = y_true[y_true==1]
+    _pred_neg = y_pred[y_true==0]
+    _pred_pos = y_pred[y_true==1]
+    return [[(_pred_neg==0).sum(), (_pred_pos==0).sum()], [(_pred_neg==1).sum(), (_pred_pos==1).sum()]]
 
 def compute_logit_regression_results(crd:RegressionResultData, debug:bool=False):
     """_summary_
@@ -521,7 +529,9 @@ def compute_logit_regression_results(crd:RegressionResultData, debug:bool=False)
                                             y_hat=y_hat,
                                             std_eval=residu_std)
     Testresults["metrics"]["log-likelihood"] = log_likelihood
-   
+
+    Testresults["confusion"] = get_confusion_matrix(y_true=y, y_pred=y_hat)
+    
 
     return Testresults
 
@@ -633,6 +643,8 @@ def sigmoid(z):
 
 def log_loss(yp, y):
     # this is the loss function which we use to minimize the error of our model
+    _f = vectorize(lambda x: min(max(x, 0.005), 1-0.005))
+    yp = _f(y)
     return (-y * log(yp) - (1 - y) * log(1 - yp)).mean()
 
 
@@ -659,6 +671,9 @@ class ComputeRegression:
         assert X.ndim == 2
         n, nb_param = X.shape
         assert y.shape == (n, )
+
+        if self.logit: 
+            assert set(y)=={0,1}, f"found set(y)=={set(y)} instead od {[0,1]}"
 
         # add slope to X
         X = self._add_intercept(X)
@@ -698,11 +713,11 @@ class ComputeRegression:
         WT = diag(WT)
         assert WT.shape == (self.nb_obs, self.nb_obs)
         b1 = self.X.T @ WT @ self.X
-        assert WT.shape == (self.nb_param, self.nb_param)
+        assert b1.shape == (self.nb_param, self.nb_param), f"found {b1.shape} instead of {(self.nb_param, self.nb_param)}"
         b1 = inv(b1)
         return sqrt(diag(b1))
 
-    def _estimate_logit_reg_coeffs(self, num_iterations:int=100, learning_rate:float=0.01, verbose:bool=True):
+    def _estimate_logit_reg_coeffs(self, num_iterations:int=None, learning_rate:float=None, verbose:bool=True):
         """
         - https://github.com/susanli2016/Machine-Learning-with-Python/blob/master/Logistic%20Regression%20in%20Python%20-%20Step%20by%20Step.ipynb
         - https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb
@@ -710,7 +725,15 @@ class ComputeRegression:
         - https://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation
         - converg engenieering: https://stats.stackexchange.com/questions/113766/omitted-variable-bias-in-logistic-regression-vs-omitted-variable-bias-in-ordina
         """
-        assert len(self.y)==2
+        if learning_rate is None: learning_rate = 0.01
+        if num_iterations is None: num_iterations = 100
+        num_iterations = int(num_iterations)
+        learning_rate = float(learning_rate)
+        assert 0<learning_rate<1
+        assert 1<num_iterations
+
+        assert len(set(self.y))==2
+        assert set(self.y) == {0,1}
         # weights initialization of our Normal Vector, initially we set it to 0, then we learn it eventually
         self.W = zeros(self.X.shape[1])
         yp = self._pred_target(self.X)
@@ -767,8 +790,8 @@ class ComputeRegression:
         self.list_coeffs_std = list_coeffs_std
         self.W  = W
     
-    def _estimate_coeffs(self):
-        list_coeffs_std, W = self._estimate_logit_reg_coeffs() if self.logit else self._estimate_lin_reg_coeffs()
+    def _estimate_coeffs(self, nb_iter:float=None, learning_rate:float=None):
+        list_coeffs_std, W = self._estimate_logit_reg_coeffs(num_iterations=nb_iter, learning_rate=learning_rate) if self.logit else self._estimate_lin_reg_coeffs()
         self._set_coeffs_(W, list_coeffs_std)
     
     def _compute_test_results(self):
@@ -779,7 +802,7 @@ class ComputeRegression:
         # compute tests
         self.Testresults = compute_logit_regression_results(crd=self.regression_result_data, debug=self.debug) if self.logit else compute_linear_regression_results(crd=self.regression_result_data, debug=self.debug)
 
-    def fit(self, X, y):
+    def fit(self, X, y, nb_iter:float=None, learning_rate:float=None):
         """_summary_
 
         Args:
@@ -797,7 +820,7 @@ class ComputeRegression:
         
         self._set_X_y(X=X, y=y)
         
-        self._estimate_coeffs()
+        self._estimate_coeffs(nb_iter=nb_iter, learning_rate=learning_rate)
 
         self._compute_test_results()
 

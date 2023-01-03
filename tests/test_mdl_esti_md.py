@@ -1,9 +1,11 @@
-from common_imports import *
-import sys
-import os.path
+try:
+    from common_imports import *
+except:
+    import sys
+    import os.path
+    sys.path.append(os.path.abspath("."))
+    from common_imports import *
 import warnings
-
-sys.path.append(os.path.abspath("."))
 
 
 class Tests_hp_estimators_regression(unittest.TestCase):
@@ -292,6 +294,69 @@ class test_models(unittest.TestCase):
 
         self.assertTrue(abs(m - loc) < 0.1)
         self.assertTrue(abs(scale - s) < 0.1)
+
+
+class Test_model_log_reg_estimator(unittest.TestCase):
+
+    def test_log_reg(self):
+        print("\n->test_log_reg ...")
+        print('test1')
+        fit_intercept = False
+        loc, scale, size = 20, 3, 2000
+        sample = random.normal(loc=loc, scale=scale, size=size)
+        y = 2*sample #+ 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
+        if fit_intercept: y += 12
+        y = (y>y.mean()).astype('int')
+        print(set(y))
+        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+                                                                   y=y,
+                                                                   degre=1,
+                                                                   fit_intercept=fit_intercept,
+                                                                   logit = True,
+                                                                   alpha=0.05,
+                                                                   nb_iter=1000,
+                                                                   learning_rate=0.01
+                                                                   )
+        print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
+        '''self.assertTrue(abs(coeffs[0] - 12) < 0.1)
+        self.assertTrue(Testresults["coeff_non_zero"].obj[0])
+        self.assertTrue(abs(coeffs[1] - 2) < 0.1)
+        self.assertTrue(Testresults["coeff_non_zero"].obj[1])
+        self.assertTrue(abs(coeffs[2] - 3) < 0.1)
+        self.assertTrue(Testresults["coeff_non_zero"].obj[2])
+        self.assertTrue(Testresults["residu_mean_null"].testPassed)
+        self.assertTrue(Testresults["residuals_normality"].testPassed)
+
+        y = 12 + 2 * sample + 0.0001 * random.normal(0, scale, size)
+        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+                                                                   y=y,
+                                                                   degre=2,
+                                                                   alpha=0.05)
+        #print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
+        self.assertTrue(abs(coeffs[0] - 12) < 0.1)
+        self.assertTrue(Testresults["coeff_non_zero"].obj[0])
+        self.assertTrue(abs(coeffs[1] - 2) < 0.1)
+        self.assertTrue(Testresults["coeff_non_zero"].obj[1])
+        self.assertTrue(abs(coeffs[2] - 0) < 0.1)
+        self.assertFalse(Testresults["coeff_non_zero"].obj[2])
+        self.assertTrue(Testresults["residu_mean_null"].testPassed)
+        self.assertTrue(Testresults["residuals_normality"].testPassed)
+
+        print('test2')
+        y = 12 + sin(sample) + 0.0001 * random.normal(0, scale, size)
+        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+                                                                   y=y,
+                                                                   degre=2,
+                                                                   alpha=0.05)
+        #print("coeff:",coeffs,"coeff_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
+        self.assertFalse(Testresults["residuals_normality"].testPassed)'''
+
+    def assertAlmostEqual_(self, first: float, second: float, diff: float):
+        diff_r = abs(first - second)
+        self.assertTrue(
+            diff_r <= diff,
+            f"{first}!={second}.  with diff={diff} while abs(first-second)={diff_r}"
+        )
 
 
 if __name__ == "__main__":
