@@ -40,7 +40,7 @@ class Test_model_estimator(unittest.TestCase):
         print("\n->test_ne_normal ...")
         loc, scale = 20, 3
         sample = random.normal(loc=loc, scale=scale, size=5000)
-        m, std_estimator, s, Testresults = ME_Normal_dist(sample, alpha=0.05)
+        m, std_estimator, s, Testresults, _others = ME_Normal_dist(sample, alpha=0.05)
         print(m, std_estimator, s, Testresults)
 
         self.assertTrue(abs(m - loc) < 0.1)
@@ -53,7 +53,7 @@ class Test_model_estimator(unittest.TestCase):
         sample = random.normal(loc=loc, scale=scale, size=size)
         y = 12 + 2*sample + 3*power(sample, 2) + \
             0.0001*random.normal(0, scale, size)
-        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
                                                                    y=y,
                                                                    degre=2,
                                                                    alpha=0.05)
@@ -68,7 +68,7 @@ class Test_model_estimator(unittest.TestCase):
         self.assertTrue(Testresults["residuals_normality"].testPassed)
 
         y = 12 + 2 * sample + 0.0001 * random.normal(0, scale, size)
-        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
                                                                    y=y,
                                                                    degre=2,
                                                                    alpha=0.05)
@@ -84,7 +84,7 @@ class Test_model_estimator(unittest.TestCase):
 
         print('test2')
         y = 12 + sin(sample) + 0.0001 * random.normal(0, scale, size)
-        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
                                                                    y=y,
                                                                    degre=2,
                                                                    alpha=0.05)
@@ -107,7 +107,7 @@ class Test_model_estimator(unittest.TestCase):
         model = sm_api.OLS.from_formula("Wingspan ~ Height", data=df)
         res = model.fit()
 
-        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=x,
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=x,
                                                                    y=y,
                                                                    degre=1,
                                                                    alpha=0.05,
@@ -206,7 +206,7 @@ class Test_model_estimator(unittest.TestCase):
         model = sm_api.OLS.from_formula("Wingspan ~ Height+CWDistance",
                                         data=df)
         res = model.fit()
-        coeffs, list_coeffs_std, residu_std, Testresults = ME_multiple_regression(
+        coeffs, list_coeffs_std, residu_std, Testresults, _others = ME_multiple_regression(
             X, y, debug=debug, alpha=0.05)
         print(
             f"coeff: {coeffs}\n-->coeff_estim_std: {list_coeffs_std}\n-->residu_std: {residu_std}\n-->tests:"
@@ -292,20 +292,26 @@ class Test_model_log_reg_estimator(unittest.TestCase):
     def test_log_reg(self):
         print("\n->test_log_reg ...")
         print('test1')
-        fit_intercept = True
+        fit_intercept = False
         loc, scale, size = 20, 3, 2000
         sample = random.normal(loc=loc, scale=scale, size=size)
+        sample = (sample - sample.mean())/sample.std()
         y = 2*sample #+ 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
         if fit_intercept: y += 12
+        y = (y - y.mean())/y.std()
+        mode1 = True
+        if mode1:
+            y = 1/(1+exp(-(y)))
+            #y = (y>0.5).astype('int')
         y = (y>y.mean()).astype('int')
         print(set(y))
-        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
                                                                    y=y,
                                                                    degre=1,
-                                                                   fit_intercept=fit_intercept,
+                                                                   fit_intercept=True,
                                                                    logit = True,
                                                                    alpha=0.05,
-                                                                   nb_iter=50000,
+                                                                   nb_iter=10000,
                                                                    learning_rate=0.1
                                                                    )
         print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
@@ -319,7 +325,7 @@ class Test_model_log_reg_estimator(unittest.TestCase):
         self.assertTrue(Testresults["residuals_normality"].testPassed)
 
         y = 12 + 2 * sample + 0.0001 * random.normal(0, scale, size)
-        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
                                                                    y=y,
                                                                    degre=2,
                                                                    alpha=0.05)
@@ -335,7 +341,7 @@ class Test_model_log_reg_estimator(unittest.TestCase):
 
         print('test2')
         y = 12 + sin(sample) + 0.0001 * random.normal(0, scale, size)
-        coeffs, coeff_std, residu_std, Testresults = ME_Regression(x=sample,
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
                                                                    y=y,
                                                                    degre=2,
                                                                    alpha=0.05)

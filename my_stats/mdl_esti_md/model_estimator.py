@@ -90,10 +90,12 @@ def ME_Normal_dist(sample: list, alpha=None, debug=False):
         print('residuals does not look Gaussian (reject H0)')
 
     Testresults = {"residuals_normality": passNormalitytest}
-    return m, std_estimator, s, Testresults
+
+    _others = {}
+    return m, std_estimator, s, Testresults, _others
 
 
-def ME_Regression(x: list, y: list, degre: int, logit=False, fit_intercept=True, debug=False, alpha=None, nb_iter=None, learning_rate=None):
+def ME_Regression(x: list, y: list, degre: int, logit=False, fit_intercept=True, debug=False, alpha:float=0.05, nb_iter:int=100000, learning_rate:float=0.1):
     '''
     estimate a regression model from two samples
 
@@ -169,7 +171,9 @@ def ME_Regression(x: list, y: list, degre: int, logit=False, fit_intercept=True,
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 
-    return coeffs, list_coeffs_std, residu_std, Testresults
+    _others = {"cr":cr}
+
+    return coeffs, list_coeffs_std, residu_std, Testresults, _others
 
 
 def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, debug=False, alpha=None):
@@ -259,7 +263,9 @@ def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, de
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 
-    return coeffs, list_coeffs_std, residu_std, Testresults
+    _others = {"cr":cr}
+
+    return coeffs, list_coeffs_std, residu_std, Testresults, _others
 
 
 def ME_logistic_regression(X: list, y: list, debug=False, alpha=None):

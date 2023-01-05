@@ -1,6 +1,8 @@
 from numpy import (abs, array, sqrt, log)
 import math
 
+from my_stats.utils_md.estimate_std import estimate_std
+import warnings
 
 def compute_skew(arr):
     """_summary_
@@ -88,8 +90,12 @@ class PredictionMetrics:
         self.y_pred = y_pred
         self.binary = bool(binary)
         if binary:
+            assert ( (self.y_pred<0) + (self.y_pred>1) ).sum() == 0, "0 to 1 constraint failed"
+            assert ( (self.y_true<0) + (self.y_true>1) ).sum() == 0, "0 to 1 constraint failed"
             self.y_true_bin = (y_true>0.5).astype('int')
             self.y_pred_bin = (y_pred>0.5).astype('int')
+            if len(set(self.y_true_bin))!=2: warnings.warn(f"found {set(self.y_true_bin)} in y_true_bin")
+            if len(set(self.y_pred_bin))!=2: warnings.warn(f"found {set(self.y_pred_bin)} in y_pred_bin")
             self.confusion_matrix = None
 
     def compute_mae(self):
@@ -99,10 +105,21 @@ class PredictionMetrics:
         return abs(y - y_pred).mean()
 
     
-    def compute_log_likelihood(self, std_eval: float, debug=False):
+    def compute_log_likelihood(self, std_eval:float=None, debug=False, min_tol:float=True):
+        """_summary_
+
+        Args:
+            std_eval (float, optional): (ignored if self.binary=True). Defaults to None.
+            debug (bool, optional): _description_. Defaults to False.
+            min_tol (float, optional): (ignored if self.binary=False). Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         if self.binary:
-            return self._log_likelihood_logit()
+            return self._log_likelihood_logit(min_tol=min_tol)
         else:
+            if std_eval is None: std_eval = estimate_std(self.y_true - self.y_pred)
             return self._log_likelihood_lin_reg(std_eval=std_eval, debug=debug)
     
     def _log_likelihood_lin_reg(self, std_eval: float, debug=False):
@@ -134,11 +151,24 @@ class PredictionMetrics:
         log_likelihood = -(n / 2) * CST - SST / (2 * sigma_carre)
         return log_likelihood
     
-    def _log_likelihood_logit(self):
+    def log_loss_flat(self, min_tol:float=None):
         assert self.binary == True
         y = self.y_true
         yp = self.y_pred
-        return (y * log(yp) + (1 - y) * log(1 - yp)).sum()
+        assert ( (yp<0) + (yp>1)).sum() == 0, "0 to 1 constraint failed"
+        assert ( (y<0) + (yp>1)).sum() == 0, "0 to 1 constraint failed"
+        if min_tol is not None:
+            min_tol = float(min_tol) if min_tol!=True else 10**(-12)
+            assert 0<min_tol<0.1
+            if len(yp[yp>0]): yp[yp<=0]= min(min(yp[yp>0]), min_tol)
+            if len(yp[yp>=1]): yp[yp>=1]= max(max(yp[yp<1]), 1-min_tol)
+        return (y * log(yp) + (1 - y) * log(1 - yp))
+
+    def _log_likelihood_logit(self, min_tol:float=True):
+        return self.log_loss_flat(min_tol=min_tol).sum()
+
+    def log_loss(self, min_tol:float=True):
+        return - self.log_loss_flat(min_tol=min_tol).mean()
 
 
 

@@ -15,9 +15,9 @@ from scipy.linalg import inv, det
 from numpy import (abs, random, array, sqrt, diag, dot, log, ones, hstack, ndarray)
 from numpy import (exp,log, exp, dot, zeros)
 from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test)
-from my_stats.mdl_esti_md.prediction_results import (compute_logit_regression_results, compute_linear_regression_results, compute_regression_results, RegressionResultData)
+from my_stats.mdl_esti_md.prediction_results import (compute_logit_regression_results, compute_linear_regression_results, RegressionResultData)
 from my_stats.utils_md.estimate_std import (estimate_std)
-
+from my_stats.mdl_esti_md.prediction_metrics import (PredictionMetrics)
 
 print('mdl_esti_md.hp_estimator_regression: import start...')
 sys.path.append(os.path.abspath("."))
@@ -43,6 +43,23 @@ def log_loss(yp, y):
     #_f = vectorize(lambda x: min(max(x, 0.005), 1-0.005))
     #yp = _f(y)
     return (-y * log(yp) - (1 - y) * log(1 - yp)).mean()
+
+def log_loss(yp, y):
+    assert ( (yp<0)).sum() == 0, "0 to 1 constraint failed"
+    assert ( (y<0)).sum() == 0, "0 to 1 constraint failed"
+    y[y==0]= min(min(y[y!=0]), 10**(-12))
+    yp[yp==0]= min(min(yp[yp!=0]), 10**(-12))
+    return -(y * log(yp) + (1 - y) * log(1 - yp)).mean()
+
+def log_loss(yp, y, min_tol:float=None):
+    assert ( (yp<0) + (yp>1)).sum() == 0, "0 to 1 constraint failed"
+    assert ( (y<0) + (yp>1)).sum() == 0, "0 to 1 constraint failed"
+    if min_tol is not None:
+        min_tol = float(min_tol) if min_tol!=True else 10**(-12)
+        assert 0<min_tol<0.1
+        if len(yp[yp>0]): yp[yp<=0]= min(min(yp[yp>0]), min_tol)
+        if len(yp[yp>=1]): yp[yp>=1]= max(max(yp[yp<1]), 1-min_tol)
+    return - (y * log(yp) + (1 - y) * log(1 - yp)).mean()
 
 
 class ComputeRegression:
@@ -87,6 +104,14 @@ class ComputeRegression:
         return 1 / (1 + exp(-z))
     
     def _pred_target(self, X):
+        """apply sigmoid and return proba
+
+        Args:
+            X (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         assert X.shape[1] == self.X.shape[1]
         y_pred = dot(X, self.W)
         if self.logit: y_pred = self._sigmoid(y_pred)
@@ -143,9 +168,15 @@ class ComputeRegression:
             #prediction
             yp = self._pred_target(self.X)
             # loss
-            loss = log_loss(yp, self.y)
+            #loss = log_loss(yp, self.y, min_tol=True)
+            pm = PredictionMetrics(y_true=self.y, y_pred=yp, binary=True)
+            loss = pm.log_loss(min_tol=True)
+            acc = pm.get_binary_accuracy()
+            f1 = pm.get_f1_score()
+            prec = pm.get_precision_score()
+            rec = pm.get_recall_score()
             if(verbose ==True and i % 10000 == 0):
-                print(f'{round(100*i/num_iterations)}% loss: {loss} \t')
+                print(f'{round(100*i/num_iterations)}% loss: {round(loss,5)} acc: {round(acc,5)}  f1: {round(f1,5)}  prec: {round(prec,5)}  rec: {round(rec,5)} \t')
         
         list_coeffs_std = self._estimate_log_reg_coeff_std()
         
@@ -239,14 +270,14 @@ class ComputeRegression:
         lim = float(lim)
         assert 0<lim<1
         y_pred = self.predict_proba(X_test=X_test)
-        return (y_pred>lim).as_type('int')
+        return (y_pred>lim).astype('int')
     
 
     '''def predict(self, X_test:ndarray, lim=0.5):
         lim = float(lim)
         assert 0<lim<1
         y_pred = self.predict_proba(X_test=X_test)
-        return (y_pred>lim).as_type('int')
+        return (y_pred>lim).astype('int')
     '''
 
 

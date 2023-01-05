@@ -4,6 +4,12 @@ source: https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python
 '''
 
 import numpy as np
+
+import sys
+import os.path
+sys.path.append(os.path.abspath("."))
+from my_stats.mdl_esti_md.prediction_metrics import PredictionMetrics
+
 class LogisticRegression:
     
     # defining parameters such as learning rate, number ot iterations, whether to include intercept, 
@@ -27,7 +33,8 @@ class LogisticRegression:
     
     def __loss(self, yp, y):
         # this is the loss function which we use to minimize the error of our model
-        return (-y * np.log(yp) - (1 - y) * np.log(1 - yp)).mean()
+        #return (-y * np.log(yp) - (1 - y) * np.log(1 - yp)).mean()
+        return PredictionMetrics(y_true=y, y_pred=yp, binary=True).log_loss(min_tol=True)
     
     # this is the function which trains our model.
     def fit(self, X, y):
@@ -88,9 +95,16 @@ y = (y>y.mean()).astype('int')
 X = sample.reshape(-1, 1)
 
 #model
-model = LogisticRegression(learning_rate=0.1, num_iterations=100000, verbose=True)
+model = LogisticRegression(learning_rate=0.1, num_iterations=500000, verbose=True)
 model.fit(X, y)
-preds = model.predict(X)
-print("pred_sc = ",(preds == y).mean())
+print("pred_sc = ",(model.predict(X) == y).sum()/len(y))
 
-
+preds = model.predict_prob(X)
+cl = PredictionMetrics(y, preds, binary=True)
+dd = {}
+dd["acc"] = cl.get_binary_accuracy()
+dd["rec"] = cl.get_recall_score()
+dd["prec"] = cl.get_precision_score()
+dd["conf"] = cl.get_confusion_matrix()
+dd["log-likelihood"] = cl.compute_log_likelihood()
+print(dd)
