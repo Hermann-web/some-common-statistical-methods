@@ -1,6 +1,6 @@
 '''
 Author: Susan Li 
-source: https://github.com/susanli2016/Machine-Learning-with-Python/blob/master/Logistic%20Regression%20in%20Python%20-%20Step%20by%20Step.ipynb
+source: https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb
 '''
 
 import numpy as np
@@ -63,7 +63,7 @@ class LogisticRegression:
             
             # as mentioned above if we want to print somehting we use verbose, so if verbose=True then our loss get printed
             if(self.verbose ==True and i % 10000 == 0):
-                print(f'loss: {loss} \t')
+                print(f'step {round(100*i/self.num_iterations)}% loss: {loss} \t')
     
     # this is where we predict the probability values based on out generated W values out of all those iterations.
     def predict_prob(self, X):
@@ -77,3 +77,20 @@ class LogisticRegression:
     # this is where we predict the actual values 0 or 1 using round. anything less than 0.5 = 0 or more than 0.5 is 1
     def predict(self, X):
         return self.predict_prob(X).round()
+
+#data
+import numpy as np
+fit_intercept = False
+loc, scale, size = 20, 3, 2000
+sample = np.random.normal(loc=loc, scale=scale, size=size)
+y = 12 + 2*sample #+ 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
+y = (y>y.mean()).astype('int')
+X = sample.reshape(-1, 1)
+
+#model
+model = LogisticRegression(learning_rate=0.1, num_iterations=100000, verbose=True)
+model.fit(X, y)
+preds = model.predict(X)
+print("pred_sc = ",(preds == y).mean())
+
+

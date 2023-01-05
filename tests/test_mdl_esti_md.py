@@ -8,7 +8,9 @@ except:
 import warnings
 
 
+
 class Tests_hp_estimators_regression(unittest.TestCase):
+
 
     def test_fisher(self):
         print("\n->test_fisher ...")
@@ -284,24 +286,13 @@ class Test_model_estimator(unittest.TestCase):
         condno = meta_data["condno"]  # Cond. No.
 
 
-class test_models(unittest.TestCase):
-
-    def test_ne_normal(self):
-        loc, scale = 20, 3
-        sample = random.normal(loc=loc, scale=scale, size=5000)
-        m, s = model_normal_dist(sample, alpha=0.05)
-        print(m, s)
-
-        self.assertTrue(abs(m - loc) < 0.1)
-        self.assertTrue(abs(scale - s) < 0.1)
-
 
 class Test_model_log_reg_estimator(unittest.TestCase):
 
     def test_log_reg(self):
         print("\n->test_log_reg ...")
         print('test1')
-        fit_intercept = False
+        fit_intercept = True
         loc, scale, size = 20, 3, 2000
         sample = random.normal(loc=loc, scale=scale, size=size)
         y = 2*sample #+ 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
@@ -314,8 +305,8 @@ class Test_model_log_reg_estimator(unittest.TestCase):
                                                                    fit_intercept=fit_intercept,
                                                                    logit = True,
                                                                    alpha=0.05,
-                                                                   nb_iter=1000,
-                                                                   learning_rate=0.01
+                                                                   nb_iter=50000,
+                                                                   learning_rate=0.1
                                                                    )
         print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
         '''self.assertTrue(abs(coeffs[0] - 12) < 0.1)

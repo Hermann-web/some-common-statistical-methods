@@ -1,9 +1,8 @@
-from my_stats.mdl_esti_md.models import (model_normal_dist)
 from my_stats.mdl_esti_md.model_estimator import (ME_Normal_dist,
                                                   ME_Regression,
                                                   ME_multiple_regression)
-from my_stats.mdl_esti_md.hp_estimators_regression import (
-    HPE_REGRESSION_FISHER_TEST)
+
+from my_stats.mdl_esti_md.prediction_results import HPE_REGRESSION_FISHER_TEST
 from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
                                               check_hyp_min_samples,
                                               check_zero_to_one_constraint)
