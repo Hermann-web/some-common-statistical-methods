@@ -176,7 +176,7 @@ def ME_Regression(x: list, y: list, degre: int, logit=False, fit_intercept=True,
     return coeffs, list_coeffs_std, residu_std, Testresults, _others
 
 
-def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, debug=False, alpha=None):
+def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, debug=False, alpha:float=0.05, nb_iter:int=100000, learning_rate:float=0.1):
     """_summary_
 
     Args:
@@ -256,7 +256,7 @@ def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, de
     check_hyp_min_sample(X.shape[0])
     
     cr = ComputeRegression(logit=logit, fit_intercept=fit_intercept, alpha=alpha, debug=debug)
-    cr.fit(X, y)
+    cr.fit(X, y, nb_iter=nb_iter, learning_rate=learning_rate)
     coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results()
     nb_param = X.shape[1] # without slope
     if fit_intercept: nb_param = nb_param + 1
