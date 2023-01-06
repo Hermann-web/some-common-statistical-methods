@@ -116,6 +116,10 @@ class ComputeRegression:
         y_pred = dot(X, self.W)
         if self.logit: y_pred = self._sigmoid(y_pred)
         return y_pred
+    
+    def count_nan_and_inf(self, arr):
+        import numpy as np
+        return (arr==np.inf).sum() + (arr==np.nan).sum() 
 
     def _estimate_log_reg_coeff_std(self):
         """_summary_
@@ -128,14 +132,21 @@ class ComputeRegression:
             _type_: _description_
         """
         #compute #
-        temp = exp(self.X @ self.W)
+        assert self.count_nan_and_inf(self.W)==0
+        assert self.count_nan_and_inf(self.X)==0
+        temp = self.X @ self.W
+        assert self.count_nan_and_inf(temp)==0, "temp1 contains inf or nan."
+        temp = exp(temp)
         assert temp.shape == (self.nb_obs, )
+        assert self.count_nan_and_inf(temp)==0, "temp2 contains inf or nan. please add a normalisation"
         WT = temp / (1+temp)**2
         assert WT.shape == (self.nb_obs, )
+        assert self.count_nan_and_inf(WT)==0, "WT contains inf or nan."
         WT = diag(WT)
         assert WT.shape == (self.nb_obs, self.nb_obs)
         b1 = self.X.T @ WT @ self.X
         assert b1.shape == (self.nb_param, self.nb_param), f"found {b1.shape} instead of {(self.nb_param, self.nb_param)}"
+        assert self.count_nan_and_inf(b1)==0, "b1 contains inf or nan."
         b1 = inv(b1)
         return sqrt(diag(b1))
 
