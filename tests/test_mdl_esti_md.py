@@ -305,16 +305,16 @@ class Test_model_log_reg_estimator(unittest.TestCase):
             #y = (y>0.5).astype('int')
         y = (y>y.mean()).astype('int')
         print(set(y))
-        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
+        '''coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
                                                                    y=y,
                                                                    degre=1,
                                                                    fit_intercept=True,
                                                                    logit = True,
                                                                    alpha=0.05,
-                                                                   nb_iter=10000,
+                                                                   nb_iter=10,
                                                                    learning_rate=0.1
                                                                    )
-        print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
+        print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)'''
         '''self.assertTrue(abs(coeffs[0] - 12) < 0.1)
         self.assertTrue(Testresults["coeff_non_zero"].obj[0])
         self.assertTrue(abs(coeffs[1] - 2) < 0.1)
@@ -347,6 +347,35 @@ class Test_model_log_reg_estimator(unittest.TestCase):
                                                                    alpha=0.05)
         #print("coeff:",coeffs,"coeff_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
         self.assertFalse(Testresults["residuals_normality"].testPassed)'''
+
+        import numpy as np
+        loc, scale, size = 20, 3, 10000
+        sample = np.random.normal(loc=loc, scale=scale, size=size)
+        sample = (sample-sample.mean())/sample.std()
+        y = 12 + 2*sample + 50*np.power(sample, 2) + 0.0001*np.random.normal(0, scale, size)
+        y = (y-y.mean())/y.std()
+        y = 1/(1+np.exp(-y))
+        y = (y>0.5).astype('int')
+        #X = sample.reshape(-1, 1)
+        degre = 2
+        X = np.array([np.power(sample, i) for i in range(1, degre+1)]).T
+        print(np.unique(y))
+
+        y_train = y 
+        X_train = X
+
+        X_train_ = X_train[:2000]
+        y_train_ = y_train[:2000]
+        print(set(y_train))
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_multiple_regression(X=X_train_,
+                                                                    y=y_train_,
+                                                                    fit_intercept=True,
+                                                                    logit = True,
+                                                                    alpha=0.05,
+                                                                    nb_iter=100000,
+                                                                    learning_rate=0.1
+                                                                    )
+        print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
 
     def assertAlmostEqual_(self, first: float, second: float, diff: float):
         diff_r = abs(first - second)
