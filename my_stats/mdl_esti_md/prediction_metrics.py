@@ -85,17 +85,18 @@ def compute_aic_bic(dfr: int, n: int, llh: float, method: str = "basic"):
 
 class PredictionMetrics:
 
-    def __init__(self, y_true: list, y_pred: list, binary=False) -> None:
+    def __init__(self, y_true: list, y_pred_proba: list, binary=False) -> None:
         self.y_true = y_true 
-        self.y_pred = y_pred
+        self.y_pred = y_pred_proba
         self.binary = bool(binary)
         if binary:
             assert ( (self.y_pred<0) + (self.y_pred>1) ).sum() == 0, "0 to 1 constraint failed"
             assert ( (self.y_true<0) + (self.y_true>1) ).sum() == 0, "0 to 1 constraint failed"
-            self.y_true_bin = (y_true>0.5).astype('int')
-            self.y_pred_bin = (y_pred>0.5).astype('int')
+            self.y_true_bin = (self.y_true>0.5).astype('int')
+            self.y_pred_bin = (self.y_pred>0.5).astype('int')
             if len(set(self.y_true_bin))!=2: warnings.warn(f"found {set(self.y_true_bin)} in y_true_bin")
             if len(set(self.y_pred_bin))!=2: warnings.warn(f"found {set(self.y_pred_bin)} in y_pred_bin")
+            assert len(set(self.y_pred))>2, f"found len(set(y_pred_proba)) = {len(set(self.y_pred))}. y_pred_proba = {set(self.y_pred)} may be the predictions. Please send y_pred_proba as probabilities (continuous values between 0 and 1"
             self.confusion_matrix = None
 
     def compute_mae(self):
