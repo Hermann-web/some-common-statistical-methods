@@ -157,12 +157,15 @@ class PredictionMetrics:
         yp = self.y_pred
         assert ( (yp<0) + (yp>1)).sum() == 0, "0 to 1 constraint failed"
         assert ( (y<0) + (yp>1)).sum() == 0, "0 to 1 constraint failed"
+        yp1 = yp.copy()
+        yp2 = yp.copy()
         if min_tol is not None:
-            min_tol = float(min_tol) if min_tol!=True else 10**(-12)
+            min_tol = float(min_tol) if min_tol!=True else 10**(-12) #si c'est plus petit, ce sera trop petit pour log
             assert 0<min_tol<0.1
-            if len(yp[yp>0]): yp[yp<=0]= min(min(yp[yp>0]), min_tol)
-            if len(yp[yp>=1]): yp[yp>=1]= max(max(yp[yp<1]), 1-min_tol)
-        return (y * log(yp) + (1 - y) * log(1 - yp))
+            yp1[yp<=0]= min(min(yp[yp>0]), min_tol) if len(yp[yp>0]) else min_tol
+            yp2[yp>=1]= max(max(yp[yp<1]), 1-min_tol) if len(yp[yp<1]) else 1-min_tol
+        return (y * log(yp1) + (1 - y) * log(1 - yp2))
+
 
     def _log_likelihood_logit(self, min_tol:float=True):
         return self.log_loss_flat(min_tol=min_tol).sum()
