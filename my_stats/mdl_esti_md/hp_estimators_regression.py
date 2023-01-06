@@ -160,6 +160,8 @@ class ComputeRegression:
         self.W = zeros(self.X.shape[1])
         yp = self._pred_target(self.X)
         # this for loop runs for the number of iterations provided
+        _list_fct = {"loss":PredictionMetrics.log_loss, "acc":PredictionMetrics.get_binary_accuracy, "f1":PredictionMetrics.get_f1_score, "prec":PredictionMetrics.get_precision_score, "rec":PredictionMetrics.get_recall_score}
+        self.hist = {_mt:[] for _mt in _list_fct}
         for i in range(num_iterations):
             #gradient
             grad = dot(self.X.T, (yp - self.y)) / self.y.size #https://arunaddagatla.medium.com/maximum-likelihood-estimation-in-logistic-regression-f86ff1627b67
@@ -170,13 +172,10 @@ class ComputeRegression:
             # loss
             #loss = log_loss(yp, self.y, min_tol=True)
             pm = PredictionMetrics(y_true=self.y, y_pred=yp, binary=True)
-            loss = pm.log_loss(min_tol=True)
-            acc = pm.get_binary_accuracy()
-            f1 = pm.get_f1_score()
-            prec = pm.get_precision_score()
-            rec = pm.get_recall_score()
+            for _mt in _list_fct:self.hist[_mt].append(_list_fct[_mt](pm))          
             if(verbose ==True and i % 10000 == 0):
-                print(f'{round(100*i/num_iterations)}% loss: {round(loss,5)} acc: {round(acc,5)}  f1: {round(f1,5)}  prec: {round(prec,5)}  rec: {round(rec,5)} \t')
+                _str = " ".join([f"{_mt}: {round(self.hist[_mt][-1],5)}" for _mt in _list_fct])
+                print(f'{round(100*i/num_iterations)}% {_str} \t')
         
         list_coeffs_std = self._estimate_log_reg_coeff_std()
         
@@ -219,7 +218,9 @@ class ComputeRegression:
         self.W  = W
     
     def _estimate_coeffs(self, nb_iter:float=None, learning_rate:float=None):
+
         list_coeffs_std, W = self._estimate_logit_reg_coeffs(num_iterations=nb_iter, learning_rate=learning_rate) if self.logit else self._estimate_lin_reg_coeffs()
+        
         self._set_coeffs_(W, list_coeffs_std)
     
     def _compute_test_results(self):
