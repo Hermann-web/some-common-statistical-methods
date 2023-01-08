@@ -85,9 +85,12 @@ def compute_aic_bic(dfr: int, n: int, llh: float, method: str = "basic"):
 
 class PredictionMetrics:
 
-    def __init__(self, y_true: list, y_pred_proba: list, binary=False) -> None:
+    def __init__(self, y_true: list, y_pred_proba: list, binary:bool) -> None:
         self.y_true = y_true 
         self.y_pred = y_pred_proba
+        assert self.y_true.ndim ==1
+        assert self.y_pred.ndim ==1
+        assert self.y_true.shape == self.y_pred.shape
         self.binary = bool(binary)
         if binary:
             assert ( (self.y_pred<0) + (self.y_pred>1) ).sum() == 0, "0 to 1 constraint failed"
@@ -207,3 +210,13 @@ class PredictionMetrics:
         rec = self.get_recall_score()
         return 2*(prec*rec)/(prec+rec)
     
+    def get_binary_regression_res(self):
+        assert self.binary == True
+        dd = {}
+        dd["acc"] = self.get_binary_accuracy()
+        dd["rec"] = self.get_recall_score()
+        dd["prec"] = self.get_precision_score()
+        dd["conf"] = self.get_confusion_matrix()
+        dd["log-likelihood"] = self.compute_log_likelihood()
+        dd["log-loss"] = self.log_loss()
+        return dd

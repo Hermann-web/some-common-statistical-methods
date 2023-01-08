@@ -34,7 +34,7 @@ class LogisticRegression:
     def __loss(self, yp, y):
         # this is the loss function which we use to minimize the error of our model
         #return (-y * np.log(yp) - (1 - y) * np.log(1 - yp)).mean()
-        return PredictionMetrics(y_true=y, y_pred=yp, binary=True).log_loss(min_tol=True)
+        return PredictionMetrics(y_true=y, y_pred_proba=yp, binary=True).log_loss(min_tol=True)
     
     # this is the function which trains our model.
     def fit(self, X, y):
@@ -100,11 +100,12 @@ model.fit(X, y)
 print("pred_sc = ",(model.predict(X) == y).sum()/len(y))
 
 preds = model.predict_prob(X)
-cl = PredictionMetrics(y, preds, binary=True)
+cl = PredictionMetrics(y_true=y, y_pred_proba=preds, binary=True)
 dd = {}
 dd["acc"] = cl.get_binary_accuracy()
 dd["rec"] = cl.get_recall_score()
 dd["prec"] = cl.get_precision_score()
 dd["conf"] = cl.get_confusion_matrix()
 dd["log-likelihood"] = cl.compute_log_likelihood()
+dd["log-loss"] = cl.log_loss()
 print(dd)

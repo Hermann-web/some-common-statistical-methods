@@ -182,7 +182,7 @@ class ComputeRegression:
             yp = self._pred_target(self.X)
             # loss
             #loss = log_loss(yp, self.y, min_tol=True)
-            pm = PredictionMetrics(y_true=self.y, y_pred=yp, binary=True)
+            pm = PredictionMetrics(y_true=self.y, y_pred_proba=yp, binary=True)
             for _mt in _list_fct:self.hist[_mt].append(_list_fct[_mt](pm))          
             if(verbose ==True and i % 10000 == 0):
                 _str = " ".join([f"{_mt}: {round(self.hist[_mt][-1],5)}" for _mt in _list_fct])

@@ -26,6 +26,9 @@ from my_stats.conf_inte_md.confidence_interval import (IC_MEAN_ONE,
                                                        IC_PROPORTION_TWO)
 from my_stats.utils_md.refactoring import (Tails)
 from my_stats.utils_md.estimate_std import (estimate_std)
+from my_stats.mdl_esti_md.prediction_metrics import PredictionMetrics
+
+
 from pandas import read_csv
 from scipy.stats import (f_oneway) # pip install statsmodels
 import statsmodels.api as sm_api

@@ -209,7 +209,7 @@ def compute_linear_regression_results(crd:RegressionResultData, debug:bool=False
         "p_value": p_value
     }
 
-    _metric = PredictionMetrics(y_true=y, y_pred=y_hat)
+    _metric = PredictionMetrics(y_true=y, y_pred_proba=y_hat, binary=False)
 
     Testresults["metrics"] = {}
     log_likelihood = _metric.compute_log_likelihood(std_eval=residu_std)
@@ -278,19 +278,18 @@ def compute_logit_regression_results(crd:RegressionResultData, debug:bool=False)
         debug=debug)
     Testresults["coeff_non_zero"] = pass_non_zero_test
 
-    _metric = PredictionMetrics(y_true=y, y_pred=y_hat, binary=True)
+    _metric = PredictionMetrics(y_true=y, y_pred_proba=y_hat, binary=True)
 
     Testresults["metrics"] = {}
     log_likelihood = _metric.compute_log_likelihood(std_eval=residu_std)
     Testresults["metrics"]["log-likelihood"] = log_likelihood
+    Testresults["metrics"]["log-loss"] = _metric.log_loss()
 
-    
-
-    Testresults["confusion"] = _metric.get_confusion_matrix()
-    Testresults["accuracy"] = _metric.get_binary_accuracy()
-    Testresults["precision"] = _metric.get_precision_score()
-    Testresults["recall"] = _metric.get_recall_score()
-    Testresults["f1"] = _metric.get_f1_score()
+    Testresults["metrics"]["confusion"] = _metric.get_confusion_matrix()
+    Testresults["metrics"]["accuracy"] = _metric.get_binary_accuracy()
+    Testresults["metrics"]["precision"] = _metric.get_precision_score()
+    Testresults["metrics"]["recall"] = _metric.get_recall_score()
+    Testresults["metrics"]["f1"] = _metric.get_f1_score()
     #Testresults["roc"] = 
     
     return Testresults
