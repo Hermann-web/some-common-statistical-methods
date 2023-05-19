@@ -17,8 +17,14 @@ from numpy.linalg import norm
 from numpy import array, vectorize, random
 from math import sqrt
 
-from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample, check_hyp_min_samples, check_or_get_alpha_for_hyph_test, check_zero_to_one_constraint)
-from my_stats.utils_md.compute_ppf_and_p_value import (get_p_value, get_p_value_f_test, get_p_value_t_test, get_p_value_z_test)
+from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
+                                              check_hyp_min_samples,
+                                              check_or_get_alpha_for_hyph_test,
+                                              check_zero_to_one_constraint)
+from my_stats.utils_md.compute_ppf_and_p_value import (get_p_value,
+                                                       get_p_value_f_test,
+                                                       get_p_value_t_test,
+                                                       get_p_value_z_test)
 from my_stats.utils_md.refactoring import (Hypothesis_data, Tails)
 
 print('hyp_testi_md.hp_estimators: import start...')

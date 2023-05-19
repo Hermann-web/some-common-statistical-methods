@@ -10,26 +10,29 @@ import warnings
 import numpy as np
 
 # check same coeffs
-resc = lambda x,n: x * 10**(n-1 - np.floor(np.log10(x)))
+resc = lambda x, n: x * 10**(n - 1 - np.floor(np.log10(x)))
+
+
 def resc_array(z, n=2):
     n = int(n)
-    assert n>0
+    assert n > 0
     x = z.copy()
-    x[z>0] = resc(z[z>0],n=n)
-    x[z<0] = - resc(-z[z<0],n=n)
+    x[z > 0] = resc(z[z > 0], n=n)
+    x[z < 0] = -resc(-z[z < 0], n=n)
     return x
 
-assert resc(50,2) ==50
-assert resc(10,2) ==10
-assert resc(5,2) ==50
-assert resc(1,2) ==10
-assert resc(0.5,2) ==50
-assert resc(0.1,2) ==10
-assert resc(0.05,2)==50
-assert resc(0.01,2) ==10
+
+assert resc(50, 2) == 50
+assert resc(10, 2) == 10
+assert resc(5, 2) == 50
+assert resc(1, 2) == 10
+assert resc(0.5, 2) == 50
+assert resc(0.1, 2) == 10
+assert resc(0.05, 2) == 50
+assert resc(0.01, 2) == 10
+
 
 class Tests_hp_estimators_regression(unittest.TestCase):
-
 
     def test_fisher(self):
         print("\n->test_fisher ...")
@@ -59,7 +62,8 @@ class Test_model_estimator(unittest.TestCase):
         print("\n->test_ne_normal ...")
         loc, scale = 20, 3
         sample = random.normal(loc=loc, scale=scale, size=5000)
-        m, std_estimator, s, Testresults, _others = ME_Normal_dist(sample, alpha=0.05)
+        m, std_estimator, s, Testresults, _others = ME_Normal_dist(sample,
+                                                                   alpha=0.05)
         print(m, std_estimator, s, Testresults)
 
         self.assertTrue(abs(m - loc) < 0.1)
@@ -72,10 +76,8 @@ class Test_model_estimator(unittest.TestCase):
         sample = random.normal(loc=loc, scale=scale, size=size)
         y = 12 + 2*sample + 3*power(sample, 2) + \
             0.0001*random.normal(0, scale, size)
-        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
-                                                                   y=y,
-                                                                   degre=2,
-                                                                   alpha=0.05)
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(
+            x=sample, y=y, degre=2, alpha=0.05)
         #print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
         self.assertTrue(abs(coeffs[0] - 12) < 0.1)
         self.assertTrue(Testresults["coeff_non_zero"].obj[0])
@@ -87,10 +89,8 @@ class Test_model_estimator(unittest.TestCase):
         self.assertTrue(Testresults["residuals_normality"].testPassed)
 
         y = 12 + 2 * sample + 0.0001 * random.normal(0, scale, size)
-        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
-                                                                   y=y,
-                                                                   degre=2,
-                                                                   alpha=0.05)
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(
+            x=sample, y=y, degre=2, alpha=0.05)
         #print("coeff:",coeffs,"coeff_estim_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
         self.assertTrue(abs(coeffs[0] - 12) < 0.1)
         self.assertTrue(Testresults["coeff_non_zero"].obj[0])
@@ -103,10 +103,8 @@ class Test_model_estimator(unittest.TestCase):
 
         print('test2')
         y = 12 + sin(sample) + 0.0001 * random.normal(0, scale, size)
-        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
-                                                                   y=y,
-                                                                   degre=2,
-                                                                   alpha=0.05)
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(
+            x=sample, y=y, degre=2, alpha=0.05)
         #print("coeff:",coeffs,"coeff_std:",coeff_std, "residu_std:",residu_std,"tests:",Testresults)
         self.assertFalse(Testresults["residuals_normality"].testPassed)
 
@@ -126,11 +124,8 @@ class Test_model_estimator(unittest.TestCase):
         model = sm_api.OLS.from_formula("Wingspan ~ Height", data=df)
         res = model.fit()
 
-        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=x,
-                                                                   y=y,
-                                                                   degre=1,
-                                                                   alpha=0.05,
-                                                                   debug=debug)
+        coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(
+            x=x, y=y, degre=1, alpha=0.05, debug=debug)
         #print(f"coeff:{coeffs}",f"coeff_estim_std:{coeff_std}", f"residu_std:{residu_std}",f"tests:{Testresults}", sep="\n")
         #print(f"coeff: {coeffs}\n-->coeff_estim_std: {coeff_std}\n-->residu_std: {residu_std}\n-->tests:")
         for elt, val in Testresults.items():
@@ -305,118 +300,127 @@ class Test_model_estimator(unittest.TestCase):
         condno = meta_data["condno"]  # Cond. No.
 
 
-
 class Test_model_log_reg_estimator(unittest.TestCase):
 
     def test_log_reg(self):
         print("\n->test_log_reg ...")
         print('test1')
 
-        loc, scale, size = 0, 1, 2000 #mean=0 pour centrer
+        loc, scale, size = 0, 1, 2000  #mean=0 pour centrer
         add_intercept = True
         degre = 2
 
         #data
-        my_coeffs = [0,2,0]
+        my_coeffs = [0, 2, 0]
         sample = np.random.normal(loc=loc, scale=scale, size=size)
-        y = my_coeffs[1]*sample +  0.0001*np.random.normal(0, scale, size)
+        y = my_coeffs[1] * sample + 0.0001 * np.random.normal(0, scale, size)
 
-        if degre>1: 
+        if degre > 1:
             my_coeffs[2] = 50
-            y += my_coeffs[2]*np.power(sample, 2)
+            y += my_coeffs[2] * np.power(sample, 2)
 
         if add_intercept:
-            my_coeffs[0] = - y.mean() #to center at the same time
+            my_coeffs[0] = -y.mean()  #to center at the same time
             y += my_coeffs[0]
 
-        y = 1/(1+np.exp(-y))
-        y = (y>0.5).astype('int')
+        y = 1 / (1 + np.exp(-y))
+        y = (y > 0.5).astype('int')
 
-        X = np.array([np.power(sample, i) for i in range(1, degre+1)]).T
-
-
+        X = np.array([np.power(sample, i) for i in range(1, degre + 1)]).T
 
         # my regressor
         print("\n@@my regressor")
-        my_reg_coeffs, coeff_std, residu_std, Testresults, _others = ME_multiple_regression(X=X,
-                                                                    y=y,
-                                                                    fit_intercept=True,
-                                                                    logit = True,
-                                                                    alpha=0.05,
-                                                                    nb_iter=20000,
-                                                                    learning_rate=0.1
-                                                                    )
-        print(f"->coeff: {my_reg_coeffs} \n->coeff_estim_std: {coeff_std} \n->residu_std: {residu_std} \n->tests")
+        my_reg_coeffs, coeff_std, residu_std, Testresults, _others = ME_multiple_regression(
+            X=X,
+            y=y,
+            fit_intercept=True,
+            logit=True,
+            alpha=0.05,
+            nb_iter=20000,
+            learning_rate=0.1)
+        print(
+            f"->coeff: {my_reg_coeffs} \n->coeff_estim_std: {coeff_std} \n->residu_std: {residu_std} \n->tests"
+        )
         print(Testresults)
         print(f"my_coeffs = {my_coeffs}")
-
-
 
         #logistic
         print("\n@@logitic regressor")
         from sklearn.linear_model import LogisticRegression
-        _X = X.copy() if not add_intercept else np.hstack((np.ones((X.shape[0], 1)), X))
-        clf = LogisticRegression(random_state=0, fit_intercept=False).fit(_X, y)
-        pm = PredictionMetrics(y, clf.predict_proba(_X)[:,1], binary=True)
+        _X = X.copy() if not add_intercept else np.hstack((np.ones(
+            (X.shape[0], 1)), X))
+        clf = LogisticRegression(random_state=0,
+                                 fit_intercept=False).fit(_X, y)
+        pm = PredictionMetrics(y, clf.predict_proba(_X)[:, 1], binary=True)
         print(pm.get_binary_regression_res())
         reg_coeffs = clf.coef_[0]
         print(f"pred_coeffs = {reg_coeffs}")
-        
 
         #coefs
-        print("\n@@comparison des coeffs normalisés (les deux premiers chiffres non nuls sont pareils et l'ecart sur le 3e < 5)")
+        print(
+            "\n@@comparison des coeffs normalisés (les deux premiers chiffres non nuls sont pareils et l'ecart sur le 3e < 5)"
+        )
         my_coeffs = np.array(my_coeffs[:reg_coeffs.size])
-        reg_coeffs = reg_coeffs/np.abs(reg_coeffs).sum()
-        my_coeffs = my_coeffs/np.abs(my_coeffs).sum() 
-        my_reg_coeffs = my_reg_coeffs/np.abs(my_reg_coeffs).sum()
+        reg_coeffs = reg_coeffs / np.abs(reg_coeffs).sum()
+        my_coeffs = my_coeffs / np.abs(my_coeffs).sum()
+        my_reg_coeffs = my_reg_coeffs / np.abs(my_reg_coeffs).sum()
         lv = 2
-        print(f"my_coeffs = {my_coeffs}\nmy_reg_coeffs = {my_reg_coeffs}\npred_coeffs = {reg_coeffs}")
-        assert (np.floor(0.5*np.ceil(2*resc_array(my_coeffs,lv))) - np.floor(0.5*np.ceil(2*resc_array(reg_coeffs,lv))) < 5).all(), f"coefficient mismatch {my_coeffs} vs {reg_coeffs}"
-        assert (np.floor(0.5*np.ceil(2*resc_array(my_coeffs,lv))) - np.floor(0.5*np.ceil(2*resc_array(my_reg_coeffs,lv))) < 5).all(), f"coefficient mismatch {my_coeffs} vs {my_reg_coeffs}"
-
+        print(
+            f"my_coeffs = {my_coeffs}\nmy_reg_coeffs = {my_reg_coeffs}\npred_coeffs = {reg_coeffs}"
+        )
+        assert (np.floor(0.5 * np.ceil(2 * resc_array(my_coeffs, lv))) -
+                np.floor(0.5 * np.ceil(2 * resc_array(reg_coeffs, lv))) <
+                5).all(), f"coefficient mismatch {my_coeffs} vs {reg_coeffs}"
+        assert (np.floor(0.5 * np.ceil(2 * resc_array(my_coeffs, lv))) -
+                np.floor(0.5 * np.ceil(2 * resc_array(my_reg_coeffs, lv))) < 5
+                ).all(), f"coefficient mismatch {my_coeffs} vs {my_reg_coeffs}"
 
         self.assertTrue(Testresults["coeff_non_zero"].obj[0])
         self.assertTrue(Testresults["coeff_non_zero"].obj[1])
-        if degre>1: self.assertTrue(Testresults["coeff_non_zero"].obj[2])
+        if degre > 1: self.assertTrue(Testresults["coeff_non_zero"].obj[2])
         self.assertLess(Testresults["metrics"]["log-loss"], 0.06)
         self.assertGreater(Testresults["metrics"]["accuracy"], 0.9)
         self.assertGreater(Testresults["metrics"]["precision"], 0.9)
         self.assertGreater(Testresults["metrics"]["recall"], 0.9)
         self.assertGreater(Testresults["metrics"]["f1"], 0.9)
-
 
         print(f"\n\n test ME_regression")
-        my_coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(x=sample,
-                                                            y=y,
-                                                            degre=degre,
-                                                            fit_intercept=True,
-                                                            logit = True,
-                                                            alpha=0.05,
-                                                            nb_iter=20000,
-                                                            learning_rate=0.1
-                                                            )
+        my_coeffs, coeff_std, residu_std, Testresults, _others = ME_Regression(
+            x=sample,
+            y=y,
+            degre=degre,
+            fit_intercept=True,
+            logit=True,
+            alpha=0.05,
+            nb_iter=20000,
+            learning_rate=0.1)
         #coefs
-        print("\n@@comparison des coeffs normalisés (les deux premiers chiffres non nuls sont pareils et l'ecart sur le 3e < 5)")
+        print(
+            "\n@@comparison des coeffs normalisés (les deux premiers chiffres non nuls sont pareils et l'ecart sur le 3e < 5)"
+        )
         my_coeffs = np.array(my_coeffs[:reg_coeffs.size])
-        reg_coeffs = reg_coeffs/np.abs(reg_coeffs).sum()
-        my_coeffs = my_coeffs/np.abs(my_coeffs).sum() 
-        my_reg_coeffs = my_reg_coeffs/np.abs(my_reg_coeffs).sum()
+        reg_coeffs = reg_coeffs / np.abs(reg_coeffs).sum()
+        my_coeffs = my_coeffs / np.abs(my_coeffs).sum()
+        my_reg_coeffs = my_reg_coeffs / np.abs(my_reg_coeffs).sum()
         lv = 2
-        print(f"my_coeffs = {my_coeffs}\nmy_reg_coeffs = {my_reg_coeffs}\npred_coeffs = {reg_coeffs}")
-        assert (np.floor(0.5*np.ceil(2*resc_array(my_coeffs,lv))) - np.floor(0.5*np.ceil(2*resc_array(reg_coeffs,lv))) < 5).all(), f"coefficient mismatch {my_coeffs} vs {reg_coeffs}"
-        assert (np.floor(0.5*np.ceil(2*resc_array(my_coeffs,lv))) - np.floor(0.5*np.ceil(2*resc_array(my_reg_coeffs,lv))) < 5).all(), f"coefficient mismatch {my_coeffs} vs {my_reg_coeffs}"
-
+        print(
+            f"my_coeffs = {my_coeffs}\nmy_reg_coeffs = {my_reg_coeffs}\npred_coeffs = {reg_coeffs}"
+        )
+        assert (np.floor(0.5 * np.ceil(2 * resc_array(my_coeffs, lv))) -
+                np.floor(0.5 * np.ceil(2 * resc_array(reg_coeffs, lv))) <
+                5).all(), f"coefficient mismatch {my_coeffs} vs {reg_coeffs}"
+        assert (np.floor(0.5 * np.ceil(2 * resc_array(my_coeffs, lv))) -
+                np.floor(0.5 * np.ceil(2 * resc_array(my_reg_coeffs, lv))) < 5
+                ).all(), f"coefficient mismatch {my_coeffs} vs {my_reg_coeffs}"
 
         self.assertTrue(Testresults["coeff_non_zero"].obj[0])
         self.assertTrue(Testresults["coeff_non_zero"].obj[1])
-        if degre>1: self.assertTrue(Testresults["coeff_non_zero"].obj[2])
+        if degre > 1: self.assertTrue(Testresults["coeff_non_zero"].obj[2])
         self.assertLess(Testresults["metrics"]["log-loss"], 0.06)
         self.assertGreater(Testresults["metrics"]["accuracy"], 0.9)
         self.assertGreater(Testresults["metrics"]["precision"], 0.9)
         self.assertGreater(Testresults["metrics"]["recall"], 0.9)
         self.assertGreater(Testresults["metrics"]["f1"], 0.9)
-
-
 
     def assertAlmostEqual_(self, first: float, second: float, diff: float):
         diff_r = abs(first - second)

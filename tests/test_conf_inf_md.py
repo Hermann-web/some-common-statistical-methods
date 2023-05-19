@@ -1,7 +1,14 @@
-from common_imports import (IC_MEAN_ONE, IC_MEAN_TWO_NOTPAIR, IC_MEAN_TWO_PAIR,
-                            IC_PROPORTION_ONE, IC_PROPORTION_TWO,
-                            CIE_ONE_PROPORTION,CIE_MEAN_ONE,CIE_MEAN_TWO,)
-from common_imports import (estimate_std,get_min_sample)
+from common_imports import (
+    IC_MEAN_ONE,
+    IC_MEAN_TWO_NOTPAIR,
+    IC_MEAN_TWO_PAIR,
+    IC_PROPORTION_ONE,
+    IC_PROPORTION_TWO,
+    CIE_ONE_PROPORTION,
+    CIE_MEAN_ONE,
+    CIE_MEAN_TWO,
+)
+from common_imports import (estimate_std, get_min_sample)
 import statsmodels.api as sm
 import unittest
 from numpy import random

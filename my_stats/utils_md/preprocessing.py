@@ -1,6 +1,7 @@
 from numpy import array, isnan, newaxis, std, hstack, ndarray
 from typing import Tuple
 
+
 def clear_list(L: list) -> ndarray:
     """remove nan from a list
 

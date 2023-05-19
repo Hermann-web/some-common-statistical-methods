@@ -4,6 +4,7 @@ import math
 from my_stats.utils_md.estimate_std import estimate_std
 import warnings
 
+
 def compute_skew(arr):
     """_summary_
 
@@ -80,26 +81,31 @@ def compute_aic_bic(dfr: int, n: int, llh: float, method: str = "basic"):
         return aic, bic
     elif method == "correct":
         return aic + 2 * K * (K + 1) / (n - 1 - K), bic
-    
 
 
 class PredictionMetrics:
 
-    def __init__(self, y_true: list, y_pred_proba: list, binary:bool) -> None:
-        self.y_true = y_true 
+    def __init__(self, y_true: list, y_pred_proba: list, binary: bool) -> None:
+        self.y_true = y_true
         self.y_pred = y_pred_proba
-        assert self.y_true.ndim ==1
-        assert self.y_pred.ndim ==1
+        assert self.y_true.ndim == 1
+        assert self.y_pred.ndim == 1
         assert self.y_true.shape == self.y_pred.shape
         self.binary = bool(binary)
         if binary:
-            assert ( (self.y_pred<0) + (self.y_pred>1) ).sum() == 0, "0 to 1 constraint failed"
-            assert ( (self.y_true<0) + (self.y_true>1) ).sum() == 0, "0 to 1 constraint failed"
-            self.y_true_bin = (self.y_true>0.5).astype('int')
-            self.y_pred_bin = (self.y_pred>0.5).astype('int')
-            if len(set(self.y_true_bin))!=2: warnings.warn(f"found {set(self.y_true_bin)} in y_true_bin")
-            if len(set(self.y_pred_bin))!=2: warnings.warn(f"found {set(self.y_pred_bin)} in y_pred_bin")
-            assert len(set(self.y_pred))>2, f"found len(set(y_pred_proba)) = {len(set(self.y_pred))}. y_pred_proba = {set(self.y_pred)} may be the predictions. Please send y_pred_proba as probabilities (continuous values between 0 and 1"
+            assert ((self.y_pred < 0) +
+                    (self.y_pred > 1)).sum() == 0, "0 to 1 constraint failed"
+            assert ((self.y_true < 0) +
+                    (self.y_true > 1)).sum() == 0, "0 to 1 constraint failed"
+            self.y_true_bin = (self.y_true > 0.5).astype('int')
+            self.y_pred_bin = (self.y_pred > 0.5).astype('int')
+            if len(set(self.y_true_bin)) != 2:
+                warnings.warn(f"found {set(self.y_true_bin)} in y_true_bin")
+            if len(set(self.y_pred_bin)) != 2:
+                warnings.warn(f"found {set(self.y_pred_bin)} in y_pred_bin")
+            assert len(
+                set(self.y_pred)
+            ) > 2, f"found len(set(y_pred_proba)) = {len(set(self.y_pred))}. y_pred_proba = {set(self.y_pred)} may be the predictions. Please send y_pred_proba as probabilities (continuous values between 0 and 1"
             self.confusion_matrix = None
 
     def compute_mae(self):
@@ -108,8 +114,10 @@ class PredictionMetrics:
         assert y.shape == y_pred.shape
         return abs(y - y_pred).mean()
 
-    
-    def compute_log_likelihood(self, std_eval:float=None, debug=False, min_tol:float=True):
+    def compute_log_likelihood(self,
+                               std_eval: float = None,
+                               debug=False,
+                               min_tol: float = True):
         """_summary_
 
         Args:
@@ -123,9 +131,10 @@ class PredictionMetrics:
         if self.binary:
             return self._log_likelihood_logit(min_tol=min_tol)
         else:
-            if std_eval is None: std_eval = estimate_std(self.y_true - self.y_pred)
+            if std_eval is None:
+                std_eval = estimate_std(self.y_true - self.y_pred)
             return self._log_likelihood_lin_reg(std_eval=std_eval, debug=debug)
-    
+
     def _log_likelihood_lin_reg(self, std_eval: float, debug=False):
         """_summary_
 
@@ -154,62 +163,63 @@ class PredictionMetrics:
         SST = ((y - y_pred)**2).sum()
         log_likelihood = -(n / 2) * CST - SST / (2 * sigma_carre)
         return log_likelihood
-    
-    def log_loss_flat(self, min_tol:float=None):
+
+    def log_loss_flat(self, min_tol: float = None):
         assert self.binary == True
         y = self.y_true
         yp = self.y_pred
-        assert ( (yp<0) + (yp>1)).sum() == 0, "0 to 1 constraint failed"
-        assert ( (y<0) + (yp>1)).sum() == 0, "0 to 1 constraint failed"
+        assert ((yp < 0) + (yp > 1)).sum() == 0, "0 to 1 constraint failed"
+        assert ((y < 0) + (yp > 1)).sum() == 0, "0 to 1 constraint failed"
         yp1 = yp.copy()
         yp2 = yp.copy()
         if min_tol is not None:
-            min_tol = float(min_tol) if min_tol!=True else 10**(-12) #si c'est plus petit, ce sera trop petit pour log
-            assert 0<min_tol<0.1
-            yp1[yp<=0]= min(min(yp[yp>0]), min_tol) if len(yp[yp>0]) else min_tol
-            yp2[yp>=1]= max(max(yp[yp<1]), 1-min_tol) if len(yp[yp<1]) else 1-min_tol
+            min_tol = float(min_tol) if min_tol != True else 10**(
+                -12)  #si c'est plus petit, ce sera trop petit pour log
+            assert 0 < min_tol < 0.1
+            yp1[yp <= 0] = min(min(yp[yp > 0]), min_tol) if len(
+                yp[yp > 0]) else min_tol
+            yp2[yp >= 1] = max(max(yp[yp < 1]), 1 -
+                               min_tol) if len(yp[yp < 1]) else 1 - min_tol
         return (y * log(yp1) + (1 - y) * log(1 - yp2))
 
-
-    def _log_likelihood_logit(self, min_tol:float=True):
+    def _log_likelihood_logit(self, min_tol: float = True):
         return self.log_loss_flat(min_tol=min_tol).sum()
 
-    def log_loss(self, min_tol:float=True):
-        return - self.log_loss_flat(min_tol=min_tol).mean()
-
-
+    def log_loss(self, min_tol: float = True):
+        return -self.log_loss_flat(min_tol=min_tol).mean()
 
     def get_confusion_matrix(self):
         assert self.binary == True
         if self.confusion_matrix is not None: return self.confusion_matrix
-        _pred_neg = self.y_pred_bin[self.y_true_bin==0]
-        _pred_pos = self.y_pred_bin[self.y_true_bin==1]
-        tn, fp, fn ,tp = (_pred_neg==0).sum(), (_pred_pos==0).sum(), (_pred_neg==1).sum(), (_pred_pos==1).sum()
-        self.confusion_matrix = [[tn, fp], [fn ,tp]]
+        _pred_neg = self.y_pred_bin[self.y_true_bin == 0]
+        _pred_pos = self.y_pred_bin[self.y_true_bin == 1]
+        tn, fp, fn, tp = (_pred_neg == 0).sum(), (_pred_pos == 0).sum(), (
+            _pred_neg == 1).sum(), (_pred_pos == 1).sum()
+        self.confusion_matrix = [[tn, fp], [fn, tp]]
         return self.confusion_matrix
 
     def get_binary_accuracy(self):
         assert self.binary == True
         #return abs(self.y_true_bin==self.y_pred_bin).sum()/len(self.y_true_bin)
-        (tn, fp), (fn ,tp) = self.get_confusion_matrix()
-        return (tp+tn)/(tp+tn+fp+fn)
+        (tn, fp), (fn, tp) = self.get_confusion_matrix()
+        return (tp + tn) / (tp + tn + fp + fn)
 
     def get_precision_score(self):
         assert self.binary == True
-        (tn, fp), (fn ,tp) = self.get_confusion_matrix()
-        return tp/(tp+fp)
-    
+        (tn, fp), (fn, tp) = self.get_confusion_matrix()
+        return tp / (tp + fp)
+
     def get_recall_score(self):
         assert self.binary == True
-        (tn, fp), (fn ,tp) = self.get_confusion_matrix()
-        return tp/(tp+fn)
+        (tn, fp), (fn, tp) = self.get_confusion_matrix()
+        return tp / (tp + fn)
 
     def get_f1_score(self):
         assert self.binary == True
-        prec = self.get_precision_score() 
+        prec = self.get_precision_score()
         rec = self.get_recall_score()
-        return 2*(prec*rec)/(prec+rec)
-    
+        return 2 * (prec * rec) / (prec + rec)
+
     def get_binary_regression_res(self):
         assert self.binary == True
         dd = {}

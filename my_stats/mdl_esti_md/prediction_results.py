@@ -2,18 +2,24 @@ from numpy import (array, sqrt)
 import warnings
 from my_stats.utils_md.refactoring import RegressionFisherTestData
 
-from my_stats.utils_md.compute_ppf_and_p_value import (get_p_value_f_test, )
+from my_stats.utils_md.compute_ppf_and_p_value import (
+    get_p_value_f_test, )
 from my_stats.utils_md.estimate_std import (estimate_std)
 
-from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test, check_sample_normality,
+from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test,
+                                              check_sample_normality,
                                               check_hyp_min_sample)
 
 from my_stats.hyp_vali_md.hypothesis_validator import (
     check_coefficients_non_zero, check_residuals_centered)
-from my_stats.mdl_esti_md.prediction_metrics import (PredictionMetrics, compute_skew, compute_aic_bic, compute_kurtosis)
+from my_stats.mdl_esti_md.prediction_metrics import (PredictionMetrics,
+                                                     compute_skew,
+                                                     compute_aic_bic,
+                                                     compute_kurtosis)
 
 from dataclasses import field, dataclass
 from numpy import ndarray
+
 
 @dataclass
 class RegressionResultData:
@@ -22,21 +28,20 @@ class RegressionResultData:
     nb_obs: int
     nb_param: int
     alpha: float
-    coeffs: ndarray 
+    coeffs: ndarray
     list_coeffs_std: ndarray
     residuals: ndarray = field(init=False)
     residu_std: float = field(init=False)
 
     def __post_init__(self):
-        assert self.y.shape == self.y_hat.shape 
+        assert self.y.shape == self.y_hat.shape
         assert self.nb_obs == len(self.y)
-        assert self.list_coeffs_std.shape == self.coeffs.shape == (self.nb_param, )
+        assert self.list_coeffs_std.shape == self.coeffs.shape == (
+            self.nb_param, )
 
         self.alpha = check_or_get_alpha_for_hyph_test(self.alpha)
         self.residuals: ndarray = self.y - self.y_hat
         self.residu_std = estimate_std(self.residuals)
-
-
 
 
 def HPE_REGRESSION_FISHER_TEST(y: list,
@@ -137,25 +142,27 @@ def HPE_REGRESSION_FISHER_TEST(y: list,
                                     p_value=p_value,
                                     reject_null=reject_null)
 
-def compute_linear_regression_results(crd:RegressionResultData, debug:bool=False):
-    
+
+def compute_linear_regression_results(crd: RegressionResultData,
+                                      debug: bool = False):
+
     debug = bool(debug)
     alpha = crd.alpha
 
     nb_obs = crd.nb_obs
     nb_param = crd.nb_param
 
-    y = crd.y 
+    y = crd.y
     y_hat = crd.y_hat
 
     residuals = crd.residuals
     residu_std = crd.residu_std
-    
+
     coeffs = crd.coeffs
     list_coeffs_std = crd.list_coeffs_std
 
     Testresults = {}
-    
+
     # test normality of the residuals
     passNormalitytest = check_sample_normality(residuals, alpha=alpha)
     if not passNormalitytest.testPassed:
@@ -185,9 +192,9 @@ def compute_linear_regression_results(crd:RegressionResultData, debug:bool=False
 
     # fisher test
     data = HPE_REGRESSION_FISHER_TEST(y=y,
-                                    y_hat=y_hat,
-                                    nb_param=nb_param,
-                                    alpha=alpha)
+                                      y_hat=y_hat,
+                                      nb_param=nb_param,
+                                      alpha=alpha)
     DFE, DFR = data.DFE, data.DFR
     SSE, MSE, SSR, MSR, SST, MST = data.SSE, data.MSE, data.SSR, data.MSR, data.SST, data.MST
     R_carre, R_carre_adj, F_stat, p_value = data.R_carre, data.R_carre_adj, data.F_stat, data.p_value
@@ -216,9 +223,9 @@ def compute_linear_regression_results(crd:RegressionResultData, debug:bool=False
     Testresults["metrics"]["log-likelihood"] = log_likelihood
 
     aic, bic = compute_aic_bic(dfr=DFR,
-                            n=nb_obs,
-                            llh=log_likelihood,
-                            method="basic")
+                               n=nb_obs,
+                               llh=log_likelihood,
+                               method="basic")
     Testresults["metrics"]["AIC"] = aic
     Testresults["metrics"]["BIC"] = bic
 
@@ -233,13 +240,11 @@ def compute_linear_regression_results(crd:RegressionResultData, debug:bool=False
     Testresults["metrics"]["skew"] = compute_skew(residuals)
     Testresults["metrics"]["kurtosis"] = compute_kurtosis(residuals)
 
-    
-
     return Testresults
-    
 
 
-def compute_logit_regression_results(crd:RegressionResultData, debug:bool=False):
+def compute_logit_regression_results(crd: RegressionResultData,
+                                     debug: bool = False):
     """_summary_
 
     Args:
@@ -251,19 +256,19 @@ def compute_logit_regression_results(crd:RegressionResultData, debug:bool=False)
     Returns:
         _type_: _description_
     """
-    
+
     debug = bool(debug)
     alpha = crd.alpha
 
     nb_obs = crd.nb_obs
     nb_param = crd.nb_param
 
-    y = crd.y 
+    y = crd.y
     y_hat = crd.y_hat
 
     residuals = crd.residuals
     residu_std = crd.residu_std
-    
+
     coeffs = crd.coeffs
     list_coeffs_std = crd.list_coeffs_std
 
@@ -290,7 +295,6 @@ def compute_logit_regression_results(crd:RegressionResultData, debug:bool=False)
     Testresults["metrics"]["precision"] = _metric.get_precision_score()
     Testresults["metrics"]["recall"] = _metric.get_recall_score()
     Testresults["metrics"]["f1"] = _metric.get_f1_score()
-    #Testresults["roc"] = 
-    
-    return Testresults
+    #Testresults["roc"] =
 
+    return Testresults

@@ -95,7 +95,15 @@ def ME_Normal_dist(sample: list, alpha=None, debug=False):
     return m, std_estimator, s, Testresults, _others
 
 
-def ME_Regression(x: list, y: list, degre: int, logit=False, fit_intercept=True, debug=False, alpha:float=0.05, nb_iter:int=100000, learning_rate:float=0.1):
+def ME_Regression(x: list,
+                  y: list,
+                  degre: int,
+                  logit=False,
+                  fit_intercept=True,
+                  debug=False,
+                  alpha: float = 0.05,
+                  nb_iter: int = 100000,
+                  learning_rate: float = 0.1):
     '''
     estimate a regression model from two samples
 
@@ -140,7 +148,7 @@ def ME_Regression(x: list, y: list, degre: int, logit=False, fit_intercept=True,
     '''
 
     alpha = check_or_get_alpha_for_hyph_test(alpha)
-    logit= bool(logit)
+    logit = bool(logit)
 
     # reshape and remove nan
     x = array(x).flatten()
@@ -158,25 +166,36 @@ def ME_Regression(x: list, y: list, degre: int, logit=False, fit_intercept=True,
     '''X = zeros((n, degre))
     for i in range(0, degre):
         X[:, i] = power(x, i)'''
-    X = array([power(x, i) for i in range(1, degre+1)]).T
+    X = array([power(x, i) for i in range(1, degre + 1)]).T
     assert X.shape == (n, degre)
     assert y.shape == (n, )
 
-    cr = ComputeRegression(logit=logit, fit_intercept=fit_intercept, alpha=alpha, debug=debug)
+    cr = ComputeRegression(logit=logit,
+                           fit_intercept=fit_intercept,
+                           alpha=alpha,
+                           debug=debug)
     cr.fit(X, y, nb_iter=nb_iter, learning_rate=learning_rate)
-    coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results()
-    
+    coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results(
+    )
+
     nb_param = degre
     if fit_intercept: nb_param += 1
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 
-    _others = {"cr":cr}
+    _others = {"cr": cr}
 
     return coeffs, list_coeffs_std, residu_std, Testresults, _others
 
 
-def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, debug=False, alpha:float=0.05, nb_iter:int=100000, learning_rate:float=0.1):
+def ME_multiple_regression(X: list,
+                           y: list,
+                           logit=False,
+                           fit_intercept=True,
+                           debug=False,
+                           alpha: float = 0.05,
+                           nb_iter: int = 100000,
+                           learning_rate: float = 0.1):
     """_summary_
 
     Args:
@@ -241,7 +260,7 @@ def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, de
     """
     alpha = check_or_get_alpha_for_hyph_test(alpha)
     fit_intercept = bool(fit_intercept)
-    logit= bool(logit)
+    logit = bool(logit)
 
     # reshape and remove nan
     X = array(X)
@@ -251,19 +270,23 @@ def ME_multiple_regression(X: list, y: list, logit=False, fit_intercept=True, de
     assert y.shape == (X.shape[0], ), "x and y lenght must match"
 
     X, y = clear_mat_vec(X, y)
-    
+
     # constraint
     check_hyp_min_sample(X.shape[0])
-    
-    cr = ComputeRegression(logit=logit, fit_intercept=fit_intercept, alpha=alpha, debug=debug)
+
+    cr = ComputeRegression(logit=logit,
+                           fit_intercept=fit_intercept,
+                           alpha=alpha,
+                           debug=debug)
     cr.fit(X, y, nb_iter=nb_iter, learning_rate=learning_rate)
-    coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results()
-    nb_param = X.shape[1] # without slope
+    coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results(
+    )
+    nb_param = X.shape[1]  # without slope
     if fit_intercept: nb_param = nb_param + 1
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 
-    _others = {"cr":cr}
+    _others = {"cr": cr}
 
     return coeffs, list_coeffs_std, residu_std, Testresults, _others
 

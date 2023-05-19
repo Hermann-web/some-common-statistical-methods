@@ -23,8 +23,14 @@ note
 import os.path
 import sys
 from numpy import mean
-from my_stats.hyp_testi_md.hp_estimators import (HPE_MEAN_MANY, HPE_MEAN_ONE, HPE_MEAN_TWO_NOTPAIRED, HPE_MEAN_TWO_PAIRED, HPE_PROPORTION_ONE, HPE_PROPORTION_TW0)
-from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample, check_hyp_min_samples, check_zero_to_one_constraint)
+from my_stats.hyp_testi_md.hp_estimators import (HPE_MEAN_MANY, HPE_MEAN_ONE,
+                                                 HPE_MEAN_TWO_NOTPAIRED,
+                                                 HPE_MEAN_TWO_PAIRED,
+                                                 HPE_PROPORTION_ONE,
+                                                 HPE_PROPORTION_TW0)
+from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
+                                              check_hyp_min_samples,
+                                              check_zero_to_one_constraint)
 from my_stats.utils_md.estimate_std import estimate_std
 from my_stats.utils_md.preprocessing import (clear_list, clear_list_pair)
 
