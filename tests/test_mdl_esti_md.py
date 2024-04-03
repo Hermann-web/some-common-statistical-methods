@@ -6,10 +6,10 @@ from numpy import power, random, sin
 from pandas import read_csv
 from sklearn.linear_model import LogisticRegression
 
-from my_stats.common import sm_api
-from my_stats.mdl_esti_md import (HPE_REGRESSION_FISHER_TEST,
-                                  ME_multiple_regression, ME_Normal_dist,
-                                  ME_Regression, PredictionMetrics)
+from statanalysis.common import sm_api
+from statanalysis.mdl_esti_md import (HPE_REGRESSION_FISHER_TEST,
+                                      ME_multiple_regression, ME_Normal_dist,
+                                      ME_Regression, PredictionMetrics)
 
 
 def resc(x, n): return x * 10**(n - 1 - np.floor(np.log10(x)))

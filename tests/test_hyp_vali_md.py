@@ -1,7 +1,8 @@
 import unittest
 
-from my_stats.hyp_vali_md import (check_hyp_min_sample, check_hyp_min_samples,
-                                  check_zero_to_one_constraint)
+from statanalysis.hyp_vali_md import (check_hyp_min_sample,
+                                      check_hyp_min_samples,
+                                      check_zero_to_one_constraint)
 
 
 class Tests_constraints(unittest.TestCase):

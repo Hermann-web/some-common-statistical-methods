@@ -13,8 +13,8 @@ from numpy import (abs, array, diag, dot, exp, hstack, log, ndarray, ones,
                    random, sqrt, zeros)
 from scipy.linalg import det, inv
 
-from my_stats.hyp_vali_md import check_or_get_alpha_for_hyph_test
-from my_stats.utils_md import estimate_std
+from statanalysis.hyp_vali_md import check_or_get_alpha_for_hyph_test
+from statanalysis.utils_md import estimate_std
 
 from .prediction_metrics import PredictionMetrics
 from .prediction_results import (RegressionResultData,

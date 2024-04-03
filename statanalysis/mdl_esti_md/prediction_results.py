@@ -3,13 +3,13 @@ from dataclasses import dataclass, field
 
 from numpy import array, ndarray, sqrt
 
-from my_stats.hyp_vali_md import (check_coefficients_non_zero,
-                                  check_hyp_min_sample,
-                                  check_or_get_alpha_for_hyph_test,
-                                  check_residuals_centered,
-                                  check_sample_normality)
-from my_stats.utils_md import (RegressionFisherTestData, estimate_std,
-                               get_p_value_f_test)
+from statanalysis.hyp_vali_md import (check_coefficients_non_zero,
+                                      check_hyp_min_sample,
+                                      check_or_get_alpha_for_hyph_test,
+                                      check_residuals_centered,
+                                      check_sample_normality)
+from statanalysis.utils_md import (RegressionFisherTestData, estimate_std,
+                                   get_p_value_f_test)
 
 from .prediction_metrics import (PredictionMetrics, compute_aic_bic,
                                  compute_kurtosis, compute_skew)

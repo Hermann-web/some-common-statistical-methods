@@ -12,7 +12,7 @@ todo
 '''
 
 
-from my_stats.utils_md import Hypothesis_data, Tails
+from statanalysis.utils_md import Hypothesis_data, Tails
 SUM = sum
 random.seed(233)
 

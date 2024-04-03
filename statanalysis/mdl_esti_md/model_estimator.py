@@ -14,13 +14,13 @@ fisher ? yes F
 
 from numpy import array, power, random, zeros
 
-from my_stats.conf_inte_md import IC_MEAN_ONE
-from my_stats.hyp_vali_md import (check_hyp_min_sample,
-                                  check_or_get_alpha_for_hyph_test,
-                                  check_sample_normality,
-                                  check_zero_to_one_constraint)
-from my_stats.utils_md import (clear_list, clear_list_pair, clear_mat_vec,
-                               estimate_std)
+from statanalysis.conf_inte_md import IC_MEAN_ONE
+from statanalysis.hyp_vali_md import (check_hyp_min_sample,
+                                      check_or_get_alpha_for_hyph_test,
+                                      check_sample_normality,
+                                      check_zero_to_one_constraint)
+from statanalysis.utils_md import (clear_list, clear_list_pair, clear_mat_vec,
+                                   estimate_std)
 
 from .hp_estimators_regression import ComputeRegression
 

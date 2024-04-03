@@ -8,10 +8,11 @@ todo
 from math import ceil as math_ceil
 from math import sqrt
 
-from my_stats.hyp_vali_md import (check_hyp_min_sample, check_hyp_min_samples,
-                                  check_or_get_cf_for_conf_inte,
-                                  check_zero_to_one_constraint)
-from my_stats.utils_md import get_t_value, get_z_value
+from statanalysis.hyp_vali_md import (check_hyp_min_sample,
+                                      check_hyp_min_samples,
+                                      check_or_get_cf_for_conf_inte,
+                                      check_zero_to_one_constraint)
+from statanalysis.utils_md import get_t_value, get_z_value
 
 
 def get_min_sample(moe: float, p=None, method=None, cf: float = None):

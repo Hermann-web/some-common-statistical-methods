@@ -3,7 +3,7 @@ import warnings
 
 from numpy import abs, array, log, sqrt
 
-from my_stats.utils_md import estimate_std
+from statanalysis.utils_md import estimate_std
 
 
 def compute_skew(arr):
