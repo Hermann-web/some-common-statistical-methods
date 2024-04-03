@@ -1,17 +1,34 @@
 [tool.poetry]
-name = "some-common-statistical-methods"
-version = "0.1.0"
-description = "Hands on computation of some stastical methods learned trough a coursera certification"
+name = "statanalysis"
+version = "1.0.0"
+description = "A Python library providing hands on implementation of a collection of common statistical methods for data analysis."
 authors = ["Hermann Agossou <agossouhermann7@gmail.com>"]
+maintainers = [
+    "Hermann Agossou <agossouhermann7@gmail.com>"
+]
+homepage = "https://github.com/Hermann-web/some-common-statistical-methods"
+repository = "https://github.com/Hermann-web/some-common-statistical-methods"
+documentation = "https://github.com/Hermann-web/some-common-statistical-methods/blob/main/docs/detailled-docu.md"
 license = "Apache License"
 readme = "README.md"
-packages = [{include = "my_stats"}]
+packages = [{include = "statanalysis"}]
+keywords = ["statistics", "data analysis", "confidence intervals", "hypothesis testing", "model estimation", "regression", "statistical learning"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.9"
 scipy = "^1.8.0"
 numpy = "^1.14.0"
 statsmodels = "^0.14.0"
+black = "^24.3.0"
 
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.1.0"

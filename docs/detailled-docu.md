@@ -1,104 +1,99 @@
 # Table of Contents
 
-* [\_\_init\_\_](#__init__)
-* [common\_imports](#common_imports)
-* [my\_stats](#my_stats)
-* [my\_stats.mdl\_esti\_md.prediction\_metrics](#my_stats.mdl_esti_md.prediction_metrics)
-  * [compute\_skew](#my_stats.mdl_esti_md.prediction_metrics.compute_skew)
-  * [compute\_kurtosis](#my_stats.mdl_esti_md.prediction_metrics.compute_kurtosis)
-  * [compute\_aic\_bic](#my_stats.mdl_esti_md.prediction_metrics.compute_aic_bic)
-  * [PredictionMetrics](#my_stats.mdl_esti_md.prediction_metrics.PredictionMetrics)
-    * [compute\_log\_likelihood](#my_stats.mdl_esti_md.prediction_metrics.PredictionMetrics.compute_log_likelihood)
-* [my\_stats.mdl\_esti\_md.prediction\_results](#my_stats.mdl_esti_md.prediction_results)
-  * [HPE\_REGRESSION\_FISHER\_TEST](#my_stats.mdl_esti_md.prediction_results.HPE_REGRESSION_FISHER_TEST)
-  * [compute\_logit\_regression\_results](#my_stats.mdl_esti_md.prediction_results.compute_logit_regression_results)
-* [my\_stats.mdl\_esti\_md.log\_reg\_example](#my_stats.mdl_esti_md.log_reg_example)
-  * [y](#my_stats.mdl_esti_md.log_reg_example.y)
-* [my\_stats.mdl\_esti\_md.hp\_estimators\_regression](#my_stats.mdl_esti_md.hp_estimators_regression)
-  * [ComputeRegression](#my_stats.mdl_esti_md.hp_estimators_regression.ComputeRegression)
-    * [fit](#my_stats.mdl_esti_md.hp_estimators_regression.ComputeRegression.fit)
-* [my\_stats.mdl\_esti\_md.model\_estimator](#my_stats.mdl_esti_md.model_estimator)
-  * [ME\_Normal\_dist](#my_stats.mdl_esti_md.model_estimator.ME_Normal_dist)
-  * [ME\_Regression](#my_stats.mdl_esti_md.model_estimator.ME_Regression)
-  * [ME\_multiple\_regression](#my_stats.mdl_esti_md.model_estimator.ME_multiple_regression)
-* [my\_stats.utils\_md.preprocessing](#my_stats.utils_md.preprocessing)
-  * [clear\_list](#my_stats.utils_md.preprocessing.clear_list)
-  * [clear\_list\_pair](#my_stats.utils_md.preprocessing.clear_list_pair)
-  * [clear\_mat\_vec](#my_stats.utils_md.preprocessing.clear_mat_vec)
-* [my\_stats.utils\_md.estimate\_std](#my_stats.utils_md.estimate_std)
-  * [estimate\_std](#my_stats.utils_md.estimate_std.estimate_std)
-* [my\_stats.utils\_md.compute\_ppf\_and\_p\_value](#my_stats.utils_md.compute_ppf_and_p_value)
-  * [get\_p\_value\_from\_tail](#my_stats.utils_md.compute_ppf_and_p_value.get_p_value_from_tail)
-  * [get\_p\_value\_z\_test](#my_stats.utils_md.compute_ppf_and_p_value.get_p_value_z_test)
-  * [get\_p\_value\_t\_test](#my_stats.utils_md.compute_ppf_and_p_value.get_p_value_t_test)
-  * [get\_p\_value\_f\_test](#my_stats.utils_md.compute_ppf_and_p_value.get_p_value_f_test)
-  * [get\_p\_value](#my_stats.utils_md.compute_ppf_and_p_value.get_p_value)
-* [my\_stats.utils\_md.constants](#my_stats.utils_md.constants)
-* [my\_stats.utils\_md.refactoring](#my_stats.utils_md.refactoring)
-  * [Confidence\_data](#my_stats.utils_md.refactoring.Confidence_data)
-    * [sample\_size](#my_stats.utils_md.refactoring.Confidence_data.sample_size)
-  * [Hypothesis\_data](#my_stats.utils_md.refactoring.Hypothesis_data)
-    * [pnull](#my_stats.utils_md.refactoring.Hypothesis_data.pnull)
-    * [tail](#my_stats.utils_md.refactoring.Hypothesis_data.tail)
-    * [sample\_size](#my_stats.utils_md.refactoring.Hypothesis_data.sample_size)
-    * [reject\_null](#my_stats.utils_md.refactoring.Hypothesis_data.reject_null)
-  * [RegressionFisherTestData](#my_stats.utils_md.refactoring.RegressionFisherTestData)
-    * [MSR](#my_stats.utils_md.refactoring.RegressionFisherTestData.MSR)
-    * [R\_carre](#my_stats.utils_md.refactoring.RegressionFisherTestData.R_carre)
-    * [R\_carre\_adj](#my_stats.utils_md.refactoring.RegressionFisherTestData.R_carre_adj)
-    * [F\_stat](#my_stats.utils_md.refactoring.RegressionFisherTestData.F_stat)
-    * [reject\_null](#my_stats.utils_md.refactoring.RegressionFisherTestData.reject_null)
-* [my\_stats.hyp\_vali\_md.constraints](#my_stats.hyp_vali_md.constraints)
-  * [check\_sample\_normality](#my_stats.hyp_vali_md.constraints.check_sample_normality)
-  * [check\_equal\_var](#my_stats.hyp_vali_md.constraints.check_equal_var)
-* [my\_stats.hyp\_vali\_md.hypothesis\_validator](#my_stats.hyp_vali_md.hypothesis_validator)
-  * [check\_residuals\_centered](#my_stats.hyp_vali_md.hypothesis_validator.check_residuals_centered)
-  * [check\_coefficients\_non\_zero](#my_stats.hyp_vali_md.hypothesis_validator.check_coefficients_non_zero)
-  * [check\_equal\_mean](#my_stats.hyp_vali_md.hypothesis_validator.check_equal_mean)
-* [my\_stats.conf\_inte\_md.confidence\_interval](#my_stats.conf_inte_md.confidence_interval)
-  * [IC\_PROPORTION\_ONE](#my_stats.conf_inte_md.confidence_interval.IC_PROPORTION_ONE)
-  * [IC\_MEAN\_ONE](#my_stats.conf_inte_md.confidence_interval.IC_MEAN_ONE)
-  * [IC\_PROPORTION\_TWO](#my_stats.conf_inte_md.confidence_interval.IC_PROPORTION_TWO)
-  * [IC\_MEAN\_TWO\_PAIR](#my_stats.conf_inte_md.confidence_interval.IC_MEAN_TWO_PAIR)
-  * [IC\_MEAN\_TWO\_NOTPAIR](#my_stats.conf_inte_md.confidence_interval.IC_MEAN_TWO_NOTPAIR)
-* [my\_stats.conf\_inte\_md.ci\_estimators](#my_stats.conf_inte_md.ci_estimators)
-  * [get\_min\_sample](#my_stats.conf_inte_md.ci_estimators.get_min_sample)
-  * [CIE\_ONE\_PROPORTION](#my_stats.conf_inte_md.ci_estimators.CIE_ONE_PROPORTION)
-  * [CIE\_PROPORTION\_TWO](#my_stats.conf_inte_md.ci_estimators.CIE_PROPORTION_TWO)
-  * [CIE\_MEAN\_ONE](#my_stats.conf_inte_md.ci_estimators.CIE_MEAN_ONE)
-  * [CIE\_MEAN\_TWO](#my_stats.conf_inte_md.ci_estimators.CIE_MEAN_TWO)
-* [my\_stats.hyp\_testi\_md.hp\_estimators](#my_stats.hyp_testi_md.hp_estimators)
-  * [HPE\_FROM\_P\_VALUE](#my_stats.hyp_testi_md.hp_estimators.HPE_FROM_P_VALUE)
-  * [HPE\_PROPORTION\_ONE](#my_stats.hyp_testi_md.hp_estimators.HPE_PROPORTION_ONE)
-  * [HPE\_PROPORTION\_TW0](#my_stats.hyp_testi_md.hp_estimators.HPE_PROPORTION_TW0)
-  * [HPE\_MEAN\_ONE](#my_stats.hyp_testi_md.hp_estimators.HPE_MEAN_ONE)
-  * [HPE\_MEAN\_TWO\_PAIRED](#my_stats.hyp_testi_md.hp_estimators.HPE_MEAN_TWO_PAIRED)
-  * [HPE\_MEAN\_TWO\_NOTPAIRED](#my_stats.hyp_testi_md.hp_estimators.HPE_MEAN_TWO_NOTPAIRED)
-  * [HPE\_MEAN\_MANY](#my_stats.hyp_testi_md.hp_estimators.HPE_MEAN_MANY)
-* [my\_stats.hyp\_testi\_md.hypothesis\_testing](#my_stats.hyp_testi_md.hypothesis_testing)
-  * [HP\_PROPORTION\_ONE](#my_stats.hyp_testi_md.hypothesis_testing.HP_PROPORTION_ONE)
-  * [HP\_MEAN\_ONE](#my_stats.hyp_testi_md.hypothesis_testing.HP_MEAN_ONE)
-  * [HP\_PROPORTION\_TWO](#my_stats.hyp_testi_md.hypothesis_testing.HP_PROPORTION_TWO)
-  * [HP\_MEAN\_TWO\_PAIR](#my_stats.hyp_testi_md.hypothesis_testing.HP_MEAN_TWO_PAIR)
-  * [HP\_MEAN\_TWO\_NOTPAIR](#my_stats.hyp_testi_md.hypothesis_testing.HP_MEAN_TWO_NOTPAIR)
+* [statanalysis](#statanalysis)
+* [statanalysis.mdl\_esti\_md.prediction\_metrics](#statanalysis.mdl_esti_md.prediction_metrics)
+  * [compute\_skew](#statanalysis.mdl_esti_md.prediction_metrics.compute_skew)
+  * [compute\_kurtosis](#statanalysis.mdl_esti_md.prediction_metrics.compute_kurtosis)
+  * [compute\_aic\_bic](#statanalysis.mdl_esti_md.prediction_metrics.compute_aic_bic)
+  * [PredictionMetrics](#statanalysis.mdl_esti_md.prediction_metrics.PredictionMetrics)
+    * [compute\_log\_likelihood](#statanalysis.mdl_esti_md.prediction_metrics.PredictionMetrics.compute_log_likelihood)
+* [statanalysis.mdl\_esti\_md](#statanalysis.mdl_esti_md)
+* [statanalysis.mdl\_esti\_md.prediction\_results](#statanalysis.mdl_esti_md.prediction_results)
+  * [HPE\_REGRESSION\_FISHER\_TEST](#statanalysis.mdl_esti_md.prediction_results.HPE_REGRESSION_FISHER_TEST)
+  * [compute\_logit\_regression\_results](#statanalysis.mdl_esti_md.prediction_results.compute_logit_regression_results)
+* [statanalysis.mdl\_esti\_md.log\_reg\_example](#statanalysis.mdl_esti_md.log_reg_example)
+* [statanalysis.mdl\_esti\_md.hp\_estimators\_regression](#statanalysis.mdl_esti_md.hp_estimators_regression)
+  * [ComputeRegression](#statanalysis.mdl_esti_md.hp_estimators_regression.ComputeRegression)
+    * [fit](#statanalysis.mdl_esti_md.hp_estimators_regression.ComputeRegression.fit)
+* [statanalysis.mdl\_esti\_md.model\_estimator](#statanalysis.mdl_esti_md.model_estimator)
+  * [ME\_Normal\_dist](#statanalysis.mdl_esti_md.model_estimator.ME_Normal_dist)
+  * [ME\_Regression](#statanalysis.mdl_esti_md.model_estimator.ME_Regression)
+  * [ME\_multiple\_regression](#statanalysis.mdl_esti_md.model_estimator.ME_multiple_regression)
+* [statanalysis.common](#statanalysis.common)
+* [statanalysis.utils\_md.preprocessing](#statanalysis.utils_md.preprocessing)
+  * [clear\_list](#statanalysis.utils_md.preprocessing.clear_list)
+  * [clear\_list\_pair](#statanalysis.utils_md.preprocessing.clear_list_pair)
+  * [clear\_mat\_vec](#statanalysis.utils_md.preprocessing.clear_mat_vec)
+* [statanalysis.utils\_md](#statanalysis.utils_md)
+* [statanalysis.utils\_md.estimate\_std](#statanalysis.utils_md.estimate_std)
+  * [estimate\_std](#statanalysis.utils_md.estimate_std.estimate_std)
+* [statanalysis.utils\_md.compute\_ppf\_and\_p\_value](#statanalysis.utils_md.compute_ppf_and_p_value)
+  * [get\_p\_value\_from\_tail](#statanalysis.utils_md.compute_ppf_and_p_value.get_p_value_from_tail)
+  * [get\_p\_value\_z\_test](#statanalysis.utils_md.compute_ppf_and_p_value.get_p_value_z_test)
+  * [get\_p\_value\_t\_test](#statanalysis.utils_md.compute_ppf_and_p_value.get_p_value_t_test)
+  * [get\_p\_value\_f\_test](#statanalysis.utils_md.compute_ppf_and_p_value.get_p_value_f_test)
+  * [get\_p\_value](#statanalysis.utils_md.compute_ppf_and_p_value.get_p_value)
+* [statanalysis.utils\_md.constants](#statanalysis.utils_md.constants)
+* [statanalysis.utils\_md.refactoring](#statanalysis.utils_md.refactoring)
+  * [Confidence\_data](#statanalysis.utils_md.refactoring.Confidence_data)
+    * [sample\_size](#statanalysis.utils_md.refactoring.Confidence_data.sample_size)
+  * [Hypothesis\_data](#statanalysis.utils_md.refactoring.Hypothesis_data)
+    * [pnull](#statanalysis.utils_md.refactoring.Hypothesis_data.pnull)
+    * [tail](#statanalysis.utils_md.refactoring.Hypothesis_data.tail)
+    * [sample\_size](#statanalysis.utils_md.refactoring.Hypothesis_data.sample_size)
+    * [reject\_null](#statanalysis.utils_md.refactoring.Hypothesis_data.reject_null)
+  * [RegressionFisherTestData](#statanalysis.utils_md.refactoring.RegressionFisherTestData)
+    * [MSR](#statanalysis.utils_md.refactoring.RegressionFisherTestData.MSR)
+    * [R\_carre](#statanalysis.utils_md.refactoring.RegressionFisherTestData.R_carre)
+    * [R\_carre\_adj](#statanalysis.utils_md.refactoring.RegressionFisherTestData.R_carre_adj)
+    * [F\_stat](#statanalysis.utils_md.refactoring.RegressionFisherTestData.F_stat)
+    * [reject\_null](#statanalysis.utils_md.refactoring.RegressionFisherTestData.reject_null)
+* [statanalysis.hyp\_vali\_md](#statanalysis.hyp_vali_md)
+* [statanalysis.hyp\_vali\_md.constraints](#statanalysis.hyp_vali_md.constraints)
+  * [check\_sample\_normality](#statanalysis.hyp_vali_md.constraints.check_sample_normality)
+  * [check\_equal\_var](#statanalysis.hyp_vali_md.constraints.check_equal_var)
+* [statanalysis.hyp\_vali\_md.hypothesis\_validator](#statanalysis.hyp_vali_md.hypothesis_validator)
+  * [check\_residuals\_centered](#statanalysis.hyp_vali_md.hypothesis_validator.check_residuals_centered)
+  * [check\_coefficients\_non\_zero](#statanalysis.hyp_vali_md.hypothesis_validator.check_coefficients_non_zero)
+  * [check\_equal\_mean](#statanalysis.hyp_vali_md.hypothesis_validator.check_equal_mean)
+* [statanalysis.conf\_inte\_md](#statanalysis.conf_inte_md)
+* [statanalysis.conf\_inte\_md.confidence\_interval](#statanalysis.conf_inte_md.confidence_interval)
+  * [IC\_PROPORTION\_ONE](#statanalysis.conf_inte_md.confidence_interval.IC_PROPORTION_ONE)
+  * [IC\_MEAN\_ONE](#statanalysis.conf_inte_md.confidence_interval.IC_MEAN_ONE)
+  * [IC\_PROPORTION\_TWO](#statanalysis.conf_inte_md.confidence_interval.IC_PROPORTION_TWO)
+  * [IC\_MEAN\_TWO\_PAIR](#statanalysis.conf_inte_md.confidence_interval.IC_MEAN_TWO_PAIR)
+  * [IC\_MEAN\_TWO\_NOTPAIR](#statanalysis.conf_inte_md.confidence_interval.IC_MEAN_TWO_NOTPAIR)
+* [statanalysis.conf\_inte\_md.ci\_estimators](#statanalysis.conf_inte_md.ci_estimators)
+  * [get\_min\_sample](#statanalysis.conf_inte_md.ci_estimators.get_min_sample)
+  * [CIE\_ONE\_PROPORTION](#statanalysis.conf_inte_md.ci_estimators.CIE_ONE_PROPORTION)
+  * [CIE\_PROPORTION\_TWO](#statanalysis.conf_inte_md.ci_estimators.CIE_PROPORTION_TWO)
+  * [CIE\_MEAN\_ONE](#statanalysis.conf_inte_md.ci_estimators.CIE_MEAN_ONE)
+  * [CIE\_MEAN\_TWO](#statanalysis.conf_inte_md.ci_estimators.CIE_MEAN_TWO)
+* [statanalysis.hyp\_testi\_md](#statanalysis.hyp_testi_md)
+* [statanalysis.hyp\_testi\_md.hp\_estimators](#statanalysis.hyp_testi_md.hp_estimators)
+  * [HPE\_FROM\_P\_VALUE](#statanalysis.hyp_testi_md.hp_estimators.HPE_FROM_P_VALUE)
+  * [HPE\_PROPORTION\_ONE](#statanalysis.hyp_testi_md.hp_estimators.HPE_PROPORTION_ONE)
+  * [HPE\_PROPORTION\_TW0](#statanalysis.hyp_testi_md.hp_estimators.HPE_PROPORTION_TW0)
+  * [HPE\_MEAN\_ONE](#statanalysis.hyp_testi_md.hp_estimators.HPE_MEAN_ONE)
+  * [HPE\_MEAN\_TWO\_PAIRED](#statanalysis.hyp_testi_md.hp_estimators.HPE_MEAN_TWO_PAIRED)
+  * [HPE\_MEAN\_TWO\_NOTPAIRED](#statanalysis.hyp_testi_md.hp_estimators.HPE_MEAN_TWO_NOTPAIRED)
+  * [HPE\_MEAN\_MANY](#statanalysis.hyp_testi_md.hp_estimators.HPE_MEAN_MANY)
+* [statanalysis.hyp\_testi\_md.hypothesis\_testing](#statanalysis.hyp_testi_md.hypothesis_testing)
+  * [HP\_PROPORTION\_ONE](#statanalysis.hyp_testi_md.hypothesis_testing.HP_PROPORTION_ONE)
+  * [HP\_MEAN\_ONE](#statanalysis.hyp_testi_md.hypothesis_testing.HP_MEAN_ONE)
+  * [HP\_PROPORTION\_TWO](#statanalysis.hyp_testi_md.hypothesis_testing.HP_PROPORTION_TWO)
+  * [HP\_MEAN\_TWO\_PAIR](#statanalysis.hyp_testi_md.hypothesis_testing.HP_MEAN_TWO_PAIR)
+  * [HP\_MEAN\_TWO\_NOTPAIR](#statanalysis.hyp_testi_md.hypothesis_testing.HP_MEAN_TWO_NOTPAIR)
 
-<a id="__init__"></a>
+<a id="statanalysis"></a>
 
-# \_\_init\_\_
+# statanalysis
 
-<a id="common_imports"></a>
+<a id="statanalysis.mdl_esti_md.prediction_metrics"></a>
 
-# common\_imports
+# statanalysis.mdl\_esti\_md.prediction\_metrics
 
-<a id="my_stats"></a>
-
-# my\_stats
-
-<a id="my_stats.mdl_esti_md.prediction_metrics"></a>
-
-# my\_stats.mdl\_esti\_md.prediction\_metrics
-
-<a id="my_stats.mdl_esti_md.prediction_metrics.compute_skew"></a>
+<a id="statanalysis.mdl_esti_md.prediction_metrics.compute_skew"></a>
 
 #### compute\_skew
 
@@ -121,7 +116,7 @@ _summary_
 
 - `_type_` - _description_
 
-<a id="my_stats.mdl_esti_md.prediction_metrics.compute_kurtosis"></a>
+<a id="statanalysis.mdl_esti_md.prediction_metrics.compute_kurtosis"></a>
 
 #### compute\_kurtosis
 
@@ -143,7 +138,7 @@ _summary_
 
 - `_type_` - _description_
 
-<a id="my_stats.mdl_esti_md.prediction_metrics.compute_aic_bic"></a>
+<a id="statanalysis.mdl_esti_md.prediction_metrics.compute_aic_bic"></a>
 
 #### compute\_aic\_bic
 
@@ -171,7 +166,7 @@ Utils
 
 - `float` - aicself, y_true, y_pred
 
-<a id="my_stats.mdl_esti_md.prediction_metrics.PredictionMetrics"></a>
+<a id="statanalysis.mdl_esti_md.prediction_metrics.PredictionMetrics"></a>
 
 ## PredictionMetrics Objects
 
@@ -179,7 +174,7 @@ Utils
 class PredictionMetrics()
 ```
 
-<a id="my_stats.mdl_esti_md.prediction_metrics.PredictionMetrics.compute_log_likelihood"></a>
+<a id="statanalysis.mdl_esti_md.prediction_metrics.PredictionMetrics.compute_log_likelihood"></a>
 
 #### compute\_log\_likelihood
 
@@ -202,11 +197,15 @@ _summary_
 
 - `_type_` - _description_
 
-<a id="my_stats.mdl_esti_md.prediction_results"></a>
+<a id="statanalysis.mdl_esti_md"></a>
 
-# my\_stats.mdl\_esti\_md.prediction\_results
+# statanalysis.mdl\_esti\_md
 
-<a id="my_stats.mdl_esti_md.prediction_results.HPE_REGRESSION_FISHER_TEST"></a>
+<a id="statanalysis.mdl_esti_md.prediction_results"></a>
+
+# statanalysis.mdl\_esti\_md.prediction\_results
+
+<a id="statanalysis.mdl_esti_md.prediction_results.HPE_REGRESSION_FISHER_TEST"></a>
 
 #### HPE\_REGRESSION\_FISHER\_TEST
 
@@ -248,7 +247,7 @@ Fisher test
 
 - `data` - (RegressionFisherTestData)
 
-<a id="my_stats.mdl_esti_md.prediction_results.compute_logit_regression_results"></a>
+<a id="statanalysis.mdl_esti_md.prediction_results.compute_logit_regression_results"></a>
 
 #### compute\_logit\_regression\_results
 
@@ -271,22 +270,16 @@ _summary_
 
 - `_type_` - _description_
 
-<a id="my_stats.mdl_esti_md.log_reg_example"></a>
+<a id="statanalysis.mdl_esti_md.log_reg_example"></a>
 
-# my\_stats.mdl\_esti\_md.log\_reg\_example
+# statanalysis.mdl\_esti\_md.log\_reg\_example
 
 Author: Susan Li 
 source: [LogisticRegressionImplementation.ipynb - github.com/aihubprojects](https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb)
 
-<a id="my_stats.mdl_esti_md.log_reg_example.y"></a>
+<a id="statanalysis.mdl_esti_md.hp_estimators_regression"></a>
 
-#### y
-
-+ 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
-
-<a id="my_stats.mdl_esti_md.hp_estimators_regression"></a>
-
-# my\_stats.mdl\_esti\_md.hp\_estimators\_regression
+# statanalysis.mdl\_esti\_md.hp\_estimators\_regression
 
 todo
 - refactor output (last lines)
@@ -296,7 +289,7 @@ todo
 - Que signifie le R au carré négatif?: 
     - selon ma def, c'est  entre 0 et 1 à cause d'une somme mais c'est faux ?? [qastack.fr](https://qastack.fr/stats/183265/what-does-negative-r-squared-mean)
 
-<a id="my_stats.mdl_esti_md.hp_estimators_regression.ComputeRegression"></a>
+<a id="statanalysis.mdl_esti_md.hp_estimators_regression.ComputeRegression"></a>
 
 ## ComputeRegression Objects
 
@@ -304,7 +297,7 @@ todo
 class ComputeRegression()
 ```
 
-<a id="my_stats.mdl_esti_md.hp_estimators_regression.ComputeRegression.fit"></a>
+<a id="statanalysis.mdl_esti_md.hp_estimators_regression.ComputeRegression.fit"></a>
 
 #### fit
 
@@ -331,9 +324,9 @@ _summary_
 
 - `_type_` - _description_
 
-<a id="my_stats.mdl_esti_md.model_estimator"></a>
+<a id="statanalysis.mdl_esti_md.model_estimator"></a>
 
-# my\_stats.mdl\_esti\_md.model\_estimator
+# statanalysis.mdl\_esti\_md.model\_estimator
 
 We know why t-student is useful
 what about khi-2 ? we know 
@@ -345,7 +338,7 @@ fisher ? yes F
     - the interval should be narrower tinyer when X reacg the sample mean
 - a good list of intel/reminder about the regression [here - sites.ualberta.ca - pdf](https://sites.ualberta.ca/~lkgray/uploads/7/3/6/2/7362679/slides_-_multiplelinearregressionaic.pdf)
 
-<a id="my_stats.mdl_esti_md.model_estimator.ME_Normal_dist"></a>
+<a id="statanalysis.mdl_esti_md.model_estimator.ME_Normal_dist"></a>
 
 #### ME\_Normal\_dist
 
@@ -355,24 +348,24 @@ def ME_Normal_dist(sample: list, alpha=None, debug=False)
 
 estimate a normal distribution from a sample
 
-visualisation: 
-- check if normal: 
+visualisation:
+- check if normal:
     - sns.distplot(data.X)
     - check if qq-plot is linear [en.wikipedia.org](https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot)
-        ::from statsmodels.graphics.gofplots import qqplot 
+        ::from statsmodels.graphics.gofplots import qqplot
         ::from matplotlib import pyplot
         ::qqplot(sample, line='s')
         ::pyplot.show()
 
-hypothesis 
+hypothesis
 - X = m + N(0,s**2)
 
 - check normal hypothesis: [machinelearningmastery](https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/)
 
-lenght 
+lenght
 - you may need data over 1000 samples to get
 
-<a id="my_stats.mdl_esti_md.model_estimator.ME_Regression"></a>
+<a id="statanalysis.mdl_esti_md.model_estimator.ME_Regression"></a>
 
 #### ME\_Regression
 
@@ -394,14 +387,14 @@ prediction
 - predict Y conditional on X assuming that Y = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3 + N(0,s**2)
 - Y is a dependant variable
 - x, s are independant ones => predictors of the dependant variables
-- If there is a time stamp of measures (or paired data), please add them as independant variables pr[0] + var_exp_1*G + 
+- If there is a time stamp of measures (or paired data), please add them as independant variables pr[0] + var_exp_1*G +
 
 
-visualisation: 
-- sns.scatterplot(X,Y) 
+visualisation:
+- sns.scatterplot(X,Y)
 
-hypothesis 
-- Y = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3 + err 
+hypothesis
+- Y = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3 + err
 - err ~~> N(0,s**2)
 - variance(error)==s**2 is the same accross the data
 - var(Y/X)==s**2 ; E(Y/X) = pr[0] + pr[1]*X + pr[2]*X^2 + pr[3]*X^3
@@ -409,27 +402,27 @@ hypothesis
 - pr[i] not null => i add a test hypothesis (to reject the null H0:coeff==0 against H1:coeff!=0), not a confidence interval (to check if 0 if not in)
 
 
-prediction 
+prediction
 - each pr[i] have a mean and a std based on normal distribution
-- Y too => 
+- Y too =>
     - Mean(Y) = y_hat = pr_h[0] + pr_h[1]*X + pr_h[2]*X^2 + pr_[3]*X^3
     - Some model can predict quantile(Y, 95%) but i will just add std(y_hat) later. uuh isn't s ?
 
 
-predictors 
+predictors
 - pr[i], s**2
 
-lenght 
+lenght
 - you may need data over 1000 samples to get
 
-Others 
+Others
 D'ont forget about the errors !
 Predictions have certain uncertainty => [ poorer fitted model => larger uncertainty]
 
 utils
 - [standard error of the intercept - stats.stackexchange](https://stats.stackexchange.com/questions/173271/what-exactly-is-the-standard-error-of-the-intercept-in-multiple-regression-analy)
 
-<a id="my_stats.mdl_esti_md.model_estimator.ME_multiple_regression"></a>
+<a id="statanalysis.mdl_esti_md.model_estimator.ME_multiple_regression"></a>
 
 #### ME\_multiple\_regression
 
@@ -511,11 +504,15 @@ _summary_
 
 - `_type_` - _description_
 
-<a id="my_stats.utils_md.preprocessing"></a>
+<a id="statanalysis.common"></a>
 
-# my\_stats.utils\_md.preprocessing
+# statanalysis.common
 
-<a id="my_stats.utils_md.preprocessing.clear_list"></a>
+<a id="statanalysis.utils_md.preprocessing"></a>
+
+# statanalysis.utils\_md.preprocessing
+
+<a id="statanalysis.utils_md.preprocessing.clear_list"></a>
 
 #### clear\_list
 
@@ -554,7 +551,7 @@ remove nan from a list
   >>> print("y: ",y1)
 - `y` - array([6. 3. 2.])
 
-<a id="my_stats.utils_md.preprocessing.clear_list_pair"></a>
+<a id="statanalysis.utils_md.preprocessing.clear_list_pair"></a>
 
 #### clear\_list\_pair
 
@@ -594,7 +591,7 @@ remove nan values (remove observation data containing nan value in L1 or L2) fro
   >>> print("y2: ",y2)
 - `y2` - array([6. 9.])
 
-<a id="my_stats.utils_md.preprocessing.clear_mat_vec"></a>
+<a id="statanalysis.utils_md.preprocessing.clear_mat_vec"></a>
 
 #### clear\_mat\_vec
 
@@ -613,7 +610,7 @@ y: 1-dimensional array (n,)
 Others
 ----------
 What about he handle missing values properly !!
-    - weight shit 
+    - weight shit
     - Anyway, it would be good to know how missing values removal the distribution of L
 
 Raises
@@ -641,11 +638,15 @@ A1:  [[1. 3.]
 >>> print("y: ",y1)
 y:  [6. 3.]
 
-<a id="my_stats.utils_md.estimate_std"></a>
+<a id="statanalysis.utils_md"></a>
 
-# my\_stats.utils\_md.estimate\_std
+# statanalysis.utils\_md
 
-<a id="my_stats.utils_md.estimate_std.estimate_std"></a>
+<a id="statanalysis.utils_md.estimate_std"></a>
+
+# statanalysis.utils\_md.estimate\_std
+
+<a id="statanalysis.utils_md.estimate_std.estimate_std"></a>
 
 #### estimate\_std
 
@@ -655,11 +656,11 @@ def estimate_std(sample)
 
 Instead of std, he divide by (n-1) correspondng to the std estimator used in t-test
 
-<a id="my_stats.utils_md.compute_ppf_and_p_value"></a>
+<a id="statanalysis.utils_md.compute_ppf_and_p_value"></a>
 
-# my\_stats.utils\_md.compute\_ppf\_and\_p\_value
+# statanalysis.utils\_md.compute\_ppf\_and\_p\_value
 
-<a id="my_stats.utils_md.compute_ppf_and_p_value.get_p_value_from_tail"></a>
+<a id="statanalysis.utils_md.compute_ppf_and_p_value.get_p_value_from_tail"></a>
 
 #### get\_p\_value\_from\_tail
 
@@ -674,7 +675,7 @@ if tail
     - left: return P(N < Z) = F(Z) = prob
     - middle: return P(N < -|Z|) + P(N > |Z|) => return  2*P(N > |Z|)
 
-<a id="my_stats.utils_md.compute_ppf_and_p_value.get_p_value_z_test"></a>
+<a id="statanalysis.utils_md.compute_ppf_and_p_value.get_p_value_z_test"></a>
 
 #### get\_p\_value\_z\_test
 
@@ -688,7 +689,7 @@ if tail
     - left: return P(N < Z)
     - middle: return P(N < -|Z|) + P(N > |Z|) => return  2*P(N > |Z|)
 
-<a id="my_stats.utils_md.compute_ppf_and_p_value.get_p_value_t_test"></a>
+<a id="statanalysis.utils_md.compute_ppf_and_p_value.get_p_value_t_test"></a>
 
 #### get\_p\_value\_t\_test
 
@@ -702,7 +703,7 @@ if tail
     - left: return P(T < Z)
     - middle: return P(T < -|Z|) + P(T > |Z|) => return  2*P(T > |Z|)
 
-<a id="my_stats.utils_md.compute_ppf_and_p_value.get_p_value_f_test"></a>
+<a id="statanalysis.utils_md.compute_ppf_and_p_value.get_p_value_f_test"></a>
 
 #### get\_p\_value\_f\_test
 
@@ -733,7 +734,7 @@ Utils
 
 - `_type_` - _description_
 
-<a id="my_stats.utils_md.compute_ppf_and_p_value.get_p_value"></a>
+<a id="statanalysis.utils_md.compute_ppf_and_p_value.get_p_value"></a>
 
 #### get\_p\_value
 
@@ -741,7 +742,7 @@ Utils
 def get_p_value(Z: float, tail: str, test: str, ddl: int = None, debug=False)
 ```
 
-get p value based on 
+get p value based on
     - (if test=="t_test") student distribution T(df=ddl) with ddl degres of freedom
     - (if test=="z_test") normal distribution N(0, 1)
     - (if test=="f_test") normal distribution F(ddl[0], ddl[1])
@@ -751,15 +752,15 @@ if tail
     - left: return P(T < Z)
     - middle: return P(T < -|Z|) + P(T > |Z|) => return  2*P(T > |Z|)
 
-<a id="my_stats.utils_md.constants"></a>
+<a id="statanalysis.utils_md.constants"></a>
 
-# my\_stats.utils\_md.constants
+# statanalysis.utils\_md.constants
 
-<a id="my_stats.utils_md.refactoring"></a>
+<a id="statanalysis.utils_md.refactoring"></a>
 
-# my\_stats.utils\_md.refactoring
+# statanalysis.utils\_md.refactoring
 
-<a id="my_stats.utils_md.refactoring.Confidence_data"></a>
+<a id="statanalysis.utils_md.refactoring.Confidence_data"></a>
 
 ## Confidence\_data Objects
 
@@ -768,13 +769,13 @@ if tail
 class Confidence_data()
 ```
 
-<a id="my_stats.utils_md.refactoring.Confidence_data.sample_size"></a>
+<a id="statanalysis.utils_md.refactoring.Confidence_data.sample_size"></a>
 
 #### sample\_size
 
 int or tuple
 
-<a id="my_stats.utils_md.refactoring.Hypothesis_data"></a>
+<a id="statanalysis.utils_md.refactoring.Hypothesis_data"></a>
 
 ## Hypothesis\_data Objects
 
@@ -783,31 +784,31 @@ int or tuple
 class Hypothesis_data()
 ```
 
-<a id="my_stats.utils_md.refactoring.Hypothesis_data.pnull"></a>
+<a id="statanalysis.utils_md.refactoring.Hypothesis_data.pnull"></a>
 
 #### pnull
 
 prior value to check against
 
-<a id="my_stats.utils_md.refactoring.Hypothesis_data.tail"></a>
+<a id="statanalysis.utils_md.refactoring.Hypothesis_data.tail"></a>
 
 #### tail
 
 right, left,middle
 
-<a id="my_stats.utils_md.refactoring.Hypothesis_data.sample_size"></a>
+<a id="statanalysis.utils_md.refactoring.Hypothesis_data.sample_size"></a>
 
 #### sample\_size
 
 int or tuple
 
-<a id="my_stats.utils_md.refactoring.Hypothesis_data.reject_null"></a>
+<a id="statanalysis.utils_md.refactoring.Hypothesis_data.reject_null"></a>
 
 #### reject\_null
 
 if H0 is rejected
 
-<a id="my_stats.utils_md.refactoring.RegressionFisherTestData"></a>
+<a id="statanalysis.utils_md.refactoring.RegressionFisherTestData"></a>
 
 ## RegressionFisherTestData Objects
 
@@ -816,41 +817,45 @@ if H0 is rejected
 class RegressionFisherTestData()
 ```
 
-<a id="my_stats.utils_md.refactoring.RegressionFisherTestData.MSR"></a>
+<a id="statanalysis.utils_md.refactoring.RegressionFisherTestData.MSR"></a>
 
 #### MSR
 
 SSR/(k-1)
 
-<a id="my_stats.utils_md.refactoring.RegressionFisherTestData.R_carre"></a>
+<a id="statanalysis.utils_md.refactoring.RegressionFisherTestData.R_carre"></a>
 
 #### R\_carre
 
 1-SSR/SST
 
-<a id="my_stats.utils_md.refactoring.RegressionFisherTestData.R_carre_adj"></a>
+<a id="statanalysis.utils_md.refactoring.RegressionFisherTestData.R_carre_adj"></a>
 
 #### R\_carre\_adj
 
 1-MSR/MST
 
-<a id="my_stats.utils_md.refactoring.RegressionFisherTestData.F_stat"></a>
+<a id="statanalysis.utils_md.refactoring.RegressionFisherTestData.F_stat"></a>
 
 #### F\_stat
 
 F=MSR/MSE
 
-<a id="my_stats.utils_md.refactoring.RegressionFisherTestData.reject_null"></a>
+<a id="statanalysis.utils_md.refactoring.RegressionFisherTestData.reject_null"></a>
 
 #### reject\_null
 
 If F is large
 
-<a id="my_stats.hyp_vali_md.constraints"></a>
+<a id="statanalysis.hyp_vali_md"></a>
 
-# my\_stats.hyp\_vali\_md.constraints
+# statanalysis.hyp\_vali\_md
 
-<a id="my_stats.hyp_vali_md.constraints.check_sample_normality"></a>
+<a id="statanalysis.hyp_vali_md.constraints"></a>
+
+# statanalysis.hyp\_vali\_md.constraints
+
+<a id="statanalysis.hyp_vali_md.constraints.check_sample_normality"></a>
 
 #### check\_sample\_normality
 
@@ -872,7 +877,7 @@ check if residuals is like a normal distribution
 
 - `bool` - if all tests passed
 
-<a id="my_stats.hyp_vali_md.constraints.check_equal_var"></a>
+<a id="statanalysis.hyp_vali_md.constraints.check_equal_var"></a>
 
 #### check\_equal\_var
 
@@ -893,14 +898,14 @@ _summary_
 
 - `_type_` - _description_
 
-<a id="my_stats.hyp_vali_md.hypothesis_validator"></a>
+<a id="statanalysis.hyp_vali_md.hypothesis_validator"></a>
 
-# my\_stats.hyp\_vali\_md.hypothesis\_validator
+# statanalysis.hyp\_vali\_md.hypothesis\_validator
 
 les test de valisation (hypothese avant de lancer un autre test) qui dependant de test que j'ai écrits moi-même
 Les mettre dans utils prut créer un import circulaire
 
-<a id="my_stats.hyp_vali_md.hypothesis_validator.check_residuals_centered"></a>
+<a id="statanalysis.hyp_vali_md.hypothesis_validator.check_residuals_centered"></a>
 
 #### check\_residuals\_centered
 
@@ -919,7 +924,7 @@ check if a list is centered (if the mean ==0 nuder a significance od 0.05)
 
 - `_type_` - _description_
 
-<a id="my_stats.hyp_vali_md.hypothesis_validator.check_coefficients_non_zero"></a>
+<a id="statanalysis.hyp_vali_md.hypothesis_validator.check_coefficients_non_zero"></a>
 
 #### check\_coefficients\_non\_zero
 
@@ -950,7 +955,7 @@ compute non zero tests for each corfficien
   - testPassed (bool)
   - obj (list) list of boolean (For each value, True if H0 is reected)
 
-<a id="my_stats.hyp_vali_md.hypothesis_validator.check_equal_mean"></a>
+<a id="statanalysis.hyp_vali_md.hypothesis_validator.check_equal_mean"></a>
 
 #### check\_equal\_mean
 
@@ -982,15 +987,19 @@ Hypothesis
 - `stat` - (float) F
 - `p_value` - (float)
 
-<a id="my_stats.conf_inte_md.confidence_interval"></a>
+<a id="statanalysis.conf_inte_md"></a>
 
-# my\_stats.conf\_inte\_md.confidence\_interval
+# statanalysis.conf\_inte\_md
+
+<a id="statanalysis.conf_inte_md.confidence_interval"></a>
+
+# statanalysis.conf\_inte\_md.confidence\_interval
 
 Some defs
 - parameter: A quantifiable characteristic of a population
 - confidence interval: range of reasonable values for the parameter
 
-<a id="my_stats.conf_inte_md.confidence_interval.IC_PROPORTION_ONE"></a>
+<a id="statanalysis.conf_inte_md.confidence_interval.IC_PROPORTION_ONE"></a>
 
 #### IC\_PROPORTION\_ONE
 
@@ -1029,7 +1038,7 @@ Confidence_interval(ONE PROPORTION):Confidence interval calculus after a statist
 - Result
 - with a {res.confidence} confidence, we estimate that the populztion proportion who are men is between {res.left_tail} and {res.right_tail}
 
-<a id="my_stats.conf_inte_md.confidence_interval.IC_MEAN_ONE"></a>
+<a id="statanalysis.conf_inte_md.confidence_interval.IC_MEAN_ONE"></a>
 
 #### IC\_MEAN\_ONE
 
@@ -1039,7 +1048,7 @@ def IC_MEAN_ONE(sample: list, t_etoile=None, confidence: float = None)
 
 Estimate_population_mean(ONE MEAN): We need the spread (std): We will use an estimation
 
-Data 
+Data
     - confidence:..
     - sample: value...
 
@@ -1049,7 +1058,7 @@ Method
 Hypothesis
 - Samples follow a normal (or large enough to bypass this assumption) => means of these sample follow a t-dist
 
-<a id="my_stats.conf_inte_md.confidence_interval.IC_PROPORTION_TWO"></a>
+<a id="statanalysis.conf_inte_md.confidence_interval.IC_PROPORTION_TWO"></a>
 
 #### IC\_PROPORTION\_TWO
 
@@ -1063,13 +1072,13 @@ Method
     - create joint confidence interval
 
 Construction
-- Cmparison 
+- Cmparison
 
 Hypotheses
 - two independant random samples
 - large enough sample sizes : 10 per category (ex 10 yes, 10 no)
 
-<a id="my_stats.conf_inte_md.confidence_interval.IC_MEAN_TWO_PAIR"></a>
+<a id="statanalysis.conf_inte_md.confidence_interval.IC_MEAN_TWO_PAIR"></a>
 
 #### IC\_MEAN\_TWO\_PAIR
 
@@ -1086,17 +1095,17 @@ Difference_population_means_for_paired_data(TWO MEANS FOR PAIRED DATA): We have 
 What is paired data ?
 
     - measurements took on individuals (people, home, any object)
-    - technicality: 
-        - When in a dataset (len = n) there is a row  df.a witch values only repeat twice (=> df.a.nunique = n/2) 
+    - technicality:
+        - When in a dataset (len = n) there is a row  df.a witch values only repeat twice (=> df.a.nunique = n/2)
         - we can do a plot(x=feature1, y=feature2)
     - examples
         - Each home need canibet quote from two suppliers => we want to know if there is an average difference in nb_quotes from between twese two suppliers
         - In a blind taste test to compare two new juice flavors, grape and apple, consumers were given a sample of each flavor and the results will be used to estimate the percentage of all such consumers who prefer the grape flavor to the apple flavor.
     - Construction
-        - It is like, 
+        - It is like,
             - checking if a feature magnitude change when going from a category to another, each pair split the two cztegories
             - Example_contexte
-                - having a dataframe df, with 3 col [name, score, equipe, role] 
+                - having a dataframe df, with 3 col [name, score, equipe, role]
                     - equipe: "1" or "2"
                     - role: df.role.nunique = 11 => len(df)==22
                 - Now there is a battle: For a "same role" fight", which team is the best?
@@ -1111,7 +1120,7 @@ We need the spread (std): We will use an estimation
 Equivl
 - IC_MEAN_ONE(confidence, sample1 - sample2)
 
-Data 
+Data
     - confidence:..
     - Sample1: list: values...
     - Sample2: list: (same len) values...
@@ -1129,7 +1138,7 @@ Notes
 - With {cf} confidence, the population mean difference of the (second_team - first_team) attribute is estimated to be between {data.interval[0]} and {dat.interval[1]}
 - if all values are above 0, cool there is a significativity
 
-<a id="my_stats.conf_inte_md.confidence_interval.IC_MEAN_TWO_NOTPAIR"></a>
+<a id="statanalysis.conf_inte_md.confidence_interval.IC_MEAN_TWO_NOTPAIR"></a>
 
 #### IC\_MEAN\_TWO\_NOTPAIR
 
@@ -1143,10 +1152,10 @@ def IC_MEAN_TWO_NOTPAIR(sample1,
 Difference_population_means_for_nonpaired_data(TWO MEANS FOR PAIRED DATA): We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? `p1`-p2#
 
 Construction
-- It is like, 
+- It is like,
     - checking if a feature magnitude change when going from a category to another
     - Example_contexte
-        - having a dataframe df, with 3 col [name, score, equipe, role] 
+        - having a dataframe df, with 3 col [name, score, equipe, role]
             - equipe: "1" or "2"
             - role: df.role.nunique = 11 => len(df)==22
         - Now there is a battle: For a "same role" fight", which team is the best?
@@ -1158,15 +1167,15 @@ Construction
 
 We need the spread (std): We will use an estimation
 
-Args 
+Args
     - confidence:..
     - Sample1: list: values...
     - Sample2: list: (same len) values...
     - pool: default False
-        - True 
+        - True
             - if we assume that our populations variance are equal
             - we use a t-distribution of (N1+N2-1) ddl
-        - False 
+        - False
             - if we assume that our populations variance are not equal
             - we use a t-distribution of min(N1, N2)-1 ddl
 
@@ -1182,9 +1191,9 @@ Notes
 - With {cf} confidence, the population mean difference of the (second_team - first_team) attribute is estimated to be between {data.interval[0]} and {dat.interval[1]}
 - if all values are above 0, cool there is a significativity
 
-<a id="my_stats.conf_inte_md.ci_estimators"></a>
+<a id="statanalysis.conf_inte_md.ci_estimators"></a>
 
-# my\_stats.conf\_inte\_md.ci\_estimators
+# statanalysis.conf\_inte\_md.ci\_estimators
 
 todo
 - refactor output (last lines)
@@ -1192,7 +1201,7 @@ todo
 - use kwargs format while calling functions
 - reorder fcts attributes
 
-<a id="my_stats.conf_inte_md.ci_estimators.get_min_sample"></a>
+<a id="statanalysis.conf_inte_md.ci_estimators.get_min_sample"></a>
 
 #### get\_min\_sample
 
@@ -1200,16 +1209,16 @@ todo
 def get_min_sample(moe: float, p=None, method=None, cf: float = None)
 ```
 
-Get_min_sample:get the minimum of sample_size to use for a 
+Get_min_sample:get the minimum of sample_size to use for a
 - input
     - cf: confidence (or coverage_probability): between 0 and 1
-    - moe: margin of error 
+    - moe: margin of error
     - method (optional): "conservative" (default)
     - p: not used if method=="conservative"
 Hyp
 - better the population follow nornal dist. Or use large sample (>10)
 
-<a id="my_stats.conf_inte_md.ci_estimators.CIE_ONE_PROPORTION"></a>
+<a id="statanalysis.conf_inte_md.ci_estimators.CIE_ONE_PROPORTION"></a>
 
 #### CIE\_ONE\_PROPORTION
 
@@ -1219,14 +1228,14 @@ def CIE_ONE_PROPORTION(proportion, n, method, cf: float = None)
 
 Get_interval_simple: get a proportion of an attribute value (male gender, ) in a population based on a sample  (no sign pb)
 - cf: confidence_level (or coverage_probability)
-- proportion: measurement 
+- proportion: measurement
 - n: number of observations == len(sample)
 - method: "classic" or "conservative"
 
 Hyp
 - better the population follow nornal dist. Or use large sample (>10)
 
-<a id="my_stats.conf_inte_md.ci_estimators.CIE_PROPORTION_TWO"></a>
+<a id="statanalysis.conf_inte_md.ci_estimators.CIE_PROPORTION_TWO"></a>
 
 #### CIE\_PROPORTION\_TWO
 
@@ -1244,7 +1253,7 @@ Get_interval_diff: get the diff of mean between 2 population based on a sample f
 Hyp
 - better the populations follow normal dist. Or use large samples (>10)
 
-<a id="my_stats.conf_inte_md.ci_estimators.CIE_MEAN_ONE"></a>
+<a id="statanalysis.conf_inte_md.ci_estimators.CIE_MEAN_ONE"></a>
 
 #### CIE\_MEAN\_ONE
 
@@ -1266,7 +1275,7 @@ Hyp
 Theo
 - reade [here](https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling)
 
-<a id="my_stats.conf_inte_md.ci_estimators.CIE_MEAN_TWO"></a>
+<a id="statanalysis.conf_inte_md.ci_estimators.CIE_MEAN_TWO"></a>
 
 #### CIE\_MEAN\_TWO
 
@@ -1290,19 +1299,19 @@ Get_interval_diff_mean: get  the diff in mean of two populations(taking their sa
 - std_sample_2: std of the sample  ==std(sample2)
 - t_etoile: if set, cf is ignored.
 - pool: default False
-    - True 
+    - True
         - if we assume that our populations variance are equal
         - we use a t-distribution of (N1+N2-1) ddl
-    - False 
+    - False
         - if we assume that our populations variance are not equal
         - we use a t-distribution of min(N1, N2)-1 ddl
 
 Hyp
 - both the population follow normal dist. Or use large sample (>10)
-- the populations are independant from each other 
+- the populations are independant from each other
 - use simple random samples
 - for pool=True, variances are assume to be the same
-    - to test that, you can 
+    - to test that, you can
         - use levene test [plus robuste que fusher ou bartlett face à la non-normalité de la donnée](https://fr.wikipedia.org/wiki/Test_de_Bartlett)
             - H0: Variances are equals; H1: there are not
 
@@ -1327,15 +1336,19 @@ Eqvl_pointWise estimation
 Theo
 - read [here](https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling)
 
-<a id="my_stats.hyp_testi_md.hp_estimators"></a>
+<a id="statanalysis.hyp_testi_md"></a>
 
-# my\_stats.hyp\_testi\_md.hp\_estimators
+# statanalysis.hyp\_testi\_md
+
+<a id="statanalysis.hyp_testi_md.hp_estimators"></a>
+
+# statanalysis.hyp\_testi\_md.hp\_estimators
 
 utils 
 - Dans un test, H0 est l'hypothese pessimiste 
     - il faudra donc assez d'evidence (p<0.05) afin de la rejeter
 
-<a id="my_stats.hyp_testi_md.hp_estimators.HPE_FROM_P_VALUE"></a>
+<a id="statanalysis.hyp_testi_md.hp_estimators.HPE_FROM_P_VALUE"></a>
 
 #### HPE\_FROM\_P\_VALUE
 
@@ -1374,7 +1387,7 @@ _summary_
 
 - `_type_` - _description_
 
-<a id="my_stats.hyp_testi_md.hp_estimators.HPE_PROPORTION_ONE"></a>
+<a id="statanalysis.hyp_testi_md.hp_estimators.HPE_PROPORTION_ONE"></a>
 
 #### HPE\_PROPORTION\_ONE
 
@@ -1385,9 +1398,9 @@ def HPE_PROPORTION_ONE(alpha, p0, proportion, n, tail=Tails.right)
 check a proportion of an attribute value (male gender, ) in a population based on a sample  (no sign pb) using a Z-statistic
 - alpha: p_value_max: significance level
 - p0: proportion under the null
-- proportion: measurement 
+- proportion: measurement
 - n: number of observations == len(sample)
-- tail: 
+- tail:
     - right: check if p>p0
     - left: check if p<p0
     - middle: ckeck id p==p0
@@ -1397,7 +1410,7 @@ Hyp
 
 Hypotheses
 - H0: proportion = p0
-- H1: 
+- H1:
     - tail==right => proportion > p0
     - tail==left => proportion < p0
     - tail==middle => proportion != p0
@@ -1409,7 +1422,7 @@ Result (ex:tail=right)
 - if reject==True
     - There is sufficient evidence to conclude that the population proportion of {....} is greater than p0
 
-<a id="my_stats.hyp_testi_md.hp_estimators.HPE_PROPORTION_TW0"></a>
+<a id="statanalysis.hyp_testi_md.hp_estimators.HPE_PROPORTION_TW0"></a>
 
 #### HPE\_PROPORTION\_TW0
 
@@ -1438,7 +1451,7 @@ Hypotheses
 Detail
 - use a normal distribion (Z-statistic)
 
-<a id="my_stats.hyp_testi_md.hp_estimators.HPE_MEAN_ONE"></a>
+<a id="statanalysis.hyp_testi_md.hp_estimators.HPE_MEAN_ONE"></a>
 
 #### HPE\_MEAN\_ONE
 
@@ -1447,7 +1460,7 @@ def HPE_MEAN_ONE(alpha, p0, mean_dist, n, std_sample, tail=Tails.right)
 ```
 
 get the mean of a population from a sample  (no sign pb) using using a T-statistic (always T for mean!! unless youre comparing a sample vs a population of known std)
-- alpha: 
+- alpha:
 - n: number of observations == len(sample)
 - mean_dist: the mean measured on the sample = mean(sample)
 - std_sample: std of the sample  ==std(sample). You should use a real estimate (ffod=n-1)
@@ -1460,7 +1473,7 @@ Hyp
 Theo
 - read [here](https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling)
 
-<a id="my_stats.hyp_testi_md.hp_estimators.HPE_MEAN_TWO_PAIRED"></a>
+<a id="statanalysis.hyp_testi_md.hp_estimators.HPE_MEAN_TWO_PAIRED"></a>
 
 #### HPE\_MEAN\_TWO\_PAIRED
 
@@ -1473,7 +1486,7 @@ def HPE_MEAN_TWO_PAIRED(alpha,
 ```
 
 get the difference of mean between two list paired (no sign pb) using a T-statistic (always T for mean!! unless youre comparing a sample vs a population of known std)
-- alpha: 
+- alpha:
 - mean_diff_sample: the mean measured on the sample = mean(sample)
 - n: number of observations == len(sample) == n1 == n2
 - std_diff_sample: std of the sample  ==std(sample). You should use a real estimate (ffod=n-1)
@@ -1486,12 +1499,12 @@ Hyp
 
 Hypothesis
 - H0: p1 - p2 = 0
-- H1: 
-    - H1: p1 - p2 != 0 for(tail=middle) 
-    - H1: p1 - p2 > 0 for(tail=right) 
+- H1:
+    - H1: p1 - p2 != 0 for(tail=middle)
+    - H1: p1 - p2 > 0 for(tail=right)
     - H1: p1 - p2 < 0 for(tail=left)
 
-<a id="my_stats.hyp_testi_md.hp_estimators.HPE_MEAN_TWO_NOTPAIRED"></a>
+<a id="statanalysis.hyp_testi_md.hp_estimators.HPE_MEAN_TWO_NOTPAIRED"></a>
 
 #### HPE\_MEAN\_TWO\_NOTPAIRED
 
@@ -1507,26 +1520,26 @@ def HPE_MEAN_TWO_NOTPAIRED(alpha,
 ```
 
 check the diff in mean of two populations(taking their samples) (sign(diff_mean) => no sign pb)
-- alpha: 
+- alpha:
 - N1: number of observations == len(sample1)
 - N2: number of observations == len(sample2)
 - mean_dist: the mean measured on the sample = mean(sample)
 - std_sample_1: std of the sample  ==std(sample1)
 - std_sample_2: std of the sample  ==std(sample2)
 - pool: default False
-    - True 
+    - True
         - if we assume that our populations variance are equal
         - we use a t-distribution of (N1+N2-1) ddl
-    - False 
+    - False
         - if we assume that our populations variance are not equal
         - we use a t-distribution of min(N1, N2)-1 ddl
 
 Hyp
 - both the population follow normal dist. Or use large sample (>10)
-- the populations are independant from each other 
+- the populations are independant from each other
 - use simple random samples
 - for pool=True, variances must be the same
-    - to test that, you can 
+    - to test that, you can
         - use levene test [plus robuste que fusher ou bartlett face à la non-normalité de la donnée](https://fr.wikipedia.org/wiki/Test_de_Bartlett)
             ::H0: Variances are equals; H1: there are not
             ::scipy.stats.levene(liste1,liste2, center='mean')
@@ -1537,7 +1550,7 @@ Hyp
 Theo
 - read [here](https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling)
 
-<a id="my_stats.hyp_testi_md.hp_estimators.HPE_MEAN_MANY"></a>
+<a id="statanalysis.hyp_testi_md.hp_estimators.HPE_MEAN_MANY"></a>
 
 #### HPE\_MEAN\_MANY
 
@@ -1568,9 +1581,9 @@ Fisher test
 - `stat` - (float) F
 - `p_value` - (float)
 
-<a id="my_stats.hyp_testi_md.hypothesis_testing"></a>
+<a id="statanalysis.hyp_testi_md.hypothesis_testing"></a>
 
-# my\_stats.hyp\_testi\_md.hypothesis\_testing
+# statanalysis.hyp\_testi\_md.hypothesis\_testing
 
 utils 
     - Dans un test, H0 est l'hypothese pessimiste 
@@ -1581,7 +1594,7 @@ Some defs
     - parameter: A quantifiable characteristic of a population (baseline)
     - alpha: level of significance = type1_error = proba(reject_null;when null is True)
 
-<a id="my_stats.hyp_testi_md.hypothesis_testing.HP_PROPORTION_ONE"></a>
+<a id="statanalysis.hyp_testi_md.hypothesis_testing.HP_PROPORTION_ONE"></a>
 
 #### HP\_PROPORTION\_ONE
 
@@ -1621,7 +1634,7 @@ ONE PROPORTION:alpha calculus after a statistic test
 - Result
 - with a {res.alpha} alpha, we estimate that the populztion proportion who are men is between {res.left_tail} and {res.right_tail}
 
-<a id="my_stats.hyp_testi_md.hypothesis_testing.HP_MEAN_ONE"></a>
+<a id="statanalysis.hyp_testi_md.hypothesis_testing.HP_MEAN_ONE"></a>
 
 #### HP\_MEAN\_ONE
 
@@ -1631,7 +1644,7 @@ def HP_MEAN_ONE(p0: float, alpha: float, sample: list, symb=Tails.SUP_SYMB)
 
 ONE MEAN: We need the spread (std): We will use an estimation
 
-Data 
+Data
     - alpha:..
     - sample: value...
 
@@ -1641,7 +1654,7 @@ Method
 Hypothesis
 - Samples follow a normal (or large enough to bypass this assumption) => means of these sample follow a t-dist
 
-<a id="my_stats.hyp_testi_md.hypothesis_testing.HP_PROPORTION_TWO"></a>
+<a id="statanalysis.hyp_testi_md.hypothesis_testing.HP_PROPORTION_TWO"></a>
 
 #### HP\_PROPORTION\_TWO
 
@@ -1657,13 +1670,13 @@ Method
 
 
 Construction
-- Cmparison 
+- Cmparison
 
 Hypotheses
 - two independant random samples
 - large enough sample sizes : 10 per category (ex 10 yes, 10 no)
 
-<a id="my_stats.hyp_testi_md.hypothesis_testing.HP_MEAN_TWO_PAIR"></a>
+<a id="statanalysis.hyp_testi_md.hypothesis_testing.HP_MEAN_TWO_PAIR"></a>
 
 #### HP\_MEAN\_TWO\_PAIR
 
@@ -1674,19 +1687,19 @@ def HP_MEAN_TWO_PAIR(alpha, sample1, sample2, symb=Tails.NEQ_SYMB)
 TWO MEANS FOR PAIRED DATA: We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? `p1`-p2#
 
 
-What is paired data: 
+What is paired data:
     - measurements took on individuals (people, home, any object)
-    - technicality: 
-        - When in a dataset (len = n) there is a row  df.a witch values only repeat twice (=> df.a.nunique = n/2) 
+    - technicality:
+        - When in a dataset (len = n) there is a row  df.a witch values only repeat twice (=> df.a.nunique = n/2)
         - we can do a plot(x=feature1, y=feature2)
     - examples
         - Each home need canibet quote from two suppliers => we want to know if there is an average difference in nb_quotes from between twese two suppliers
         - In a blind taste test to compare two new juice flavors, grape and apple, consumers were given a sample of each flavor and the results will be used to estimate the percentage of all such consumers who prefer the grape flavor to the apple flavor.
     - Construction
-        - It is like, 
+        - It is like,
             - checking if a feature magnitude change when going from a category to another, each pair split the two cztegories
             - Example_contexte
-                - having a dataframe df, with 3 col [name, score, equipe, role] 
+                - having a dataframe df, with 3 col [name, score, equipe, role]
                     - equipe: "1" or "2"
                     - role: df.role.nunique = 11 => len(df)==22
                 - Now there is a battle: For a "same role" fight", which team is the best?
@@ -1701,7 +1714,7 @@ We need the spread (std): We will use an estimation
 Equivl
 - estimate_population_mean(alpha, sample1 - sample2)
 
-Data 
+Data
     - alpha:..
     - Sample1: list: values...
     - Sample2: list: (same len) values...
@@ -1719,7 +1732,7 @@ Hypothesis
 - With {alpha} alpha, the population mean difference of the (second_team - first_team) attribute is estimated to be between {data.interval[0]} and {dat.interval[1]}
 - if all values are above 0, cool there is a significativity
 
-<a id="my_stats.hyp_testi_md.hypothesis_testing.HP_MEAN_TWO_NOTPAIR"></a>
+<a id="statanalysis.hyp_testi_md.hypothesis_testing.HP_MEAN_TWO_NOTPAIR"></a>
 
 #### HP\_MEAN\_TWO\_NOTPAIR
 
@@ -1734,10 +1747,10 @@ def HP_MEAN_TWO_NOTPAIR(alpha,
 TWO MEANS FOR PAIRED DATA: We have have estimate a parameter p on two populations (1 , 2).How to check p1-p2 != 0? `p1`-p2#
 
 Construction
-- It is like, 
+- It is like,
     - checking if a feature magnitude change when going from a category to another
     - Example_contexte
-        - having a dataframe df, with 3 col [name, score, equipe, role] 
+        - having a dataframe df, with 3 col [name, score, equipe, role]
             - equipe: "1" or "2"
             - role: df.role.nunique = 11 => len(df)==22
         - Now there is a battle: For a "same role" fight", which team is the best?
@@ -1749,15 +1762,15 @@ Construction
 
 We need the spread (std): We will use an estimation
 
-Data 
+Data
     - alpha:..
     - Sample1: list: values...
     - Sample2: list: (same len) values...
     - pool: default False
-        - True 
+        - True
             - if we assume that our populations variance are equal
             - we use a t-distribution of (N1+N2-1) ddl
-        - False 
+        - False
             - if we assume that our populations variance are not equal
             - we use a t-distribution of min(N1, N2)-1 ddl
 
