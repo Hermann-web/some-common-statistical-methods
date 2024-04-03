@@ -7,8 +7,7 @@ fisher ? yes F
     - attention to extrapolation (unsern data) vs interpolation
 - another for the curve showing the std
     - the interval should be narrower tinyer when X reacg the sample mean
-- a good list of intel/reminder about the regression
-    - https://sites.ualberta.ca/~lkgray/uploads/7/3/6/2/7362679/slides_-_multiplelinearregressionaic.pdf
+- a good list of intel/reminder about the regression [here - sites.ualberta.ca - pdf](https://sites.ualberta.ca/~lkgray/uploads/7/3/6/2/7362679/slides_-_multiplelinearregressionaic.pdf)
     
 '''
 
@@ -52,7 +51,7 @@ def ME_Normal_dist(sample: list, alpha=None, debug=False):
     visualisation: 
     - check if normal: 
         - sns.distplot(data.X)
-        - check if qq-plot is linear #https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot
+        - check if qq-plot is linear [en.wikipedia.org](https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot)
             ::from statsmodels.graphics.gofplots import qqplot 
             ::from matplotlib import pyplot
             ::qqplot(sample, line='s')
@@ -61,7 +60,7 @@ def ME_Normal_dist(sample: list, alpha=None, debug=False):
     hypothesis 
     - X = m + N(0,s**2)
 
-    - check normal hypothesis: https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
+    - check normal hypothesis: [machinelearningmastery](https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/)
 
     lenght 
     - you may need data over 1000 samples to get
@@ -144,7 +143,7 @@ def ME_Regression(x: list,
     Predictions have certain uncertainty => [ poorer fitted model => larger uncertainty]
 
     utils
-    - https://stats.stackexchange.com/questions/173271/what-exactly-is-the-standard-error-of-the-intercept-in-multiple-regression-analy
+    - [standard error of the intercept - stats.stackexchange](https://stats.stackexchange.com/questions/173271/what-exactly-is-the-standard-error-of-the-intercept-in-multiple-regression-analy)
     '''
 
     alpha = check_or_get_alpha_for_hyph_test(alpha)

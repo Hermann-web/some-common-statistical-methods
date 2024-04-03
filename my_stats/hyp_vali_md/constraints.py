@@ -118,7 +118,7 @@ def check_equal_var(*samples, alpha=COMMON_ALPHA_FOR_HYPH_TEST):
     Args:
         alpha (_type_, optional): _description_. Defaults to COMMON_ALPHA_FOR_HYPH_TEST.
     Utils 
-    - use levene test (plus robuste que fisher ou bartlett face à la non-normalité de la donnée)(https://fr.wikipedia.org/wiki/Test_de_Bartlett)
+    - use levene test [plus robuste que fisher ou bartlett face à la non-normalité de la donnée](https://fr.wikipedia.org/wiki/Test_de_Bartlett)
 
     Returns:
         _type_: _description_

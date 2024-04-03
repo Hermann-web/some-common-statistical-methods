@@ -87,7 +87,7 @@ def get_p_value_f_test(Z: float, dfn: int, dfd: int, debug: bool = False):
     """get p value based on fisher distribution T(dfn, dfd) with ddl degres of freedom
 
     Utils
-        - https://en.wikipedia.org/wiki/F-distribution
+        - [F-distribution - wiki](https://en.wikipedia.org/wiki/F-distribution)
         - tail is right because Fisher is positive
 
     Args:

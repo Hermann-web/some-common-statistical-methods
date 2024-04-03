@@ -12,8 +12,8 @@ def compute_skew(arr):
         y (_type_): _description_
 
     Utils
-    - https://www.spcforexcel.com/knowledge/basic-statistics/are-skewness-and-kurtosis-useful-statistics
-    - https://www.thoughtco.com/what-is-skewness-in-statistics-3126242
+    - [skewness and kurtosis - spcforexcel.com](https://www.spcforexcel.com/knowledge/basic-statistics/are-skewness-and-kurtosis-useful-statistics)
+    - [skewness - thoughtco.com](https://www.thoughtco.com/what-is-skewness-in-statistics-3126242)
 
     Returns:
         _type_: _description_
@@ -34,7 +34,7 @@ def compute_kurtosis(arr, residuals=None):
         y (list|array-like): _description_
 
     Utils
-    - https://www.spcforexcel.com/knowledge/basic-statistics/are-skewness-and-kurtosis-useful-statistics
+    - [kurtosis and skewness - spcforexcel.com](https://www.spcforexcel.com/knowledge/basic-statistics/are-skewness-and-kurtosis-useful-statistics)
 
     Returns:
         _type_: _description_
@@ -57,7 +57,7 @@ def compute_aic_bic(dfr: int, n: int, llh: float, method: str = "basic"):
 
     Utils
         - It adds a penalty that increases the error when including additional terms. The lower the AIC, the better the model.
-        - https://medium.com/analytics-vidhya/probabilistic-model-selection-with-aic-bic-in-python-f8471d6add32
+        - [aic and bic in python - medium.com/analytics-vidhya](https://medium.com/analytics-vidhya/probabilistic-model-selection-with-aic-bic-in-python-f8471d6add32)
 
     Args:
         dfr (int): nb_predictors(not including the intercept)
@@ -144,7 +144,7 @@ class PredictionMetrics:
             std_eval (float): _description_
             debug (bool, optional): _description_. Defaults to False.
         Utils
-            - https://www.cs.princeton.edu/courses/archive/fall18/cos324/files/mle-regression.pdf
+            - [mle regression - cs.princeton.edu - pdf](https://www.cs.princeton.edu/courses/archive/fall18/cos324/files/mle-regression.pdf)
         Returns:
             log_likelihood: _description_
         """

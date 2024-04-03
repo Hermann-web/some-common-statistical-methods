@@ -4,11 +4,11 @@ from my_stats.utils_md.refactoring import RegressionFisherTestData
 
 from my_stats.utils_md.compute_ppf_and_p_value import (
     get_p_value_f_test, )
-from my_stats.utils_md.estimate_std import (estimate_std)
-
 from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test,
                                               check_sample_normality,
                                               check_hyp_min_sample)
+from my_stats.utils_md.estimate_std import (estimate_std)
+
 
 from my_stats.hyp_vali_md.hypothesis_validator import (
     check_coefficients_non_zero, check_residuals_centered)
@@ -71,9 +71,9 @@ def HPE_REGRESSION_FISHER_TEST(y: list,
 
     Fisher test 
         - The F Distribution is also called the Snedecor’s F, Fisher’s F or the Fisher–Snedecor distribution
-        - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html
-        - https://blog.minitab.com/fr/comprendre-lanalyse-de-la-variance-anova-et-le-test-f
-        - http://facweb.cs.depaul.edu/sjost/csc423/documents/f-test-reg.htm
+        - [f_oneway - docs.scipy.org/doc](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html)
+        - [anova and f test - blog.minitab.com](https://blog.minitab.com/fr/comprendre-lanalyse-de-la-variance-anova-et-le-test-f)
+        - [f-test-reg - facweb.cs.depaul.edu/sjost](http://facweb.cs.depaul.edu/sjost/csc423/documents/f-test-reg.htm)
 
     Returns:
         data: (RegressionFisherTestData)
@@ -251,8 +251,8 @@ def compute_logit_regression_results(crd: RegressionResultData,
         crd (RegressionResultData): _description_
         debug (bool, optional): _description_. Defaults to False.
     Info 
-    - understant outputs: https://stats.stackexchange.com/questions/86351/interpretation-of-rs-output-for-binomial-regression
-    - pseudo-rcarre: https://stats.stackexchange.com/questions/3559/which-pseudo-r2-measure-is-the-one-to-report-for-logistic-regression-cox-s
+    - [understand rs outputs - stats.stackexchange.com](https://stats.stackexchange.com/questions/86351/interpretation-of-rs-output-for-binomial-regression)
+    - [pseudo-rcarre - stats.stackexchange.com](https://stats.stackexchange.com/questions/3559/which-pseudo-r2-measure-is-the-one-to-report-for-logistic-regression-cox-s)
     Returns:
         _type_: _description_
     """

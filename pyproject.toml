@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "some-common-statistical-methods"
+version = "0.1.0"
+description = "Hands on computation of some stastical methods learned trough a coursera certification"
+authors = ["Hermann Agossou <agossouhermann7@gmail.com>"]
+license = "Apache License"
+readme = "README.md"
+packages = [{include = "my_stats"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+scipy = "^1.10.0"
+
+[tool.poetry.group.dev.dependencies]
+yapf = "^0.40.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

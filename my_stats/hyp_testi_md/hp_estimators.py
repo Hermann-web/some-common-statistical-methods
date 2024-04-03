@@ -258,7 +258,7 @@ def HPE_MEAN_ONE(alpha, p0, mean_dist, n, std_sample, tail=Tails.right):
         - Alternative to normality: Wilcoxon Signed Rank Test
 
     Theo
-    - https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling
+    - read [here](https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling)
     '''
 
     # ctd
@@ -354,7 +354,7 @@ def HPE_MEAN_TWO_NOTPAIRED(alpha,
     - use simple random samples
     - for pool=True, variances must be the same
         - to test that, you can 
-            - use levene test (plus robuste que fusher ou bartlett face à la non-normalité de la donnée)(https://fr.wikipedia.org/wiki/Test_de_Bartlett)
+            - use levene test [plus robuste que fusher ou bartlett face à la non-normalité de la donnée](https://fr.wikipedia.org/wiki/Test_de_Bartlett)
                 ::H0: Variances are equals; H1: there are not
                 ::scipy.stats.levene(liste1,liste2, center='mean')
                 ::solution = "no equality" if p-value<0.05 else "equality"
@@ -362,7 +362,7 @@ def HPE_MEAN_TWO_NOTPAIRED(alpha,
                 - IQR = quantile(75%) - quantile(25%)
 
     Theo
-    - https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling
+    - read [here](https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling)
     '''
 
     # ctd
@@ -418,13 +418,11 @@ def HPE_MEAN_MANY(*samples, alpha=None):
         - normal
         - indepebdant from others
     - same variance 
-        - if added, the "same variance test" should use levene test but apparently, use levene test (plus robuste que fusher ou bartlett face à la non-normalité de la donnée)(https://fr.wikipedia.org/wiki/Test_de_Bartlett)
+        - if added, the "same variance test" should use levene test but apparently, use levene test [plus robuste que fusher ou bartlett face à la non-normalité de la donnée](https://fr.wikipedia.org/wiki/Test_de_Bartlett)
 
 
     Fisher test 
-        - The F Distribution is also called the Snedecor’s F, Fisher’s F or the Fisher–Snedecor distribution
-        - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html
-        - https://blog.minitab.com/fr/comprendre-lanalyse-de-la-variance-anova-et-le-test-f
+        - The F Distribution is also called the Snedecor’s F, Fisher’s F or the Fisher–Snedecor distribution [1](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html) [2](https://blog.minitab.com/fr/comprendre-lanalyse-de-la-variance-anova-et-le-test-f)
 
     Returns:
         stat: (float) F

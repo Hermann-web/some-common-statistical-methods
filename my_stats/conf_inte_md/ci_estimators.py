@@ -134,7 +134,7 @@ def CIE_MEAN_ONE(n, mean_dist, std_sample, t_etoile=None, cf: float = None):
         - Alternative to normality: Wilcoxon Signed Rank Test
 
     Theo
-    - https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling
+    - reade [here](https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling)
     '''
 
     # ctd
@@ -199,10 +199,14 @@ def CIE_MEAN_TWO(N1,
     - use simple random samples
     - for pool=True, variances are assume to be the same
         - to test that, you can 
-            - use levene test (plus robuste que fusher ou bartlett face à la non-normalité de la donnée)(https://fr.wikipedia.org/wiki/Test_de_Bartlett)
-                ::H0: Variances are equals; H1: there are not
-                ::scipy.stats.levene(liste1,liste2, center='mean')
-                ::solution = "no equality" if p-value<0.05 else "equality"
+            - use levene test [plus robuste que fusher ou bartlett face à la non-normalité de la donnée](https://fr.wikipedia.org/wiki/Test_de_Bartlett)
+                - H0: Variances are equals; H1: there are not
+
+                ```python
+                scipy.stats.levene(liste1,liste2, center='mean')
+                solution = "no equality" if p-value<0.05 else "equality"
+                ```
+                
             - or check if IQR are the same
                 - IQR = quantile(75%) - quantile(25%)
 
@@ -217,7 +221,7 @@ def CIE_MEAN_TWO(N1,
     - As sa matter of fact, there is some value in CI below 80 witch if not compatible with H1 => the test doest give enough evidence to reject H0
 
     Theo
-    - https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling
+    - read [here](https://en.wikipedia.org/wiki/Student's_t-distribution#How_Student's_distribution_arises_from_sampling)
     '''
 
     # ctd

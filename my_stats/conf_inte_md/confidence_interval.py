@@ -177,7 +177,8 @@ def IC_MEAN_TWO_PAIR(sample1,
     Difference_population_means_for_paired_data(TWO MEANS FOR PAIRED DATA): We have have estimate a parameter p on two populations (1 , 2).How to estimate p1-p2 ? #p1-p2#
 
 
-    What is paired data: 
+    What is paired data ?
+
         - measurements took on individuals (people, home, any object)
         - technicality: 
             - When in a dataset (len = n) there is a row  df.a witch values only repeat twice (=> df.a.nunique = n/2) 
@@ -218,7 +219,7 @@ def IC_MEAN_TWO_PAIR(sample1,
     - a random sample of identical twin sets
     - Samples follow a normal (or large enough to bypass this assumption: (ex 20 twins)) => means of these sample follow a t-dist
 
-    - description
+    Notes
     - With {cf} confidence, the population mean difference of the (second_team - first_team) attribute is estimated to be between {data.interval[0]} and {dat.interval[1]}
     - if all values are above 0, cool there is a significativity
     '''
@@ -283,7 +284,7 @@ def IC_MEAN_TWO_NOTPAIR(sample1,
 
     We need the spread (std): We will use an estimation
 
-    Data 
+    Args 
         - confidence:..
         - Sample1: list: values...
         - Sample2: list: (same len) values...
@@ -303,7 +304,7 @@ def IC_MEAN_TWO_NOTPAIR(sample1,
     - a random sample
     - Samples follow a normal (or large enough to bypass this assumption: 10 per category) => means of these sample follow a t-dist
 
-    - description
+    Notes
     - With {cf} confidence, the population mean difference of the (second_team - first_team) attribute is estimated to be between {data.interval[0]} and {dat.interval[1]}
     - if all values are above 0, cool there is a significativity
     '''

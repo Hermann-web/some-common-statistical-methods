@@ -1,6 +1,6 @@
 '''
 Author: Susan Li 
-source: https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb
+source: [LogisticRegressionImplementation.ipynb - github.com/aihubprojects](https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb)
 '''
 
 import numpy as np

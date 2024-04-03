@@ -5,8 +5,7 @@ todo
 - use kwargs format while calling functions
 - reorder fcts attributes
 - Que signifie le R au carré négatif?: 
-    - selon ma def, c'est  entre 0 et 1 à cause d'une somme mais c'est faux ??
-    - https://qastack.fr/stats/183265/what-does-negative-r-squared-mean
+    - selon ma def, c'est  entre 0 et 1 à cause d'une somme mais c'est faux ?? [qastack.fr](https://qastack.fr/stats/183265/what-does-negative-r-squared-mean)
 '''
 
 import os.path
@@ -134,8 +133,8 @@ class ComputeRegression:
         """_summary_
 
         Info 
-        - cool: https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture26.pdf
-        - another(not used): https://stats.stackexchange.com/questions/60723/bias-of-maximum-likelihood-estimators-for-logistic-regression
+        - cool: [web.stanford.edu](https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture26.pdf)
+        - another(not used): [stats.stackexchange.com](https://stats.stackexchange.com/questions/60723/bias-of-maximum-likelihood-estimators-for-logistic-regression)
 
         Returns:
             _type_: _description_
@@ -167,11 +166,12 @@ class ComputeRegression:
                                    learning_rate: float = None,
                                    verbose: bool = True):
         """
-        - https://github.com/susanli2016/Machine-Learning-with-Python/blob/master/Logistic%20Regression%20in%20Python%20-%20Step%20by%20Step.ipynb
-        - https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb
-        - https://arunaddagatla.medium.com/maximum-likelihood-estimation-in-logistic-regression-f86ff1627b67
-        - https://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation
-        - converg engenieering: https://stats.stackexchange.com/questions/113766/omitted-variable-bias-in-logistic-regression-vs-omitted-variable-bias-in-ordina
+        some documentation: 
+        - [implementation - github.com/susanli2016 - ipynb](https://github.com/susanli2016/Machine-Learning-with-Python/blob/master/Logistic%20Regression%20in%20Python%20-%20Step%20by%20Step.ipynb)
+        - [implementation - github.com/aihubprojects - ipynb](https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb)
+        - [MLE - arunaddagatla.medium.com](https://arunaddagatla.medium.com/maximum-likelihood-estimation-in-logistic-regression-f86ff1627b67)
+        - [R2 interpretation - stats.stackexchange.com](https://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation)
+        - [biais in logistic regression - stats.stackexchange](https://stats.stackexchange.com/questions/113766/omitted-variable-bias-in-logistic-regression-vs-omitted-variable-bias-in-ordina)
         """
         if learning_rate is None: learning_rate = 0.01
         if num_iterations is None: num_iterations = 100

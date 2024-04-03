@@ -120,9 +120,7 @@ def check_equal_mean(*samples, alpha=None):
         - *samples (list): one or many lists 
 
     Fisher test 
-        - The F Distribution is also called the Snedecor’s F, Fisher’s F or the Fisher–Snedecor distribution
-        - https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html
-        - https://blog.minitab.com/fr/comprendre-lanalyse-de-la-variance-anova-et-le-test-f
+        - The F Distribution is also called the Snedecor’s F, Fisher’s F or the Fisher–Snedecor distribution [1](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html) [2](https://blog.minitab.com/fr/comprendre-lanalyse-de-la-variance-anova-et-le-test-f)
 
     Returns:
         stat: (float) F
