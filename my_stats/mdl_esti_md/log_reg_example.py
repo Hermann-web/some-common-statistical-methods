@@ -5,11 +5,7 @@ source: [LogisticRegressionImplementation.ipynb - github.com/aihubprojects](http
 
 import numpy as np
 
-import sys
-import os.path
-
-sys.path.append(os.path.abspath("."))
-from my_stats.mdl_esti_md.prediction_metrics import PredictionMetrics
+from .prediction_metrics import PredictionMetrics
 
 
 class LogisticRegression:
@@ -39,7 +35,7 @@ class LogisticRegression:
 
     def __loss(self, yp, y):
         # this is the loss function which we use to minimize the error of our model
-        #return (-y * np.log(yp) - (1 - y) * np.log(1 - yp)).mean()
+        # return (-y * np.log(yp) - (1 - y) * np.log(1 - yp)).mean()
         return PredictionMetrics(y_true=y, y_pred_proba=yp,
                                  binary=True).log_loss(min_tol=True)
 
@@ -95,17 +91,17 @@ class LogisticRegression:
         return self.predict_prob(X).round()
 
 
-#data
-import numpy as np
+# data
 
 fit_intercept = False
 loc, scale, size = 20, 3, 2000
 sample = np.random.normal(loc=loc, scale=scale, size=size)
-y = 12 + 2 * sample  #+ 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
+# + 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
+y = 12 + 2 * sample
 y = (y > y.mean()).astype('int')
 X = sample.reshape(-1, 1)
 
-#model
+# model
 model = LogisticRegression(learning_rate=0.1,
                            num_iterations=500000,
                            verbose=True)

@@ -1,9 +1,18 @@
-if __name__ == "__main__":
-    import sys
-    import os.path
-    sys.path.append(os.path.abspath("."))
 
-from common_imports import *
+
+import unittest
+
+from numpy import random
+from pandas import read_csv
+
+from my_stats.common import f_oneway, sm_api
+from my_stats.hyp_testi_md import (HP_MEAN_ONE, HP_MEAN_TWO_NOTPAIR,
+                                   HP_PROPORTION_ONE, HP_PROPORTION_TWO,
+                                   HPE_FROM_P_VALUE, HPE_MEAN_MANY,
+                                   HPE_MEAN_ONE, HPE_MEAN_TWO_NOTPAIRED,
+                                   HPE_MEAN_TWO_PAIRED, HPE_PROPORTION_ONE,
+                                   HPE_PROPORTION_TW0)
+from my_stats.utils_md.refactoring import Tails
 
 
 class Tests_hyp_estimators(unittest.TestCase):
@@ -15,13 +24,13 @@ class Tests_hyp_estimators(unittest.TestCase):
         # Last year, 52% of parents believe that electronics and social media was the cause of their teenager lack of sleep
         # IS it more thid year?? => ">"
         # H0: p = 52%
-        #H1: p > 0.52
+        # H1: p > 0.52
         p = 0.56
         # This year, 56% of parents believe that electronics and social media was the cause of their teenager lack of sleep
 
         N = 1018
         _, _, _, Z, p_val, reject = HPE_PROPORTION_ONE(alpha, p0, p, N)
-        #print(f"Z={Z} p_val={p_val} test_passed={reject}")
+        # print(f"Z={Z} p_val={p_val} test_passed={reject}")
         assert abs(Z - 2.554) <= 0.005
         assert abs(p_val - 0.0053) <= 0.0005
         assert reject == True
@@ -31,7 +40,7 @@ class Tests_hyp_estimators(unittest.TestCase):
                                                      p0,
                                                      alternative='larger',
                                                      prop_var=0.52)
-        #print("sm:",Z, p_val, p_val_sm)
+        # print("sm:",Z, p_val, p_val_sm)
         assert abs(p_val_sm - p_val) <= 0.00001
 
     def test_proportion_two(self):
@@ -39,7 +48,7 @@ class Tests_hyp_estimators(unittest.TestCase):
         alpha = 0.05
         p1, N1 = 91 / 247, 247  # black children => 91
         p2, N2 = 120 / 308, 308  # hispanic ones => 120
-        #print("p1-p2: ",p1-p2)
+        # print("p1-p2: ",p1-p2)
         _, _, _, Z, p_val, reject_null = HPE_PROPORTION_TW0(
             alpha, p1, p2, N1, N2)
         print(f"Z={Z} p_val={p_val} test_passed={reject_null}")
@@ -54,8 +63,8 @@ class Tests_hyp_estimators(unittest.TestCase):
         alpha = 0.05
         p0 = 80  # null value#
         # a guess from something
-        #H0: p = 80
-        #H1: p > 80
+        # H0: p = 80
+        # H1: p > 80
         mean_sample = 82.48  # from a sample #best_estimate#
         std_sample = 15.06  # std error estimated
 
@@ -66,7 +75,7 @@ class Tests_hyp_estimators(unittest.TestCase):
                                                       N,
                                                       std_sample,
                                                       tail=Tails.right)
-        #print(f"Z={Z} p_val={p_val} test_passed={reject_null}")
+        # print(f"Z={Z} p_val={p_val} test_passed={reject_null}")
         assert abs(Z - 0.82) <= 0.05
         assert abs(p_val - 0.21) <= 0.05
         assert reject_null == False  # not enough evidence to reject the null
@@ -80,7 +89,7 @@ class Tests_hyp_estimators(unittest.TestCase):
         N = 20
         _, _, _, Z, p_val, reject_null = HPE_MEAN_TWO_PAIRED(
             alpha, mean_diff_sample, N, std_diff_sample)
-        #print(f"Z={Z} p_val={p_val} test_passed={reject_null}")
+        # print(f"Z={Z} p_val={p_val} test_passed={reject_null}")
         assert abs(Z - 2.72) <= 0.05
         assert abs(p_val - 0.014) <= 0.005
         # not enough evidence to reject the null #A confidence interval at (cf=O.95 show an interval=17.3 +- 13.33 wictch is totally in H1. So Ho is rejected)
@@ -103,7 +112,7 @@ class Tests_hyp_estimators(unittest.TestCase):
             pool=False,
             tail=Tails.middle)
 
-        #print(f"Z={Z} p_val={p_val} test_passed={reject_null}")
+        # print(f"Z={Z} p_val={p_val} test_passed={reject_null}")
         assert abs(Z - 1.3) <= 0.5
         # calcul assez large quand même pour être très exact (1942 vs 1956)
         assert abs(p_val - 0.1942) <= 0.05
@@ -186,7 +195,7 @@ class Tests_estimators(unittest.TestCase):
                                        n,
                                        pnull,
                                        alternative='larger')
-        #print("p_v_ = ",p_v_)
+        # print("p_v_ = ",p_v_)
         assert abs(data.p_value - p_v_) < 0.005
 
         # ttest_ind compare les mean mais on peut donner deux listes (de 0 et 1, pour distinguer les deux categories => mean==proportion !)
@@ -264,7 +273,7 @@ class Tests_estimators(unittest.TestCase):
                                       alternative="larger")
         data = HP_MEAN_ONE(p0=pnull, alpha=0.05, sample=df["CWDistance"])
         # print(data)
-        #print(f"Z_={Z_}, p_v_={p_v_}")
+        # print(f"Z_={Z_}, p_v_={p_v_}")
         assert abs(abs(data.Z) - abs(Z_)) < 0.0000005
         assert abs(data.p_value - p_v_) < 0.005
 
@@ -312,15 +321,16 @@ class Tests_estimators(unittest.TestCase):
                                       Sample2,
                                       usevar="pooled",
                                       alternative="two-sided")
-        #print(f"Z_={Z_}, p_v_={p_v_}")
+        # print(f"Z_={Z_}, p_v_={p_v_}")
         assert abs(abs(data.Z) - abs(Z_)) < 0.0000005
         assert abs(data.p_value - p_v_) < 0.005
 
         # use scipy.stats.ttest_ind
         from scipy import stats
+
         # two-sided #equal_var=True => pooled
         Z_, p_v_ = stats.ttest_ind(Sample1, Sample2, equal_var=True)
-        #print(f"Z_={Z_}, p_v_={p_v_},_={_} ")
+        # print(f"Z_={Z_}, p_v_={p_v_},_={_} ")
         # print(data)
         assert abs(abs(data.Z) - abs(Z_)) < 0.0000005
         assert abs(data.p_value - p_v_) < 0.005
@@ -330,7 +340,7 @@ class Tests_estimators(unittest.TestCase):
                                              Sample2,
                                              usevar="pooled",
                                              alternative="two-sided")
-        #print(f"Z_={Z_}, p_v_={p_v_},_={_} ")
+        # print(f"Z_={Z_}, p_v_={p_v_},_={_} ")
         # print(data)
         assert abs(abs(data.Z) - abs(Z_)) < 0.0000005
         assert abs(data.p_value - p_v_) < 0.005
@@ -340,7 +350,7 @@ class Tests_estimators(unittest.TestCase):
         bmi2 = sm_api.stats.DescrStatsW(Sample2)
         Z_, p_v_ = sm_api.stats.CompareMeans(bmi1, bmi2).ztest_ind(
             usevar='pooled', alternative="two-sided")
-        #print(f"Z_={Z_}, p_v_={p_v_}")
+        # print(f"Z_={Z_}, p_v_={p_v_}")
         # print(data)
         assert abs(abs(data.Z) - abs(Z_)) < 0.0000005
         assert abs(data.p_value - p_v_) < 0.005

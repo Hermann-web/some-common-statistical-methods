@@ -1,12 +1,7 @@
-if __name__ == "__main__":
-    import sys
-    import os.path
-    sys.path.append(os.path.abspath("."))
-
 import unittest
-# hyp_validation
-from common_imports import (check_hyp_min_sample, check_hyp_min_samples,
-                            check_zero_to_one_constraint)
+
+from my_stats.hyp_vali_md import (check_hyp_min_sample, check_hyp_min_samples,
+                                  check_zero_to_one_constraint)
 
 
 class Tests_constraints(unittest.TestCase):

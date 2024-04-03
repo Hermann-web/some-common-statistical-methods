@@ -9,32 +9,6 @@ todo
 - reorder fcts attributes
 '''
 
-import os.path
-import sys
-from numpy import mean
-from my_stats.conf_inte_md.ci_estimators import (CIE_MEAN_ONE, CIE_MEAN_TWO,
-                                                 CIE_ONE_PROPORTION,
-                                                 CIE_PROPORTION_TWO)
-from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
-                                              check_hyp_min_samples,
-                                              check_or_get_cf_for_conf_inte,
-                                              check_zero_to_one_constraint)
-from my_stats.utils_md.estimate_std import estimate_std
-from my_stats.utils_md.preprocessing import (clear_list, clear_list_pair)
-from my_stats.utils_md.refactoring import Confidence_data
-
-print('conf_int_md.confidence_interval: import start...')
-sys.path.append(os.path.abspath("."))
-
-# data manipulation and testing
-
-# hyp_validation
-# utils
-
-# confidence interval
-
-print('conf_int_md.confidence_interval: ---import end---')
-
 
 def IC_PROPORTION_ONE(sample_size: int,
                       parameter: float,

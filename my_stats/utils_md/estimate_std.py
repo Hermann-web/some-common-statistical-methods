@@ -1,4 +1,4 @@
-from numpy import isnan, std, mean, sqrt
+from numpy import isnan, mean, sqrt, std
 from numpy.linalg import norm
 
 
@@ -14,7 +14,7 @@ def estimate_std(sample):
 
 
 def compute_slope_std(X, y, y_hat, debug=False, skipcst=True):
-    #if skipcst: X = X[:,1:]
+    # if skipcst: X = X[:,1:]
 
     n, nb_param = X.shape
     assert y.shape == (n, )
@@ -31,7 +31,7 @@ def compute_slope_std(X, y, y_hat, debug=False, skipcst=True):
     Y_err = norm(y - y_hat)
     if debug:
         print("X_err", X_err)
-    #m = n-2 if n>2 else n
+    # m = n-2 if n>2 else n
     # list of standard errors of the coefficients
     list_coeffs_std = sqrt(Y_err / X_err) / sqrt(n - 2)
     if debug:
@@ -39,6 +39,6 @@ def compute_slope_std(X, y, y_hat, debug=False, skipcst=True):
     assert list_coeffs_std.shape == (1, nb_param)
 
     list_coeffs_std = list_coeffs_std.flatten()
-    #list_coeffs_std[0] = 0
+    # list_coeffs_std[0] = 0
 
     return list_coeffs_std

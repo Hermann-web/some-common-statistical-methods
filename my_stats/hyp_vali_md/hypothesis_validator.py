@@ -3,32 +3,16 @@ les test de valisation (hypothese avant de lancer un autre test) qui dependant d
 Les mettre dans utils prut créer un import circulaire
 '''
 
-import os.path
-import sys
+
 import warnings
-from my_stats.utils_md.refactoring import HypothesisValidationData, Tails
-from my_stats.hyp_vali_md.constraints import (check_equal_var,
-                                              check_or_get_alpha_for_hyph_test,
-                                              check_sample_normality,
-                                              check_zero_to_one_constraint)
-from my_stats.hyp_testi_md.hypothesis_testing import (HP_MEAN_MANY,
-                                                      HP_MEAN_ONE)
-from my_stats.hyp_testi_md.hp_estimators import HPE_FROM_P_VALUE
+
 from numpy import array
 
-print('hyp_vali_md.hypothesis_validator:import start...')
-sys.path.append(os.path.abspath("."))
+from my_stats.hyp_testi_md import HP_MEAN_MANY, HP_MEAN_ONE, HPE_FROM_P_VALUE
+from my_stats.utils_md import HypothesisValidationData, Tails
 
-# data manipulation
-
-#
-
-# hyp_validation
-
-# utils
-
-# testing
-print('hyp_vali_md.hypothesis_validator: ---import end---')
+from .constraints import (check_equal_var, check_or_get_alpha_for_hyph_test,
+                          check_sample_normality, check_zero_to_one_constraint)
 
 
 def check_residuals_centered(residuals: list, alpha=None):

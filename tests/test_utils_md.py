@@ -1,12 +1,8 @@
-from my_stats.utils_md.preprocessing import clear_mat_vec
-import sys
-import os.path
 import unittest
-import warnings
 
 import numpy as np
 
-sys.path.append(os.path.abspath("."))
+from my_stats.utils_md.preprocessing import clear_mat_vec
 
 
 class Tests_hp_estimators_regression(unittest.TestCase):

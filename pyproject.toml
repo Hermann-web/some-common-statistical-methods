@@ -9,10 +9,26 @@ packages = [{include = "my_stats"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-scipy = "^1.10.0"
+scipy = "^1.8.0"
+numpy = "^1.14.0"
+statsmodels = "^0.14.0"
 
 [tool.poetry.group.dev.dependencies]
-yapf = "^0.40.2"
+autopep8 = "^2.1.0"
+isort = "^5.13.2"
+
+
+[tool.poetry.group.visu.dependencies]
+matplotlib = "^3.0.0"
+seaborn = "^0.13.0"
+
+
+[tool.poetry.group.pandas.dependencies]
+pandas = "^2.0.0"
+
+
+[tool.poetry.group.sklearn.dependencies]
+scikit-learn = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]

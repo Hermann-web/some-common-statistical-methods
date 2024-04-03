@@ -1,8 +1,9 @@
-from numpy import (abs, array, sqrt, log)
 import math
-
-from my_stats.utils_md.estimate_std import estimate_std
 import warnings
+
+from numpy import abs, array, log, sqrt
+
+from my_stats.utils_md import estimate_std
 
 
 def compute_skew(arr):
@@ -174,7 +175,7 @@ class PredictionMetrics:
         yp2 = yp.copy()
         if min_tol is not None:
             min_tol = float(min_tol) if min_tol != True else 10**(
-                -12)  #si c'est plus petit, ce sera trop petit pour log
+                -12)  # si c'est plus petit, ce sera trop petit pour log
             assert 0 < min_tol < 0.1
             yp1[yp <= 0] = min(min(yp[yp > 0]), min_tol) if len(
                 yp[yp > 0]) else min_tol
@@ -190,7 +191,8 @@ class PredictionMetrics:
 
     def get_confusion_matrix(self):
         assert self.binary == True
-        if self.confusion_matrix is not None: return self.confusion_matrix
+        if self.confusion_matrix is not None:
+            return self.confusion_matrix
         _pred_neg = self.y_pred_bin[self.y_true_bin == 0]
         _pred_pos = self.y_pred_bin[self.y_true_bin == 1]
         tn, fp, fn, tp = (_pred_neg == 0).sum(), (_pred_pos == 0).sum(), (
@@ -200,7 +202,7 @@ class PredictionMetrics:
 
     def get_binary_accuracy(self):
         assert self.binary == True
-        #return abs(self.y_true_bin==self.y_pred_bin).sum()/len(self.y_true_bin)
+        # return abs(self.y_true_bin==self.y_pred_bin).sum()/len(self.y_true_bin)
         (tn, fp), (fn, tp) = self.get_confusion_matrix()
         return (tp + tn) / (tp + tn + fp + fn)
 

@@ -8,33 +8,22 @@ todo
     - selon ma def, c'est  entre 0 et 1 à cause d'une somme mais c'est faux ?? [qastack.fr](https://qastack.fr/stats/183265/what-does-negative-r-squared-mean)
 '''
 
-import os.path
-import sys
-from scipy.linalg import inv, det
-from numpy import (abs, random, array, sqrt, diag, dot, log, ones, hstack,
-                   ndarray)
-from numpy import (exp, log, exp, dot, zeros)
-from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test)
-from my_stats.mdl_esti_md.prediction_results import (
-    compute_logit_regression_results, compute_linear_regression_results,
-    RegressionResultData)
-from my_stats.utils_md.estimate_std import (estimate_std)
-from my_stats.mdl_esti_md.prediction_metrics import (PredictionMetrics)
 
-print('mdl_esti_md.hp_estimator_regression: import start...')
-sys.path.append(os.path.abspath("."))
+from numpy import (abs, array, diag, dot, exp, hstack, log, ndarray, ones,
+                   random, sqrt, zeros)
+from scipy.linalg import det, inv
 
-# data manipulation and testing
+from my_stats.hyp_vali_md import check_or_get_alpha_for_hyph_test
+from my_stats.utils_md import estimate_std
+
+from .prediction_metrics import PredictionMetrics
+from .prediction_results import (RegressionResultData,
+                                 compute_linear_regression_results,
+                                 compute_logit_regression_results)
+
 SUM = sum
 sum_loc = sum
 random.seed(233)
-
-# hyp_validation
-
-# utils
-# hyp_validation
-
-print('mdl_esti_md.hp_estimator_regression: ---import ended---')
 
 
 def sigmoid(z):
@@ -43,8 +32,8 @@ def sigmoid(z):
 
 def log_loss(yp, y):
     # this is the loss function which we use to minimize the error of our model
-    #_f = vectorize(lambda x: min(max(x, 0.005), 1-0.005))
-    #yp = _f(y)
+    # _f = vectorize(lambda x: min(max(x, 0.005), 1-0.005))
+    # yp = _f(y)
     return (-y * log(yp) - (1 - y) * log(1 - yp)).mean()
 
 
@@ -62,8 +51,10 @@ def log_loss(yp, y, min_tol: float = None):
     if min_tol is not None:
         min_tol = float(min_tol) if min_tol != True else 10**(-12)
         assert 0 < min_tol < 0.1
-        if len(yp[yp > 0]): yp[yp <= 0] = min(min(yp[yp > 0]), min_tol)
-        if len(yp[yp >= 1]): yp[yp >= 1] = max(max(yp[yp < 1]), 1 - min_tol)
+        if len(yp[yp > 0]):
+            yp[yp <= 0] = min(min(yp[yp > 0]), min_tol)
+        if len(yp[yp >= 1]):
+            yp[yp >= 1] = max(max(yp[yp < 1]), 1 - min_tol)
     return -(y * log(yp) + (1 - y) * log(1 - yp)).mean()
 
 
@@ -99,7 +90,8 @@ class ComputeRegression:
 
         # add slope to X
         X = self._add_intercept(X)
-        if self.fit_intercept: nb_param = nb_param + 1
+        if self.fit_intercept:
+            nb_param = nb_param + 1
         assert X.shape == (n, nb_param)
 
         # set data
@@ -122,7 +114,8 @@ class ComputeRegression:
         """
         assert X.shape[1] == self.X.shape[1]
         y_pred = dot(X, self.W)
-        if self.logit: y_pred = self._sigmoid(y_pred)
+        if self.logit:
+            y_pred = self._sigmoid(y_pred)
         return y_pred
 
     def count_nan_and_inf(self, arr):
@@ -139,7 +132,7 @@ class ComputeRegression:
         Returns:
             _type_: _description_
         """
-        #compute #
+        # compute #
         assert self.count_nan_and_inf(self.W) == 0
         assert self.count_nan_and_inf(self.X) == 0
         temp = self.X @ self.W
@@ -173,8 +166,10 @@ class ComputeRegression:
         - [R2 interpretation - stats.stackexchange.com](https://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation)
         - [biais in logistic regression - stats.stackexchange](https://stats.stackexchange.com/questions/113766/omitted-variable-bias-in-logistic-regression-vs-omitted-variable-bias-in-ordina)
         """
-        if learning_rate is None: learning_rate = 0.01
-        if num_iterations is None: num_iterations = 100
+        if learning_rate is None:
+            learning_rate = 0.01
+        if num_iterations is None:
+            num_iterations = 100
         num_iterations = int(num_iterations)
         learning_rate = float(learning_rate)
         assert 0 < learning_rate < 1
@@ -195,16 +190,16 @@ class ComputeRegression:
         }
         self.hist = {_mt: [] for _mt in _list_fct}
         for i in range(num_iterations):
-            #gradient
+            # gradient
             grad = dot(
                 self.X.T, (yp - self.y)
-            ) / self.y.size  #https://arunaddagatla.medium.com/maximum-likelihood-estimation-in-logistic-regression-f86ff1627b67
-            #optimize
+            ) / self.y.size  # https://arunaddagatla.medium.com/maximum-likelihood-estimation-in-logistic-regression-f86ff1627b67
+            # optimize
             self.W -= learning_rate * grad
-            #prediction
+            # prediction
             yp = self._pred_target(self.X)
             # loss
-            #loss = log_loss(yp, self.y, min_tol=True)
+            # loss = log_loss(yp, self.y, min_tol=True)
             pm = PredictionMetrics(y_true=self.y, y_pred_proba=yp, binary=True)
             for _mt in _list_fct:
                 self.hist[_mt].append(_list_fct[_mt](pm))
@@ -223,7 +218,8 @@ class ComputeRegression:
         # estimate coefficients
         b1 = dot(self.X.T, self.X)
         assert b1.shape == (self.nb_param, self.nb_param)
-        if det(b1) == 0: raise Exception("det==0")
+        if det(b1) == 0:
+            raise Exception("det==0")
         b1 = inv(b1)
         b2 = dot(self.X.T, self.y)
         self.W = dot(b1, b2)
@@ -265,8 +261,8 @@ class ComputeRegression:
     def _compute_test_results(self):
         # compute target
         y_hat = self._pred_target(self.X)
-        #if self.logit: y_hat = (y_hat>0.5).astype('int')
-        #assert set(y_hat)=={0,1}, f"found set(y_hat)={set(y_hat)}. maybe there are not enough iterations"
+        # if self.logit: y_hat = (y_hat>0.5).astype('int')
+        # assert set(y_hat)=={0,1}, f"found set(y_hat)={set(y_hat)}. maybe there are not enough iterations"
         # store necessery
         self.regression_result_data = RegressionResultData(
             y=self.y,
@@ -332,4 +328,4 @@ class ComputeRegression:
 if __name__ == "__main__":
     pass
 else:
-    pass  #print = lambda *args: ""
+    pass  # print = lambda *args: ""

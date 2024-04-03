@@ -5,25 +5,13 @@ todo
 - use kwargs format while calling functions
 - reorder fcts attributes
 '''
-from my_stats.utils_md.compute_ppf_and_p_value import (get_z_value,
-                                                       get_t_value)
-from my_stats.hyp_vali_md.constraints import (check_or_get_cf_for_conf_inte,
-                                              check_zero_to_one_constraint,
-                                              check_hyp_min_sample,
-                                              check_hyp_min_samples)
-from math import ceil as math_ceil, sqrt
-import sys
-import os.path
+from math import ceil as math_ceil
+from math import sqrt
 
-sys.path.append(os.path.abspath("."))
-
-print('ci_estimators: import start...')
-# data manipulation and testing
-
-# hyp_validation
-
-# utils
-print('ci_estimators: import ended...')
+from my_stats.hyp_vali_md import (check_hyp_min_sample, check_hyp_min_samples,
+                                  check_or_get_cf_for_conf_inte,
+                                  check_zero_to_one_constraint)
+from my_stats.utils_md import get_t_value, get_z_value
 
 
 def get_min_sample(moe: float, p=None, method=None, cf: float = None):
@@ -41,7 +29,7 @@ def get_min_sample(moe: float, p=None, method=None, cf: float = None):
     cf = check_or_get_cf_for_conf_inte(confidence=cf)
     z_value = get_z_value(cf)
     min_sample = (z_value / (2 * moe))**2
-    #print("min_sample = ",min_sample)
+    # print("min_sample = ",min_sample)
     return math_ceil(min_sample)
 
 
@@ -206,7 +194,7 @@ def CIE_MEAN_TWO(N1,
                 scipy.stats.levene(liste1,liste2, center='mean')
                 solution = "no equality" if p-value<0.05 else "equality"
                 ```
-                
+
             - or check if IQR are the same
                 - IQR = quantile(75%) - quantile(25%)
 
@@ -254,7 +242,7 @@ def CIE_MEAN_TWO(N1,
             ((N1 - 1) * (std_sample_1**2) + (N2 - 1) *
              (std_sample_2**2)) / (N1 + N2 - 2)) * sqrt(1 / N1 + 1 / N2)
     # margin of error
-    #print(f"few={few} std={std_stat_eval}")
+    # print(f"few={few} std={std_stat_eval}")
     marginOfError = float(few * std_stat_eval)
     # interval
     interval = (float(p - marginOfError), float(p + marginOfError))

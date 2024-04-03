@@ -8,12 +8,4 @@
     ],
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
-    "python.analysis.extraPaths": [
-        "./stats/hyp_testi_md",
-        "./stats/hyp_vali_md",
-        "./stats/conf_inte_md",
-        "./stats/mdl_esti_md",
-        "./stats",
-        "."
-    ]
 }

@@ -1,24 +1,18 @@
-from numpy import (array, sqrt)
 import warnings
-from my_stats.utils_md.refactoring import RegressionFisherTestData
+from dataclasses import dataclass, field
 
-from my_stats.utils_md.compute_ppf_and_p_value import (
-    get_p_value_f_test, )
-from my_stats.hyp_vali_md.constraints import (check_or_get_alpha_for_hyph_test,
-                                              check_sample_normality,
-                                              check_hyp_min_sample)
-from my_stats.utils_md.estimate_std import (estimate_std)
+from numpy import array, ndarray, sqrt
 
+from my_stats.hyp_vali_md import (check_coefficients_non_zero,
+                                  check_hyp_min_sample,
+                                  check_or_get_alpha_for_hyph_test,
+                                  check_residuals_centered,
+                                  check_sample_normality)
+from my_stats.utils_md import (RegressionFisherTestData, estimate_std,
+                               get_p_value_f_test)
 
-from my_stats.hyp_vali_md.hypothesis_validator import (
-    check_coefficients_non_zero, check_residuals_centered)
-from my_stats.mdl_esti_md.prediction_metrics import (PredictionMetrics,
-                                                     compute_skew,
-                                                     compute_aic_bic,
-                                                     compute_kurtosis)
-
-from dataclasses import field, dataclass
-from numpy import ndarray
+from .prediction_metrics import (PredictionMetrics, compute_aic_bic,
+                                 compute_kurtosis, compute_skew)
 
 
 @dataclass
@@ -103,7 +97,7 @@ def HPE_REGRESSION_FISHER_TEST(y: list,
     # total variance = ( E(X**2) - E(X)**2 )/ (n-1) # Mean of Squares for Error
     MST = SST / dft
 
-    #MSM = SSM / DFM
+    # MSM = SSM / DFM
 
     R_carre = 1 - SSE / SST  # explained/total # 1-R_carre = SSE/SST
     assert R_carre <= 1 and R_carre >= 0
@@ -295,6 +289,6 @@ def compute_logit_regression_results(crd: RegressionResultData,
     Testresults["metrics"]["precision"] = _metric.get_precision_score()
     Testresults["metrics"]["recall"] = _metric.get_recall_score()
     Testresults["metrics"]["f1"] = _metric.get_f1_score()
-    #Testresults["roc"] =
+    # Testresults["roc"] =
 
     return Testresults

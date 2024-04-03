@@ -1,10 +1,10 @@
+from scipy.stats import f as f_dist
 from scipy.stats import norm
 from scipy.stats import t as t_dist
-from scipy.stats import f as f_dist
 
+from .constants import LIM_MIN_SAMPLE
 # utils
-from my_stats.utils_md.refactoring import Tails
-from my_stats.utils_md.constants import LIM_MIN_SAMPLE
+from .refactoring import Tails
 
 # quantiles
 

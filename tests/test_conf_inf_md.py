@@ -1,24 +1,14 @@
-from common_imports import (
-    IC_MEAN_ONE,
-    IC_MEAN_TWO_NOTPAIR,
-    IC_MEAN_TWO_PAIR,
-    IC_PROPORTION_ONE,
-    IC_PROPORTION_TWO,
-    CIE_ONE_PROPORTION,
-    CIE_MEAN_ONE,
-    CIE_MEAN_TWO,
-)
-from common_imports import (estimate_std, get_min_sample)
-import statsmodels.api as sm
 import unittest
+
 from numpy import random
-import sys
-import os.path
 
-sys.path.append(os.path.abspath("."))
-
-# testing
-# utils
+from my_stats.common import sm_api
+from my_stats.conf_inte_md import (CIE_MEAN_ONE, CIE_MEAN_TWO,
+                                   CIE_ONE_PROPORTION, IC_MEAN_ONE,
+                                   IC_MEAN_TWO_NOTPAIR, IC_MEAN_TWO_PAIR,
+                                   IC_PROPORTION_ONE, IC_PROPORTION_TWO,
+                                   get_min_sample)
+from my_stats.utils_md import estimate_std
 
 
 class Test_estimators(unittest.TestCase):
@@ -32,11 +22,11 @@ class Test_estimators(unittest.TestCase):
                                               n=N,
                                               method="classic")
         # print(interval)
-        #print("vs >> 0.0637\n")
+        # print("vs >> 0.0637\n")
         assert abs(moe - 0.0637) <= 0.001
         # print("passed")
         # so he uses cf = z_quantile(0.95) = 1.96
-        interval2 = sm.stats.proportion_confint(N * proportion, N)
+        interval2 = sm_api.stats.proportion_confint(N * proportion, N)
         # print(interval2)
         assert abs(interval[0] - interval2[0]) <= 10**(-10)
         assert abs(interval[1] - interval2[1]) <= 10**(-10)
@@ -45,12 +35,12 @@ class Test_estimators(unittest.TestCase):
         cf = 0.95
         moe = 0.04  # 4%
         min_sample = get_min_sample(cf=cf, moe=moe)
-        #print("min_sample = ", min_sample)
-        #print(">>> vs 601\n")
+        # print("min_sample = ", min_sample)
+        # print(">>> vs 601\n")
         assert abs(min_sample - 601) <= 1
         min_sample = get_min_sample(cf=0.98, moe=0.03)
-        #print("min_sample = ", min_sample)
-        #print(">>> vs 1503\n")
+        # print("min_sample = ", min_sample)
+        # print(">>> vs 1503\n")
         assert abs(min_sample - 1503) <= 1
         # print("passed")
 
@@ -152,10 +142,10 @@ class Tests(unittest.TestCase):
         print("interval: ", data.interval)
 
         # print(data)
-        #print(">>>vs (0.4942, 0.5657)\n")
+        # print(">>>vs (0.4942, 0.5657)\n")
         assert abs(data.interval[0] - 0.4942) <= 10**(-2)
         assert abs(data.interval[1] - 0.5657) <= 10**(-2)
-        #print("all passed")
+        # print("all passed")
         print("confidence interval:", data.interval)
 
     def test_estimate_population_mean(self):
@@ -173,7 +163,7 @@ class Tests(unittest.TestCase):
 
         interval = data.interval
         print(interval)
-        interval2 = sm.stats.DescrStatsW(sample).zconfint_mean()
+        interval2 = sm_api.stats.DescrStatsW(sample).zconfint_mean()
         print(interval2)
         assert abs(interval[0] - interval2[0]) <= 0.5  # large mais normal
         assert abs(interval[1] - interval2[1]) <= 0.5  # large mais normal

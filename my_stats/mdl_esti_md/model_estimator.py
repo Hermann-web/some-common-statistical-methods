@@ -11,37 +11,21 @@ fisher ? yes F
     
 '''
 
-import os.path
-import sys
-from my_stats.mdl_esti_md.hp_estimators_regression import ComputeRegression
-from my_stats.conf_inte_md.confidence_interval import IC_MEAN_ONE
-from my_stats.hyp_vali_md.constraints import (check_hyp_min_sample,
-                                              check_or_get_alpha_for_hyph_test,
-                                              check_sample_normality,
-                                              check_zero_to_one_constraint)
-from my_stats.utils_md.estimate_std import (estimate_std)
-from my_stats.utils_md.preprocessing import (clear_list, clear_list_pair,
-                                             clear_mat_vec)
 
-from numpy import (random, array, zeros, power)
+from numpy import array, power, random, zeros
 
-print('mdl_esti_md.model_estimator: import start...')
-sys.path.append(os.path.abspath("."))
+from my_stats.conf_inte_md import IC_MEAN_ONE
+from my_stats.hyp_vali_md import (check_hyp_min_sample,
+                                  check_or_get_alpha_for_hyph_test,
+                                  check_sample_normality,
+                                  check_zero_to_one_constraint)
+from my_stats.utils_md import (clear_list, clear_list_pair, clear_mat_vec,
+                               estimate_std)
 
-# data manipulation
+from .hp_estimators_regression import ComputeRegression
+
 sum_loc = sum
 random.seed(133)
-
-# testing
-
-# utils
-
-# hyp_validation
-
-# condidence_intervals
-# regression models
-
-print('mdl_esti_md.model_estimator: ---import end---')
 
 
 def ME_Normal_dist(sample: list, alpha=None, debug=False):
@@ -178,7 +162,8 @@ def ME_Regression(x: list,
     )
 
     nb_param = degre
-    if fit_intercept: nb_param += 1
+    if fit_intercept:
+        nb_param += 1
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 
@@ -281,7 +266,8 @@ def ME_multiple_regression(X: list,
     coeffs, list_coeffs_std, residu_std, Testresults = cr.get_regression_results(
     )
     nb_param = X.shape[1]  # without slope
-    if fit_intercept: nb_param = nb_param + 1
+    if fit_intercept:
+        nb_param = nb_param + 1
     assert coeffs.shape == (nb_param, )
     assert list_coeffs_std.shape == (nb_param, )
 

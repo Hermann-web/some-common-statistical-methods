@@ -1,21 +1,10 @@
-import os.path
-import sys
-from my_stats.utils_md.constants import (
-    COMMON_COVERAGE_PROBABILITY_FOR_CONF_INT, COMMON_ALPHA_FOR_HYPH_TEST,
-    LIM_MIN_SAMPLE)
-from scipy.stats import (normaltest, shapiro, anderson, levene)
+
 from numpy import array
-from my_stats.utils_md.refactoring import HypothesisValidationData
+from scipy.stats import anderson, levene, normaltest, shapiro
 
-print('hyp_vali_md.constraints:import start...')
-
-sys.path.append(os.path.abspath("."))
-
-# hypothesis testing
-
-# utils
-
-print('hyp_vali_md.constraints: ---import end---')
+from my_stats.utils_md import (COMMON_ALPHA_FOR_HYPH_TEST,
+                               COMMON_COVERAGE_PROBABILITY_FOR_CONF_INT,
+                               LIM_MIN_SAMPLE, HypothesisValidationData)
 
 
 def check_zero_to_one_constraint(*args):
