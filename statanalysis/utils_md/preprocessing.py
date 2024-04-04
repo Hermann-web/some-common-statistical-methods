@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from numpy import array, hstack, isnan, ndarray, newaxis, std
+from numpy import array, hstack, isnan, ndarray, newaxis
 
 
 def clear_list(L: list) -> ndarray:

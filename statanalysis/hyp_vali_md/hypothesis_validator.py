@@ -8,10 +8,8 @@ import warnings
 
 from numpy import array
 
-from statanalysis.hyp_testi_md import (HP_MEAN_MANY, HP_MEAN_ONE,
-                                       HPE_FROM_P_VALUE)
-from statanalysis.utils_md import HypothesisValidationData, Tails
-
+from ..hyp_testi_md import HP_MEAN_MANY, HP_MEAN_ONE, HPE_FROM_P_VALUE
+from ..utils_md import HypothesisValidationData, Tails
 from .constraints import (check_equal_var, check_or_get_alpha_for_hyph_test,
                           check_sample_normality, check_zero_to_one_constraint)
 

@@ -7,8 +7,7 @@ utils
 Some defs
     - parameter: A quantifiable characteristic of a population (baseline)
     - alpha: level of significance = type1_error = proba(reject_null;when null is True)
-'''
-'''
+
 todo
 - docstrings for the fcts here
 
@@ -19,6 +18,12 @@ todo
 note 
 - mean_two_paired(Sample1, Sample2) <==> mean_one(Sample1 - Sample2)
 '''
+
+
+from numpy import mean
+from .hp_estimators import HPE_MEAN_MANY, HPE_MEAN_ONE, HPE_MEAN_TWO_NOTPAIRED, HPE_MEAN_TWO_PAIRED, HPE_PROPORTION_ONE, HPE_PROPORTION_TW0
+from ..hyp_vali_md import check_hyp_min_sample, check_hyp_min_samples, check_zero_to_one_constraint
+from ..utils_md import estimate_std, clear_list, clear_list_pair, Hypothesis_data, Tails
 
 
 def HP_PROPORTION_ONE(sample_size: int,

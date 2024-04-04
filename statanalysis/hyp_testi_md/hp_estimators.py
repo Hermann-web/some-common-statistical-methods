@@ -2,8 +2,7 @@
 utils 
 - Dans un test, H0 est l'hypothese pessimiste 
     - il faudra donc assez d'evidence (p<0.05) afin de la rejeter
-'''
-'''
+
 todo
 - refactor output (last lines)
 - use "alternative" instead of "tail"
@@ -11,8 +10,11 @@ todo
 - reorder fcts attributes
 '''
 
-
-from statanalysis.utils_md import Hypothesis_data, Tails
+from ..hyp_vali_md import check_hyp_min_sample, check_hyp_min_samples, check_or_get_alpha_for_hyph_test, check_zero_to_one_constraint
+from ..utils_md import Hypothesis_data, Tails, get_p_value, get_p_value_f_test, get_p_value_t_test, get_p_value_z_test
+from math import sqrt
+from numpy import array, vectorize, random
+from numpy.linalg import norm
 SUM = sum
 random.seed(233)
 

@@ -2,12 +2,17 @@
 Some defs
 - parameter: A quantifiable characteristic of a population
 - confidence interval: range of reasonable values for the parameter
-'''
-'''
+
 todo
 - use kwargs format while calling functions
 - reorder fcts attributes
 '''
+
+from numpy import mean
+from ..hyp_vali_md import check_hyp_min_samples
+from .ci_estimators import CIE_MEAN_ONE, CIE_MEAN_TWO, CIE_ONE_PROPORTION, CIE_PROPORTION_TWO
+from ..hyp_vali_md import check_hyp_min_sample, check_or_get_cf_for_conf_inte, check_zero_to_one_constraint
+from ..utils_md import estimate_std, clear_list, clear_list_pair, Confidence_data
 
 
 def IC_PROPORTION_ONE(sample_size: int,

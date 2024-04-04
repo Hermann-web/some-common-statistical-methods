@@ -1,6 +1,6 @@
 # Statistical Analysis Toolkit
 
-Welcome to `statanalysis`, a comprehensive repository of statistical methods and tools tailored for data analysis enthusiasts. Inspired by my completion of a Coursera certificate in statistics, this repository encompasses a plethora of statistical concepts meticulously crafted into implementations. From prediction metrics to regression analysis, hypothesis testing to confidence intervals, and population parameter estimation to model estimation, `statanalysis` covers it all.
+Welcome to `statanalysis`, a repository of statistical methods and tools tailored for data analysis enthusiasts. Inspired by my completion of a Coursera certificate in statistics, this repository encompasses a plethora of statistical concepts meticulously crafted into implementations. From prediction metrics to regression analysis, hypothesis testing to confidence intervals, and population parameter estimation to model estimation, `statanalysis` covers it all.
 
 Built in Python, `statanalysis` provides meticulously crafted modules and utilities aimed at beginners in statistics, data science, and research. While following a certification on statistics on Coursera, I chose to solidify my knowledge through implementations instead of solely relying on existing modules. I believe there is no better way to understand a statistical formula than by implementing it in code, documenting it thoroughly, and validating the results through tests.
 

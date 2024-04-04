@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "statanalysis"
+name = "stat-analysis"
 version = "1.0.0"
 description = "A Python library providing hands on implementation of a collection of common statistical methods for data analysis."
 authors = ["Hermann Agossou <agossouhermann7@gmail.com>"]
@@ -28,7 +28,6 @@ python = "^3.9"
 scipy = "^1.8.0"
 numpy = "^1.14.0"
 statsmodels = "^0.14.0"
-black = "^24.3.0"
 
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.1.0"
