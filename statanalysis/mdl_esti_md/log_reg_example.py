@@ -1,6 +1,5 @@
 '''
-Author: Susan Li 
-source: [LogisticRegressionImplementation.ipynb - github.com/aihubprojects](https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb)
+Author: Susan Li source: `LogisticRegressionImplementation.ipynb - github.com/aihubprojects <https://github.com/aihubprojects/Logistic-Regression-From-Scratch-Python/blob/master/LogisticRegressionImplementation.ipynb>`_
 '''
 
 import numpy as np
@@ -91,30 +90,32 @@ class LogisticRegression:
         return self.predict_prob(X).round()
 
 
-# data
+if __name__ == "__main__":
 
-fit_intercept = False
-loc, scale, size = 20, 3, 2000
-sample = np.random.normal(loc=loc, scale=scale, size=size)
-# + 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
-y = 12 + 2 * sample
-y = (y > y.mean()).astype('int')
-X = sample.reshape(-1, 1)
+    # data
 
-# model
-model = LogisticRegression(learning_rate=0.1,
-                           num_iterations=500000,
-                           verbose=True)
-model.fit(X, y)
-print("pred_sc = ", (model.predict(X) == y).sum() / len(y))
+    fit_intercept = False
+    loc, scale, size = 20, 3, 2000
+    sample = np.random.normal(loc=loc, scale=scale, size=size)
+    # + 3*power(sample, 2) + 0.0001*random.normal(0, scale, size)
+    y = 12 + 2 * sample
+    y = (y > y.mean()).astype('int')
+    X = sample.reshape(-1, 1)
 
-preds = model.predict_prob(X)
-cl = PredictionMetrics(y_true=y, y_pred_proba=preds, binary=True)
-dd = {}
-dd["acc"] = cl.get_binary_accuracy()
-dd["rec"] = cl.get_recall_score()
-dd["prec"] = cl.get_precision_score()
-dd["conf"] = cl.get_confusion_matrix()
-dd["log-likelihood"] = cl.compute_log_likelihood()
-dd["log-loss"] = cl.log_loss()
-print(dd)
+    # model
+    model = LogisticRegression(learning_rate=0.1,
+                               num_iterations=500000,
+                               verbose=True)
+    model.fit(X, y)
+    print("pred_sc = ", (model.predict(X) == y).sum() / len(y))
+
+    preds = model.predict_prob(X)
+    cl = PredictionMetrics(y_true=y, y_pred_proba=preds, binary=True)
+    dd = {}
+    dd["acc"] = cl.get_binary_accuracy()
+    dd["rec"] = cl.get_recall_score()
+    dd["prec"] = cl.get_precision_score()
+    dd["conf"] = cl.get_confusion_matrix()
+    dd["log-likelihood"] = cl.compute_log_likelihood()
+    dd["log-loss"] = cl.log_loss()
+    print(dd)

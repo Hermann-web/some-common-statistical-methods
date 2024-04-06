@@ -1,13 +1,12 @@
 '''
-todo
-- refactor output (last lines)
-- use "alternative" instead of "tail"
-- use kwargs format while calling functions
-- reorder fcts attributes
-- Que signifie le R au carré négatif?: 
-    - selon ma def, c'est  entre 0 et 1 à cause d'une somme mais c'est faux ?? [qastack.fr](https://qastack.fr/stats/183265/what-does-negative-r-squared-mean)
+.. todo:: 
+    - refactor output (last lines)
+    - use "alternative" instead of "tail"
+    - use kwargs format while calling functions
+    - reorder fcts attributes
+    - Que signifie le R au carré négatif?: 
+        - selon ma def, c'est  entre 0 et 1 à cause d'une somme mais c'est faux ?? [qastack.fr](https://qastack.fr/stats/183265/what-does-negative-r-squared-mean)
 '''
-
 
 from numpy import (abs, array, diag, dot, exp, hstack, log, ndarray, ones,
                    random, sqrt, zeros)

@@ -32,6 +32,8 @@ statsmodels = "^0.14.0"
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.1.0"
 isort = "^5.13.2"
+sphinx = "^7.2.6"
+sphinx-rtd-theme = "^2.0.0"
 
 
 [tool.poetry.group.visu.dependencies]
