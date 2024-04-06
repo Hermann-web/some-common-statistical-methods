@@ -8,7 +8,7 @@ maintainers = [
 ]
 homepage = "https://github.com/Hermann-web/some-common-statistical-methods"
 repository = "https://github.com/Hermann-web/some-common-statistical-methods"
-documentation = "https://github.com/Hermann-web/some-common-statistical-methods/blob/main/docs/detailled-docu.md"
+documentation = "https://statanalysis.readthedocs.io"
 license = "Apache License"
 readme = "README.md"
 packages = [{include = "statanalysis"}]
@@ -32,6 +32,8 @@ statsmodels = "^0.14.0"
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.1.0"
 isort = "^5.13.2"
+
+[tool.poetry.group.buildthedocs.dependencies]
 sphinx = "^7.2.6"
 sphinx-rtd-theme = "^2.0.0"
 
