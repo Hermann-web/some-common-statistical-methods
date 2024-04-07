@@ -37,6 +37,7 @@ pydeps = "^1.12.20"
 [tool.poetry.group.buildthedocs.dependencies]
 sphinx = "^7.1.0"
 sphinx-rtd-theme = "^2.0.0"
+m2r2 = "^0.3.3.post2"
 
 
 [tool.poetry.group.visu.dependencies]

@@ -9,6 +9,7 @@ Welcome to statanalysis's documentation!
 .. toctree::
    :maxdepth: 2
 
+   readme
    statanalysis/statanalysis
 
 Indices and tables
