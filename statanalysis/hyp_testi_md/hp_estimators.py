@@ -10,11 +10,18 @@ todo
 - reorder fcts attributes
 '''
 
-from ..hyp_vali_md import check_hyp_min_sample, check_hyp_min_samples, check_or_get_alpha_for_hyph_test, check_zero_to_one_constraint
-from ..utils_md import Hypothesis_data, Tails, get_p_value, get_p_value_f_test, get_p_value_t_test, get_p_value_z_test
 from math import sqrt
-from numpy import array, vectorize, random
+
+from numpy import array, random, vectorize
 from numpy.linalg import norm
+
+from ..hyp_vali_md import (check_hyp_min_sample, check_hyp_min_samples,
+                           check_or_get_alpha_for_hyph_test,
+                           check_zero_to_one_constraint)
+from ..utils_md import (Hypothesis_data, Tails, get_p_value,
+                        get_p_value_f_test, get_p_value_t_test,
+                        get_p_value_z_test)
+
 SUM = sum
 random.seed(233)
 

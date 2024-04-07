@@ -5,7 +5,6 @@ import unittest
 from numpy import random
 from pandas import read_csv
 
-from statanalysis.common import f_oneway, sm_api
 from statanalysis.hyp_testi_md import (HP_MEAN_ONE, HP_MEAN_TWO_NOTPAIR,
                                        HP_PROPORTION_ONE, HP_PROPORTION_TWO,
                                        HPE_FROM_P_VALUE, HPE_MEAN_MANY,
@@ -13,6 +12,7 @@ from statanalysis.hyp_testi_md import (HP_MEAN_ONE, HP_MEAN_TWO_NOTPAIR,
                                        HPE_MEAN_TWO_PAIRED, HPE_PROPORTION_ONE,
                                        HPE_PROPORTION_TW0)
 from statanalysis.utils_md.refactoring import Tails
+from tests.common import f_oneway, sm_api
 
 
 class Tests_hyp_estimators(unittest.TestCase):

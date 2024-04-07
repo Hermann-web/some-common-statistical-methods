@@ -2,13 +2,13 @@ import unittest
 
 from numpy import random
 
-from statanalysis.common import sm_api
 from statanalysis.conf_inte_md import (CIE_MEAN_ONE, CIE_MEAN_TWO,
                                        CIE_ONE_PROPORTION, IC_MEAN_ONE,
                                        IC_MEAN_TWO_NOTPAIR, IC_MEAN_TWO_PAIR,
                                        IC_PROPORTION_ONE, IC_PROPORTION_TWO,
                                        get_min_sample)
 from statanalysis.utils_md import estimate_std
+from tests.common import sm_api
 
 
 class Test_estimators(unittest.TestCase):
