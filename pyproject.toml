@@ -24,17 +24,18 @@ classifiers = [
 
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 scipy = "^1.8.0"
-numpy = "^1.14.0"
+numpy = "^1.20.0"
 statsmodels = "^0.14.0"
 
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.1.0"
-isort = "^5.13.2"
+isort = "^5.10.0"
+pydeps = "^1.12.20"
 
 [tool.poetry.group.buildthedocs.dependencies]
-sphinx = "^7.2.6"
+sphinx = "^7.1.0"
 sphinx-rtd-theme = "^2.0.0"
 
 
