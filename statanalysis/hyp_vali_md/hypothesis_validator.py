@@ -9,9 +9,9 @@ import warnings
 from numpy import array
 
 from ..hyp_testi_md import HP_MEAN_MANY, HP_MEAN_ONE, HPE_FROM_P_VALUE
-from ..utils_md import HypothesisValidationData, Tails
-from .constraints import (check_equal_var, check_or_get_alpha_for_hyph_test,
-                          check_sample_normality, check_zero_to_one_constraint)
+from ..utils_md import (HypothesisValidationData, Tails, check_equal_var,
+                        check_or_get_alpha_for_hyph_test,
+                        check_sample_normality, check_zero_to_one_constraint)
 
 
 def check_residuals_centered(residuals: list, alpha=None):

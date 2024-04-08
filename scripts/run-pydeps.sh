@@ -10,13 +10,15 @@ TEST_FOLDER=./tests
 TEMP_INIT=$TEST_FOLDER/__init__.py
 
 # Log the start of the script
-mkdir $DOCS_FOLDER
+mkdir -p $DOCS_FOLDER
 echo "Starting dependency graph generation..."
 
 # Generate dependency graph for main files
 echo "Generating dependency graph for main files..."
-pydeps --noshow $MAIN_FOLDER --cluster --rankdir LR -o $DOCS_FOLDER/pydeps.svg
+# pydeps --noshow $MAIN_FOLDER --cluster --rankdir LR -o $DOCS_FOLDER/pydeps.svg
 echo "created $DOCS_FOLDER/pydeps.svg"
+pydeps --noshow $MAIN_FOLDER --cluster --rankdir LR -o $DOCS_FOLDER/pydeps.cycles.svg --show-cycles
+echo "created $DOCS_FOLDER/pydeps.cycles.svg"
 pydeps --noshow $MAIN_FOLDER --cluster --rankdir LR -o $DOCS_FOLDER/pydeps.min.svg --max-module-depth 2
 echo "created $DOCS_FOLDER/pydeps.min.svg"
 

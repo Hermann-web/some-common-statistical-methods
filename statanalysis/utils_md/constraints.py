@@ -2,9 +2,10 @@
 from numpy import array
 from scipy.stats import anderson, levene, normaltest, shapiro
 
-from ..utils_md import (COMMON_ALPHA_FOR_HYPH_TEST,
+from .constants import (COMMON_ALPHA_FOR_HYPH_TEST,
                         COMMON_COVERAGE_PROBABILITY_FOR_CONF_INT,
-                        LIM_MIN_SAMPLE, HypothesisValidationData)
+                        LIM_MIN_SAMPLE)
+from .refactoring import HypothesisValidationData
 
 
 def check_zero_to_one_constraint(*args):

@@ -5,12 +5,6 @@ Submodules
 ----------
 
 
-.. automodule:: statanalysis.hyp_vali_md.constraints
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: statanalysis.hyp_vali_md.hypothesis_validator
    :members:
    :undoc-members:

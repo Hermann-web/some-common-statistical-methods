@@ -13,15 +13,6 @@ Subpackages
    statanalysis.mdl_esti_md
    statanalysis.utils_md
 
-Submodules
-----------
-
-
-.. automodule:: statanalysis.common
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

@@ -10,11 +10,10 @@ todo
 
 from numpy import mean
 
-from ..hyp_vali_md import (check_hyp_min_sample, check_hyp_min_samples,
-                           check_or_get_cf_for_conf_inte,
-                           check_zero_to_one_constraint)
-from ..utils_md import (Confidence_data, clear_list, clear_list_pair,
-                        estimate_std)
+from ..utils_md import (Confidence_data, check_hyp_min_sample,
+                        check_hyp_min_samples, check_or_get_cf_for_conf_inte,
+                        check_zero_to_one_constraint, clear_list,
+                        clear_list_pair, estimate_std)
 from .ci_estimators import (CIE_MEAN_ONE, CIE_MEAN_TWO, CIE_ONE_PROPORTION,
                             CIE_PROPORTION_TWO)
 

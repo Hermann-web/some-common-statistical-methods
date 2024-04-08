@@ -22,10 +22,9 @@ note
 
 from numpy import mean
 
-from ..hyp_vali_md import (check_hyp_min_sample, check_hyp_min_samples,
-                           check_zero_to_one_constraint)
-from ..utils_md import (Hypothesis_data, Tails, clear_list, clear_list_pair,
-                        estimate_std)
+from ..utils_md import (Hypothesis_data, Tails, check_hyp_min_sample,
+                        check_hyp_min_samples, check_zero_to_one_constraint,
+                        clear_list, clear_list_pair, estimate_std)
 from .hp_estimators import (HPE_MEAN_MANY, HPE_MEAN_ONE,
                             HPE_MEAN_TWO_NOTPAIRED, HPE_MEAN_TWO_PAIRED,
                             HPE_PROPORTION_ONE, HPE_PROPORTION_TW0)

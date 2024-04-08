@@ -3,10 +3,10 @@ from dataclasses import dataclass, field
 
 from numpy import array, ndarray, sqrt
 
-from ..hyp_vali_md import (check_coefficients_non_zero, check_hyp_min_sample,
-                           check_or_get_alpha_for_hyph_test,
-                           check_residuals_centered, check_sample_normality)
-from ..utils_md import (RegressionFisherTestData, estimate_std,
+from ..hyp_vali_md import check_coefficients_non_zero, check_residuals_centered
+from ..utils_md import (RegressionFisherTestData, check_hyp_min_sample,
+                        check_or_get_alpha_for_hyph_test,
+                        check_sample_normality, estimate_std,
                         get_p_value_f_test)
 from .prediction_metrics import (PredictionMetrics, compute_aic_bic,
                                  compute_kurtosis, compute_skew)

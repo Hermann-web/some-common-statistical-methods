@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from statanalysis.utils_md.preprocessing import clear_mat_vec
+from statanalysis.utils_md import clear_mat_vec
 
 
 class Tests_hp_estimators_regression(unittest.TestCase):

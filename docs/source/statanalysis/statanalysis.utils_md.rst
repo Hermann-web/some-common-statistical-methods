@@ -17,6 +17,12 @@ Submodules
    :show-inheritance:
 
 
+.. automodule:: statanalysis.utils_md.constraints
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. automodule:: statanalysis.utils_md.estimate_std
    :members:
    :undoc-members:

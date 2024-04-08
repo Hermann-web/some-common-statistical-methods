@@ -15,10 +15,9 @@ fisher ? yes F
 from numpy import array, power, random
 
 from ..conf_inte_md import IC_MEAN_ONE
-from ..hyp_vali_md import (check_hyp_min_sample,
-                           check_or_get_alpha_for_hyph_test,
-                           check_sample_normality)
-from ..utils_md import clear_list, clear_list_pair, clear_mat_vec, estimate_std
+from ..utils_md import (check_hyp_min_sample, check_or_get_alpha_for_hyph_test,
+                        check_sample_normality, clear_list, clear_list_pair,
+                        clear_mat_vec, estimate_std)
 from .hp_estimators_regression import ComputeRegression
 
 sum_loc = sum
